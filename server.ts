@@ -217,6 +217,8 @@ app.post('/api/reflect', async (req, res) => {
     const prompt = typeof data.prompt === 'string' ? data.prompt.trim() : '';
     const mode = typeof data.mode === 'string' ? data.mode : 'reflection';
     const persona = typeof data.persona === 'string' ? data.persona : 'default';
+    const creed = typeof data.creed === 'string' ? data.creed.trim().slice(0, 300) : '';
+    const socraticTone = typeof data.socraticTone === 'string' ? data.socraticTone : 'default';
     const rawHistory = Array.isArray(data.history) ? data.history : [];
 
     if (!prompt) {
@@ -310,6 +312,21 @@ Focus on:
 - Non-Dualism: dissolving the artificial struggle between the "thinker" and the "thought".
 - The Settling Waters: letting the turbulent mind calm itself naturally rather than violently forcing it into submission.
 - Cosmic Play: reminding the author not to take the drama of life too grimly; life is musical, not a race to a finish line.`;
+    }
+
+    // 6. Author's Guiding Creed & Socratic Voice Calibration
+    if (creed) {
+      systemInstruction += `\n\nAUTHOR'S GUIDING CREED: "${creed}". Ground your Socratic questions and insights in resonance with this personal compass.`;
+    }
+
+    if (socraticTone === 'classical') {
+      systemInstruction += `\n\nSOCRATIC TONE: Classical & Rigorous. Focus on strict dialectical precision and dissecting unexamined premises.`;
+    } else if (socraticTone === 'gentle') {
+      systemInstruction += `\n\nSOCRATIC TONE: Gentle & Nurturing. Be extraordinarily patient, validating emotions with tender warmth and compassion.`;
+    } else if (socraticTone === 'poetic') {
+      systemInstruction += `\n\nSOCRATIC TONE: Poetic & Evocative. Use rich literary imagery, metaphors, and contemplative cadence.`;
+    } else if (socraticTone === 'direct') {
+      systemInstruction += `\n\nSOCRATIC TONE: Direct & Pragmatic. Keep responses concise, clear, and focused on decisive virtue.`;
     }
 
     let isJsonMode = false;

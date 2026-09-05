@@ -7,12 +7,16 @@ interface AnthologyModalProps {
   isOpen: boolean;
   onClose: () => void;
   interactions: Interaction[];
+  penName?: string;
+  waxSeal?: string;
 }
 
 export const AnthologyModal: React.FC<AnthologyModalProps> = ({
   isOpen,
   onClose,
   interactions,
+  penName,
+  waxSeal,
 }) => {
   const { user } = useAuth();
   const [selectedIds, setSelectedIds] = useState<string[]>(interactions.map((i) => i.id));
@@ -20,7 +24,7 @@ export const AnthologyModal: React.FC<AnthologyModalProps> = ({
 
   if (!isOpen) return null;
 
-  const authorName = user?.email?.split('@')[0] || 'The Author';
+  const authorName = penName || user?.email?.split('@')[0] || 'The Author';
   const currentYear = new Date().getFullYear();
   const selectedInteractions = interactions.filter((i) => selectedIds.includes(i.id));
 
@@ -123,6 +127,9 @@ export const AnthologyModal: React.FC<AnthologyModalProps> = ({
           <div className="max-w-2xl mx-auto space-y-16">
             {/* Frontispiece / Cover Page */}
             <div className="border-4 border-double border-[#2B2A28]/40 p-8 sm:p-12 text-center space-y-6 my-8 rounded-xs bg-[#FFFDF9] shadow-xs">
+              {waxSeal && (
+                <div className="text-3xl select-none mb-1 opacity-90">{waxSeal}</div>
+              )}
               <div className="text-xs font-sans tracking-[0.3em] uppercase text-[#8A8478]">
                 Private Monograph Edition
               </div>

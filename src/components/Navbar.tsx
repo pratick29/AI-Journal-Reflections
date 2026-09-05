@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Plus, LogOut, CheckCircle, ShieldCheck, PanelLeftClose, PanelLeft, Feather, BarChart2, Lock, Calendar, Archive, Headphones, Sparkles, BookOpen, Sun, Compass, PenTool, Search } from 'lucide-react';
+import { Plus, LogOut, CheckCircle, ShieldCheck, PanelLeftClose, PanelLeft, Feather, BarChart2, Lock, Calendar, Archive, Headphones, Sparkles, BookOpen, Sun, Compass, PenTool, Search, User, Heart, Award, X } from 'lucide-react';
+import { AuthorProfile, WAX_SEALS } from '../types';
 
 interface NavbarProps {
   onNewReflection: () => void;
@@ -21,6 +22,8 @@ interface NavbarProps {
   thoughtGrammarEnabled?: boolean;
   onToggleThoughtGrammar?: () => void;
   onOpenCommandPalette?: () => void;
+  authorProfile?: AuthorProfile;
+  onOpenProfile?: (tab?: 'identity' | 'ledger' | 'preferences' | 'grounding') => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -42,10 +45,15 @@ export const Navbar: React.FC<NavbarProps> = ({
   thoughtGrammarEnabled = true,
   onToggleThoughtGrammar,
   onOpenCommandPalette,
+  authorProfile,
+  onOpenProfile,
 }) => {
   const { user, signOutUser } = useAuth();
 
-  const userInitials = (user?.displayName || user?.email || 'U')
+  const currentSeal = WAX_SEALS.find((s) => s.id === authorProfile?.waxSeal)?.symbol || '🪶';
+  const authorDisplayName = authorProfile?.penName || user?.displayName || user?.email?.split('@')[0] || 'The Author';
+
+  const userInitials = (authorProfile?.penName || user?.displayName || user?.email || 'U')
     .split(' ')
     .map((n) => n[0])
     .join('')
@@ -53,13 +61,18 @@ export const Navbar: React.FC<NavbarProps> = ({
     .toUpperCase();
 
   const [isToolsOpen, setIsToolsOpen] = React.useState(false);
+  const [isProfileCardOpen, setIsProfileCardOpen] = React.useState(false);
   const toolsMenuRef = React.useRef<HTMLDivElement>(null);
+  const profileCardRef = React.useRef<HTMLDivElement>(null);
 
-  // Close dropdown on click outside
+  // Close dropdowns on click outside
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (toolsMenuRef.current && !toolsMenuRef.current.contains(event.target as Node)) {
         setIsToolsOpen(false);
+      }
+      if (profileCardRef.current && !profileCardRef.current.contains(event.target as Node)) {
+        setIsProfileCardOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -338,47 +351,141 @@ export const Navbar: React.FC<NavbarProps> = ({
             )}
           </div>
 
-          {/* User Profile Info */}
+          {/* Author Profile & Sanctuary Cameo */}
           {user && (
-            <div className="flex items-center gap-2 sm:gap-3 pl-2 sm:pl-3 border-l border-[#E2DDD5]">
-              <div className="text-right hidden md:block font-sans">
-                <div className="flex items-center justify-end gap-1">
-                  <p className="text-[9px] uppercase tracking-widest font-bold text-[#2B2A28]">
-                    Active Session
+            <div className="relative" ref={profileCardRef}>
+              <button
+                onClick={() => setIsProfileCardOpen((prev) => !prev)}
+                className="flex items-center gap-2 sm:gap-2.5 pl-2 sm:pl-3 border-l border-[#E2DDD5] text-left group hover:opacity-90 transition-opacity cursor-pointer"
+                title="Author Profile & Sanctuary Settings"
+              >
+                <div className="text-right hidden md:block font-sans">
+                  <div className="flex items-center justify-end gap-1">
+                    <p className="text-[9px] uppercase tracking-widest font-bold text-[#2B2A28] group-hover:text-[#C4432B] transition-colors">
+                      {authorDisplayName}
+                    </p>
+                    {user.emailVerified && (
+                      <span title="Email Verified">
+                        <CheckCircle className="w-2.5 h-2.5 text-[#C4432B]" />
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[10px] text-[#8A8478] truncate max-w-[130px]">
+                    {authorProfile?.creed ? `"${authorProfile.creed.slice(0, 24)}…"` : user.email}
                   </p>
-                  {user.emailVerified && (
-                    <span title="Email Verified">
-                      <CheckCircle className="w-2.5 h-2.5 text-[#C4432B]" />
-                    </span>
-                  )}
                 </div>
-                <p className="text-xs italic text-[#595652] truncate max-w-[130px] xl:max-w-[160px]">
-                  {user.displayName || user.email}
-                </p>
-              </div>
 
-              {user.photoURL ? (
-                <img
-                  src={user.photoURL}
-                  alt={user.displayName || 'User'}
-                  className="w-8 h-8 rounded-full border border-[#E2DDD5] object-cover"
-                  referrerPolicy="no-referrer"
-                />
-              ) : (
-                <div className="w-8 h-8 rounded-full border border-[#2B2A28] flex items-center justify-center text-[10px] font-sans bg-[#EFECE6] font-bold text-[#2B2A28]">
-                  {userInitials}
+                <div className="relative">
+                  {user.photoURL ? (
+                    <img
+                      src={user.photoURL}
+                      alt={authorDisplayName}
+                      className="w-8 h-8 rounded-full border border-[#E2DDD5] object-cover"
+                      referrerPolicy="no-referrer"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full border border-[#2B2A28] flex items-center justify-center text-[10px] font-sans bg-[#EFECE6] font-bold text-[#2B2A28]">
+                      {userInitials}
+                    </div>
+                  )}
+                  {/* Wax Seal Pin badge */}
+                  <span className="absolute -bottom-1 -right-1 text-[11px] bg-[#FFFDF9] border border-[#E2DDD5] rounded-full p-0.2 shadow-xs leading-none">
+                    {currentSeal}
+                  </span>
+                </div>
+              </button>
+
+              {/* Author Cameo Card Popover */}
+              {isProfileCardOpen && (
+                <div className="absolute right-0 top-full mt-2 z-50 w-72 bg-[#FFFDF9] border border-[#E2DDD5] border-t-2 border-t-[#C4432B] shadow-2xl p-3 rounded-xs space-y-3 animate-in fade-in zoom-in-95 duration-100 font-serif">
+                  <div className="flex items-start justify-between pb-2 border-b border-[#E2DDD5]/70">
+                    <div className="flex items-center gap-2.5">
+                      <span className="text-2xl p-1 bg-[#F4F0E8] border border-[#E2DDD5] rounded-xs">
+                        {currentSeal}
+                      </span>
+                      <div>
+                        <h3 className="font-serif font-medium text-sm text-[#2B2A28]">
+                          {authorDisplayName}
+                        </h3>
+                        <p className="text-[10px] font-sans text-[#8A8478] truncate max-w-[160px]">
+                          {user.email}
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setIsProfileCardOpen(false)}
+                      className="text-[#8A8478] hover:text-[#2B2A28] p-0.5"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+
+                  {authorProfile?.creed && (
+                    <div className="bg-[#FAF6F0] p-2 rounded-xs border-l-2 border-l-[#C4432B] text-[11px] italic text-[#595652]">
+                      "{authorProfile.creed}"
+                    </div>
+                  )}
+
+                  <div className="space-y-1">
+                    {onOpenProfile && (
+                      <>
+                        <button
+                          onClick={() => {
+                            onOpenProfile('identity');
+                            setIsProfileCardOpen(false);
+                          }}
+                          className="w-full text-left px-2.5 py-1.5 text-xs font-serif text-[#2B2A28] hover:bg-[#F7F4EE] rounded-xs transition-colors flex items-center justify-between"
+                        >
+                          <span className="flex items-center gap-2">
+                            <User className="w-3.5 h-3.5 text-[#C4432B]" />
+                            <span>Author Sanctuary &amp; Creed</span>
+                          </span>
+                          <span className="text-[9px] font-sans uppercase text-[#8A8478]">Settings</span>
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            onOpenProfile('ledger');
+                            setIsProfileCardOpen(false);
+                          }}
+                          className="w-full text-left px-2.5 py-1.5 text-xs font-serif text-[#2B2A28] hover:bg-[#F7F4EE] rounded-xs transition-colors flex items-center justify-between"
+                        >
+                          <span className="flex items-center gap-2">
+                            <Award className="w-3.5 h-3.5 text-[#C4432B]" />
+                            <span>Ledger &amp; Socratic Laurels</span>
+                          </span>
+                          <span className="text-[9px] font-sans uppercase text-[#8A8478]">Stats</span>
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            onOpenProfile('grounding');
+                            setIsProfileCardOpen(false);
+                          }}
+                          className="w-full text-left px-2.5 py-1.5 text-xs font-serif text-[#2B2A28] hover:bg-[#F7F4EE] rounded-xs transition-colors flex items-center justify-between"
+                        >
+                          <span className="flex items-center gap-2">
+                            <Heart className="w-3.5 h-3.5 text-rose-500" />
+                            <span>Grounding Anchor</span>
+                          </span>
+                          <span className="text-[9px] font-sans uppercase text-rose-600 font-bold">Calm</span>
+                        </button>
+                      </>
+                    )}
+                  </div>
+
+                  <div className="pt-2 border-t border-[#E2DDD5]/70 flex items-center justify-between text-[10px] font-sans">
+                    <span className="text-[#8A8478]">AES-256 Vault Active</span>
+                    <button
+                      onClick={signOutUser}
+                      className="px-2 py-1 text-[#8A8478] hover:text-[#C4432B] hover:bg-[#FAF6F0] rounded-xs transition-colors flex items-center gap-1 font-semibold uppercase tracking-wider"
+                    >
+                      <LogOut className="w-3 h-3" />
+                      <span>Sign Out</span>
+                    </button>
+                  </div>
                 </div>
               )}
-
-              <button
-                id="signout-btn"
-                onClick={signOutUser}
-                className="p-1.5 text-[#8A8478] hover:text-[#C4432B] border border-transparent hover:border-[#E2DDD5] transition-colors rounded-sm"
-                title="Sign Out"
-                aria-label="Sign Out"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-              </button>
             </div>
           )}
         </div>

@@ -8,7 +8,7 @@ import { VaultLockModal } from './components/VaultLockModal';
 import { ZenMode } from './components/editor/ZenMode';
 import { AmbientCanvas } from './components/common/AmbientCanvas';
 import { SoundscapePlayer } from './components/common/SoundscapePlayer';
-import { Interaction, PhilosophicalPersona } from './types';
+import { Interaction, PhilosophicalPersona, AuthorProfile } from './types';
 import { subscribeUserInteractions } from './firebase/interactions';
 import { Loader2 } from 'lucide-react';
 
@@ -43,6 +43,9 @@ const AnthologyModal = React.lazy(() =>
 const CommandPaletteModal = React.lazy(() =>
   import('./components/palette/CommandPaletteModal').then((m) => ({ default: m.CommandPaletteModal }))
 );
+const AuthorSanctuaryModal = React.lazy(() =>
+  import('./components/profile/AuthorSanctuaryModal').then((m) => ({ default: m.AuthorSanctuaryModal }))
+);
 
 function MainApp() {
   const { user, loading } = useAuth();
@@ -65,6 +68,41 @@ function MainApp() {
   const [isAnthologyOpen, setIsAnthologyOpen] = useState<boolean>(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState<boolean>(false);
   const [thoughtGrammarEnabled, setThoughtGrammarEnabled] = useState<boolean>(true);
+
+  // Author Sanctuary Profile State
+  const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
+  const [profileInitialTab, setProfileInitialTab] = useState<'identity' | 'ledger' | 'preferences' | 'grounding'>('identity');
+  const [authorProfile, setAuthorProfile] = useState<AuthorProfile>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('journal_author_profile');
+        if (stored) return JSON.parse(stored);
+      } catch (err) {
+        console.warn('Failed to parse author profile:', err);
+      }
+    }
+    return {
+      penName: '',
+      creed: 'To examine that which goes unsaid, and live with reasoned deliberate intent.',
+      waxSeal: 'quill',
+      socraticTone: 'default',
+      defaultInterlocutor: 'default',
+      defaultHeadspace: 'Reflective & Grounded',
+      lexicon: [],
+      typographyStyle: 'newsreader',
+    };
+  });
+
+  const handleSaveProfile = (newProfile: AuthorProfile) => {
+    setAuthorProfile(newProfile);
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('journal_author_profile', JSON.stringify(newProfile));
+      } catch (err) {
+        console.warn('Failed to persist author profile:', err);
+      }
+    }
+  };
 
   const [isVaultLocked, setIsVaultLocked] = useState<boolean>(false);
   const [savedPin, setSavedPin] = useState<string | null>(() => {
@@ -179,6 +217,11 @@ function MainApp() {
         thoughtGrammarEnabled={thoughtGrammarEnabled}
         onToggleThoughtGrammar={() => setThoughtGrammarEnabled((prev) => !prev)}
         onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
+        authorProfile={authorProfile}
+        onOpenProfile={(tab = 'identity') => {
+          setProfileInitialTab(tab);
+          setIsProfileOpen(true);
+        }}
       />
 
       <main className="flex-1 flex overflow-hidden relative">
@@ -233,6 +276,7 @@ function MainApp() {
             onOpenZenMode={() => setIsZenModeOpen(true)}
             onPinQuote={(quoteText) => setPinnedQuote(quoteText)}
             thoughtGrammarEnabled={thoughtGrammarEnabled}
+            authorProfile={authorProfile}
           />
         </div>
       </main>
@@ -352,6 +396,20 @@ function MainApp() {
             isOpen={isAnthologyOpen}
             onClose={() => setIsAnthologyOpen(false)}
             interactions={allInteractions}
+            penName={authorProfile.penName}
+            waxSeal={
+              authorProfile.waxSeal === 'temple'
+                ? '🏛️'
+                : authorProfile.waxSeal === 'candle'
+                ? '🕯️'
+                : authorProfile.waxSeal === 'olive'
+                ? '🌿'
+                : authorProfile.waxSeal === 'owl'
+                ? '🦉'
+                : authorProfile.waxSeal === 'compass'
+                ? '🧭'
+                : '🪶'
+            }
           />
         )}
 
@@ -374,6 +432,21 @@ function MainApp() {
             onOpenBackup={() => setIsBackupOpen(true)}
             onToggleThoughtGrammar={() => setThoughtGrammarEnabled((prev) => !prev)}
             onToggleAtmosphere={() => setIsAmbientMotion((prev) => !prev)}
+            onOpenProfile={(tab = 'identity') => {
+              setProfileInitialTab(tab);
+              setIsProfileOpen(true);
+            }}
+          />
+        )}
+
+        {isProfileOpen && (
+          <AuthorSanctuaryModal
+            isOpen={isProfileOpen}
+            onClose={() => setIsProfileOpen(false)}
+            profile={authorProfile}
+            onSaveProfile={handleSaveProfile}
+            interactions={allInteractions}
+            initialTab={profileInitialTab}
           />
         )}
       </React.Suspense>

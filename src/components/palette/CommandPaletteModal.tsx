@@ -15,6 +15,9 @@ import {
   PenTool,
   ArrowRight,
   X,
+  User,
+  Award,
+  Heart,
 } from 'lucide-react';
 import { Interaction, PhilosophicalPersona } from '../../types';
 
@@ -37,6 +40,7 @@ interface CommandPaletteModalProps {
   onToggleThoughtGrammar: () => void;
   onToggleAtmosphere: () => void;
   onSelectPersona?: (persona: PhilosophicalPersona) => void;
+  onOpenProfile?: (tab?: 'identity' | 'ledger' | 'preferences' | 'grounding') => void;
 }
 
 export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
@@ -58,6 +62,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
   onToggleThoughtGrammar,
   onToggleAtmosphere,
   onSelectPersona,
+  onOpenProfile,
 }) => {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -72,6 +77,43 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
   }, [isOpen]);
 
   const commandItems = [
+    ...(onOpenProfile
+      ? [
+          {
+            id: 'cmd_profile',
+            category: 'Sanctuary',
+            title: 'Author Sanctuary & Identity (Pen Name, Creed & Seal)',
+            shortcut: 'Creed',
+            icon: <User className="w-4 h-4 text-[#C4432B]" />,
+            action: () => {
+              onOpenProfile('identity');
+              onClose();
+            },
+          },
+          {
+            id: 'cmd_laurels',
+            category: 'Sanctuary',
+            title: 'Lifetime Ledger & Socratic Laurels',
+            shortcut: 'Laurels',
+            icon: <Award className="w-4 h-4 text-[#C4432B]" />,
+            action: () => {
+              onOpenProfile('ledger');
+              onClose();
+            },
+          },
+          {
+            id: 'cmd_grounding',
+            category: 'Sanctuary',
+            title: 'Stoic Grounding Anchor & Breath Pacer (4-4-4)',
+            shortcut: 'Breathe',
+            icon: <Heart className="w-4 h-4 text-[#C4432B]" />,
+            action: () => {
+              onOpenProfile('grounding');
+              onClose();
+            },
+          },
+        ]
+      : []),
     {
       id: 'cmd_new',
       category: 'Actions',

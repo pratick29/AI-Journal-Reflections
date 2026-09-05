@@ -159,3 +159,41 @@ export interface ThoughtDistortion {
   reframeQuestion: string;
 }
 
+export type AuthorWaxSeal = 'quill' | 'temple' | 'candle' | 'olive' | 'owl' | 'compass';
+export type SocraticTone = 'default' | 'gentle' | 'classical' | 'poetic' | 'direct';
+
+export interface PersonalLexiconItem {
+  id: string;
+  term: string;
+  meaning: string;
+}
+
+export interface AuthorProfile {
+  penName: string;
+  creed: string;
+  waxSeal: AuthorWaxSeal;
+  socraticTone: SocraticTone;
+  defaultInterlocutor: PhilosophicalPersona;
+  defaultHeadspace: string;
+  lexicon: PersonalLexiconItem[];
+  typographyStyle: 'newsreader' | 'roman' | 'minimal';
+}
+
+export const WAX_SEALS: { id: AuthorWaxSeal; symbol: string; label: string; desc: string }[] = [
+  { id: 'quill', symbol: '🪶', label: 'The Quill', desc: 'Devotion to the written word and honest inquiry.' },
+  { id: 'temple', symbol: '🏛️', label: 'The Temple', desc: 'Stoic duty, structural virtue, and inner fortress.' },
+  { id: 'candle', symbol: '🕯️', label: 'The Candle', desc: 'Shadow work, introspection, and quiet illumination.' },
+  { id: 'olive', symbol: '🌿', label: 'Olive Branch', desc: 'Equanimity, peaceful reconciliation, and grace.' },
+  { id: 'owl', symbol: '🦉', label: 'The Owl', desc: 'Philosophical wisdom, discernment, and contemplation.' },
+  { id: 'compass', symbol: '🧭', label: 'The Compass', desc: 'Directional truth, existential agency, and navigation.' },
+];
+
+export const SOCRATIC_TONES: { id: SocraticTone; label: string; desc: string }[] = [
+  { id: 'default', label: 'Balanced Journal Mirror', desc: 'Thoughtful, empathetic, and gently encouraging.' },
+  { id: 'gentle', label: 'Gentle & Nurturing', desc: 'Tender emotional validation, patient holding, and warmth.' },
+  { id: 'classical', label: 'Classical Dialectic', desc: 'Rigorous Socratic inquiry that dismantles unexamined premises.' },
+  { id: 'poetic', label: 'Poetic & Evocative', desc: 'Rich in literary metaphor, resonance, and aesthetic depth.' },
+  { id: 'direct', label: 'Direct & Pragmatic', desc: 'Crisp, sobering, and focused on decisive moral action.' },
+];
+
+

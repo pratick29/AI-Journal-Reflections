@@ -22,6 +22,7 @@ import {
   CognitiveAnalysis,
   ThinkingMap,
   PhilosophicalPersona,
+  AuthorProfile,
 } from '../types';
 import { saveInteraction } from '../firebase/interactions';
 import { useAuth } from '../context/AuthContext';
@@ -38,6 +39,7 @@ interface JournalEditorProps {
   onOpenZenMode?: () => void;
   onPinQuote?: (text: string) => void;
   thoughtGrammarEnabled?: boolean;
+  authorProfile?: AuthorProfile;
 }
 
 export const JournalEditor: React.FC<JournalEditorProps> = ({
@@ -47,6 +49,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
   onOpenZenMode,
   onPinQuote,
   thoughtGrammarEnabled = true,
+  authorProfile,
 }) => {
   const { user } = useAuth();
 
@@ -99,6 +102,9 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
       setTitle(`Inquiry • ${now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`);
       setCategory('reflection');
       setMessages([]);
+      if (authorProfile?.defaultInterlocutor) {
+        setSelectedPersona(authorProfile.defaultInterlocutor);
+      }
       setCognitiveAnalysis(null);
       setThinkingMap(null);
       setSaveStatus('unsaved');
@@ -299,6 +305,8 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
           prompt: submittedText,
           mode: modeToUse,
           persona: selectedPersona,
+          creed: authorProfile?.creed,
+          socraticTone: authorProfile?.socraticTone,
           history: messages.map((m) => ({
             role: m.role,
             content: m.content,
@@ -403,7 +411,8 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
   };
 
   const handleExportText = () => {
-    const textData = `# ${title}\nCategory: ${category}\nCreated: ${currentInteraction?.createdAt || new Date().toISOString()}\n\n` +
+    const authorLine = authorProfile?.penName ? `Author: ${authorProfile.penName}\n` : '';
+    const textData = `# ${title}\n${authorLine}Category: ${category}\nCreated: ${currentInteraction?.createdAt || new Date().toISOString()}\n\n` +
       messages.map((m) => `## ${m.role.toUpperCase()} (${m.timestamp})\n${m.content}\n`).join('\n');
     navigator.clipboard.writeText(textData);
     setCopiedExport(true);
