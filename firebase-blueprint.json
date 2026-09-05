@@ -1,0 +1,59 @@
+{
+  "entities": {
+    "Interaction": {
+      "title": "Interaction",
+      "description": "A multi-turn journal entry or reflection interaction between the user and Gemini AI",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier of the interaction",
+          "maxLength": 128
+        },
+        "userId": {
+          "type": "string",
+          "description": "Firebase Auth UID of the owner",
+          "maxLength": 128
+        },
+        "title": {
+          "type": "string",
+          "description": "Title or topic of the journal reflection",
+          "maxLength": 200
+        },
+        "category": {
+          "type": "string",
+          "description": "Category: reflection, brainstorming, gratitude, mindfulness, or goals",
+          "maxLength": 50
+        },
+        "summary": {
+          "type": "string",
+          "description": "Key takeaways or brief AI summary of the reflection",
+          "maxLength": 1000
+        },
+        "tags": {
+          "type": "array",
+          "description": "User or AI assigned tags"
+        },
+        "messages": {
+          "type": "array",
+          "description": "Ordered conversation history between user and Gemini"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp of creation"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO timestamp of last update"
+        }
+      },
+      "required": ["id", "userId", "title", "messages", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/interactions/{interactionId}": {
+      "schema": "Interaction",
+      "description": "Isolated journal and reflection interactions strictly private to each authenticated user"
+    }
+  }
+}

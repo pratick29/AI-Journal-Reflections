@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --paper-canvas: #F7F4EE;
+    --paper-surface: #FFFDF9;
+    --paper-subtle: #EFECE6;
+    --ink-primary: #2B2A28;
+    --ink-secondary: #595652;
+    --ink-muted: #8A8478;
+    --rust-accent: #C4432B;
+    --rust-hover: #A8351F;
+    --rust-subtle-bg: rgba(196, 67, 43, 0.07);
+    --paper-rule: #E2DDD5;
+    --paper-rule-dark: #2B2A28;
+    --selection-bg: #2B2A28;
+    --selection-text: #F7F4EE;
+    --font-serif: 'Newsreader', Georgia, Cambria, 'Times New Roman', serif;
+    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-script: 'Caveat', cursive, sans-serif;
+  }
+
+  body {
+    background-color: var(--paper-canvas);
+    color: var(--ink-primary);
+    font-family: var(--font-serif);
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Focus rings with warm editorial style */
+  :focus-visible {
+    outline: 2px solid var(--rust-accent);
+    outline-offset: 2px;
+  }
+}
+
+.paper-texture {
+  background-color: var(--paper-canvas);
+  background-image: radial-gradient(rgba(43, 42, 40, 0.035) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+.font-sans {
+  font-family: var(--font-sans);
+}
+
+.font-script {
+  font-family: var(--font-script);
+}
+
+/* Editorial selection style */
+::selection {
+  background-color: var(--selection-bg);
+  color: var(--selection-text);
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(138, 132, 120, 0.35);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--rust-accent);
+}
+
+/* Printable PDF & Paper Editorial Specimen CSS */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  /* Hide interactive controls and chrome when printing */
+  nav,
+  #writing-desk,
+  button,
+  select,
+  .no-print {
+    display: none !important;
+  }
+
+  #journal-editor {
+    height: auto !important;
+    overflow: visible !important;
+    background: transparent !important;
+  }
+
+  .max-w-4xl {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  /* Expand all scrollable containers */
+  .overflow-y-auto,
+  .overflow-hidden {
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+}
+
