@@ -23,6 +23,7 @@ import {
   ThinkingMap,
   PhilosophicalPersona,
   AuthorProfile,
+  JournalLocation,
 } from '../types';
 import { saveInteraction } from '../firebase/interactions';
 import { useAuth } from '../context/AuthContext';
@@ -31,6 +32,7 @@ import { WritingDesk } from './editor/WritingDesk';
 import { DialogueStream } from './editor/DialogueStream';
 import { CognitiveLensPanel } from './editor/CognitiveLensPanel';
 import { EmptyStatePrompts } from './editor/EmptyStatePrompts';
+import { JournalLocationPicker } from './maps/JournalLocationPicker';
 
 interface JournalEditorProps {
   currentInteraction: Interaction | null;
@@ -72,6 +74,8 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
   const [pendingUnsavedInteraction, setPendingUnsavedInteraction] = useState<Interaction | null>(null);
   const [copiedExport, setCopiedExport] = useState<boolean>(false);
   const [retryCooldown, setRetryCooldown] = useState<number>(0);
+  const [location, setLocation] = useState<JournalLocation | null>(null);
+  const [isLocationPickerOpen, setIsLocationPickerOpen] = useState<boolean>(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -93,6 +97,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
       setMessages(currentInteraction.messages || []);
       setCognitiveAnalysis(currentInteraction.cognitiveAnalysis || null);
       setThinkingMap(currentInteraction.thinkingMap || null);
+      setLocation(currentInteraction.location || null);
       setSaveStatus('saved');
       setErrorMessage(null);
       setPendingUnsavedInteraction(null);
@@ -107,6 +112,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
       }
       setCognitiveAnalysis(null);
       setThinkingMap(null);
+      setLocation(null);
       setSaveStatus('unsaved');
       setErrorMessage(null);
       setPendingUnsavedInteraction(null);
@@ -307,6 +313,14 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
           persona: selectedPersona,
           creed: authorProfile?.creed,
           socraticTone: authorProfile?.socraticTone,
+          location: location
+            ? {
+                name: location.name,
+                lat: location.lat,
+                lng: location.lng,
+                address: location.address,
+              }
+            : undefined,
           history: messages.map((m) => ({
             role: m.role,
             content: m.content,
@@ -331,49 +345,67 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
             }
           }
         } catch {
-          // ignore
+          // Fallback to HTTP status text
         }
 
-        if (response.status === 429 && cooldownSec > 0) {
-          setRetryCooldown(cooldownSec);
-          errorText = `Rate limit active. Please wait ${cooldownSec}s before submitting again.`;
+        if (response.status === 429) {
+          const finalCooldown = cooldownSec > 0 ? cooldownSec : 30;
+          setRetryCooldown(finalCooldown);
+          throw new Error(`Manuscript pace limit reached. The Socratic guide requires contemplation. Please wait ${finalCooldown}s.`);
         }
 
         throw new Error(errorText);
       }
 
       const data = await response.json();
-      const geminiReply = data.reply || 'No response generated.';
-      const modelUsed = data.modelUsed || 'gemini-3.6-flash';
 
+      let assistantMessage: ChatMessage;
       let updatedAnalysis = cognitiveAnalysis;
-      if (modeToUse === 'cognitive_lens' && data.cognitiveAnalysis) {
-        updatedAnalysis = data.cognitiveAnalysis;
-        setCognitiveAnalysis(updatedAnalysis);
-        setActiveTab('cognitive_lens');
-      }
-
       let updatedThinkingMap = thinkingMap;
-      if (modeToUse === 'thinking_map' && data.thinkingMap) {
-        const validatedMap = validateThinkingMapGraph(data.thinkingMap);
-        if (validatedMap) {
-          updatedThinkingMap = validatedMap;
-          setThinkingMap(updatedThinkingMap);
-          setActiveTab('thinking_map');
-        }
-      }
 
-      let finalMessages = newMessagesList;
-      if (modeToUse !== 'cognitive_lens' && modeToUse !== 'thinking_map') {
-        const assistantMessage: ChatMessage = {
-          id: `msg_asst_${Date.now()}`,
+      if (modeToUse === 'cognitive_lens') {
+        const lensAnalysis: CognitiveAnalysis = data.cognitiveAnalysis;
+        updatedAnalysis = lensAnalysis;
+        setCognitiveAnalysis(lensAnalysis);
+
+        assistantMessage = {
+          id: `lens_${Date.now()}`,
           role: 'assistant',
-          content: geminiReply,
-          timestamp: new Date().toISOString(),
-          modelUsed,
+          content: `**Cognitive Axiom:** ${lensAnalysis.coreAxiom}\n\n**Emotional Resonance:** ${lensAnalysis.emotionalResonance.join(', ')}\n\n**Unexamined Premises:**\n${lensAnalysis.cognitiveBlindspots.map((b) => `• ${b}`).join('\n')}\n\n**Socratic Inquiries:**\n${lensAnalysis.socraticQuestions.map((q) => `• ${q}`).join('\n')}`,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          modelUsed: data.modelUsed,
         };
-        finalMessages = [...newMessagesList, assistantMessage];
-        setMessages(finalMessages);
+        newMessagesList = [...newMessagesList, assistantMessage];
+        setMessages(newMessagesList);
+      } else if (modeToUse === 'thinking_map') {
+        const mapData = validateThinkingMapGraph(data.thinkingMap);
+        if (mapData) {
+          updatedThinkingMap = mapData;
+          setThinkingMap(mapData);
+          setActiveTab('thinking_map');
+
+          assistantMessage = {
+            id: `map_${Date.now()}`,
+            role: 'assistant',
+            content: `**Thinking Map Synthesis Generated:** "${mapData.centralTheme}"\n\nSynthesized **${mapData.nodes.length} dialectical nodes** and **${mapData.edges.length} reasoning vectors**. Explore the structural topology in the **Thinking Map** tab.`,
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            modelUsed: data.modelUsed,
+          };
+          newMessagesList = [...newMessagesList, assistantMessage];
+          setMessages(newMessagesList);
+        } else {
+          throw new Error('Received malformed reasoning topology. Please retry.');
+        }
+      } else {
+        assistantMessage = {
+          id: `asst_${Date.now()}`,
+          role: 'assistant',
+          content: data.reply || 'Silence in the manuscript.',
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          modelUsed: data.modelUsed,
+        };
+        newMessagesList = [...newMessagesList, assistantMessage];
+        setMessages(newMessagesList);
       }
 
       let effectiveTitle = title;
@@ -388,9 +420,10 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
         userId: user.uid,
         title: effectiveTitle,
         category,
-        messages: finalMessages,
+        messages: newMessagesList,
         cognitiveAnalysis: updatedAnalysis || undefined,
         thinkingMap: updatedThinkingMap || undefined,
+        location: location || undefined,
         createdAt: currentInteraction?.createdAt || nowIso,
         updatedAt: new Date().toISOString(),
       };
@@ -412,7 +445,8 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
 
   const handleExportText = () => {
     const authorLine = authorProfile?.penName ? `Author: ${authorProfile.penName}\n` : '';
-    const textData = `# ${title}\n${authorLine}Category: ${category}\nCreated: ${currentInteraction?.createdAt || new Date().toISOString()}\n\n` +
+    const locLine = location ? `Locus: ${location.name}${location.address ? ` (${location.address})` : ''}\n` : '';
+    const textData = `# ${title}\n${authorLine}${locLine}Category: ${category}\nCreated: ${currentInteraction?.createdAt || new Date().toISOString()}\n\n` +
       messages.map((m) => `## ${m.role.toUpperCase()} (${m.timestamp})\n${m.content}\n`).join('\n');
     navigator.clipboard.writeText(textData);
     setCopiedExport(true);
@@ -626,6 +660,8 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
                 selectedPersona={selectedPersona}
                 onSelectPersona={setSelectedPersona}
                 thoughtGrammarEnabled={thoughtGrammarEnabled}
+                location={location}
+                onOpenLocationPicker={() => setIsLocationPickerOpen(true)}
               />
             </div>
           </div>
@@ -677,6 +713,19 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
           </div>
         )}
       </div>
+
+      {/* Journal Location Picker Modal */}
+      {isLocationPickerOpen && (
+        <JournalLocationPicker
+          isOpen={isLocationPickerOpen}
+          onClose={() => setIsLocationPickerOpen(false)}
+          currentLocation={location}
+          onSaveLocation={(loc) => {
+            setLocation(loc);
+            setSaveStatus('unsaved');
+          }}
+        />
+      )}
     </div>
   );
 };

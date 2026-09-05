@@ -66,6 +66,14 @@ export interface ChatMessage {
   modelUsed?: string;
 }
 
+export interface JournalLocation {
+  name: string;
+  lat: number;
+  lng: number;
+  address?: string;
+  placeId?: string;
+}
+
 export interface Interaction {
   id: string;
   userId: string;
@@ -76,6 +84,7 @@ export interface Interaction {
   cognitiveAnalysis?: CognitiveAnalysis;
   thinkingMap?: ThinkingMap;
   messages: ChatMessage[];
+  location?: JournalLocation;
   createdAt: string;
   updatedAt: string;
 }

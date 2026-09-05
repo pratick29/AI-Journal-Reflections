@@ -18,6 +18,7 @@ import {
   User,
   Award,
   Heart,
+  MapPin,
 } from 'lucide-react';
 import { Interaction, PhilosophicalPersona } from '../../types';
 
@@ -41,6 +42,7 @@ interface CommandPaletteModalProps {
   onToggleAtmosphere: () => void;
   onSelectPersona?: (persona: PhilosophicalPersona) => void;
   onOpenProfile?: (tab?: 'identity' | 'ledger' | 'preferences' | 'grounding') => void;
+  onOpenSacredGrounds?: () => void;
 }
 
 export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
@@ -63,6 +65,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
   onToggleAtmosphere,
   onSelectPersona,
   onOpenProfile,
+  onOpenSacredGrounds,
 }) => {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -147,6 +150,21 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
         onClose();
       },
     },
+    ...(onOpenSacredGrounds
+      ? [
+          {
+            id: 'cmd_sacred_grounds',
+            category: 'Studio',
+            title: 'Open Sacred Grounds Atlas (Map of Reflection Loci)',
+            shortcut: 'Atlas',
+            icon: <MapPin className="w-4 h-4 text-[#C4432B]" />,
+            action: () => {
+              onOpenSacredGrounds();
+              onClose();
+            },
+          },
+        ]
+      : []),
     {
       id: 'cmd_rituals',
       category: 'Studio',

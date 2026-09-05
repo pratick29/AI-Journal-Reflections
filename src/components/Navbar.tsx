@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Plus, LogOut, CheckCircle, ShieldCheck, PanelLeftClose, PanelLeft, Feather, BarChart2, Lock, Calendar, Archive, Headphones, Sparkles, BookOpen, Sun, Compass, PenTool, Search, User, Heart, Award, X } from 'lucide-react';
+import { Plus, LogOut, CheckCircle, ShieldCheck, PanelLeftClose, PanelLeft, Feather, BarChart2, Lock, Calendar, Archive, Headphones, Sparkles, BookOpen, Sun, Compass, PenTool, Search, User, Heart, Award, X, MapPin } from 'lucide-react';
 import { AuthorProfile, WAX_SEALS } from '../types';
 
 interface NavbarProps {
@@ -24,6 +24,7 @@ interface NavbarProps {
   onOpenCommandPalette?: () => void;
   authorProfile?: AuthorProfile;
   onOpenProfile?: (tab?: 'identity' | 'ledger' | 'preferences' | 'grounding') => void;
+  onOpenSacredGrounds?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -47,6 +48,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenCommandPalette,
   authorProfile,
   onOpenProfile,
+  onOpenSacredGrounds,
 }) => {
   const { user, signOutUser } = useAuth();
 
@@ -227,6 +229,22 @@ export const Navbar: React.FC<NavbarProps> = ({
                       <span>Book Anthology Specimen</span>
                     </div>
                     <span className="text-[9px] font-sans uppercase tracking-wider text-[#8A8478]">Memoir</span>
+                  </button>
+                )}
+
+                {onOpenSacredGrounds && (
+                  <button
+                    onClick={() => {
+                      onOpenSacredGrounds();
+                      setIsToolsOpen(false);
+                    }}
+                    className="w-full text-left px-2.5 py-2 text-xs font-serif text-[#2B2A28] hover:bg-[#F7F4EE] transition-colors flex items-center justify-between rounded-xs"
+                  >
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-3.5 h-3.5 text-[#C4432B]" />
+                      <span>Sacred Grounds Atlas</span>
+                    </div>
+                    <span className="text-[9px] font-sans uppercase tracking-wider text-[#8A8478]">Maps</span>
                   </button>
                 )}
 

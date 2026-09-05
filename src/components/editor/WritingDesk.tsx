@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { Loader2, Mic, MicOff, Maximize2, BookTemplate, Compass, X, Sparkles } from 'lucide-react';
-import { ReflectionMode, PhilosophicalPersona } from '../../types';
+import { Loader2, Mic, MicOff, Maximize2, BookTemplate, Compass, X, Sparkles, MapPin } from 'lucide-react';
+import { ReflectionMode, PhilosophicalPersona, JournalLocation } from '../../types';
 import { InteractiveButton } from '../common/InteractiveButton';
 import { InterlocutorSelector } from '../personas/InterlocutorSelector';
 import { scanForThoughtDistortions, DistortionMatch } from './thoughtGrammarEngine';
@@ -44,6 +44,8 @@ interface WritingDeskProps {
   selectedPersona?: PhilosophicalPersona;
   onSelectPersona?: (persona: PhilosophicalPersona) => void;
   thoughtGrammarEnabled?: boolean;
+  location?: JournalLocation | null;
+  onOpenLocationPicker?: () => void;
 }
 
 const TEMPLATES = [
@@ -82,6 +84,8 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
   selectedPersona = 'default',
   onSelectPersona,
   thoughtGrammarEnabled = true,
+  location,
+  onOpenLocationPicker,
 }) => {
   const isDepthLimitReached = activeMode !== 'cognitive_lens' && userTurnCount >= 15;
   const [isListening, setIsListening] = useState(false);
@@ -269,6 +273,29 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
                 <X className="w-2.5 h-2.5" />
               </button>
             </span>
+          )}
+          {onOpenLocationPicker && (
+            location ? (
+              <button
+                type="button"
+                onClick={onOpenLocationPicker}
+                className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-[#F7F4EE] hover:bg-[#EFECE6] border border-[#E2DDD5] text-[#595652] hover:text-[#2B2A28] rounded-xs transition-colors"
+                title={`Inscribed at: ${location.name}`}
+              >
+                <MapPin className="w-2.5 h-2.5 text-[#C4432B]" />
+                <span className="font-serif italic truncate max-w-[120px]">{location.name}</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={onOpenLocationPicker}
+                className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider text-[#8A8478] hover:text-[#C4432B] transition-colors border border-transparent hover:border-[#E2DDD5] px-1 py-0.5 rounded-xs"
+                title="Pin locus of reflection"
+              >
+                <MapPin className="w-2.5 h-2.5 text-[#8A8478]" />
+                <span>Pin Locus</span>
+              </button>
+            )
           )}
         </div>
 

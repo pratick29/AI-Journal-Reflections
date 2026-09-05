@@ -46,6 +46,9 @@ const CommandPaletteModal = React.lazy(() =>
 const AuthorSanctuaryModal = React.lazy(() =>
   import('./components/profile/AuthorSanctuaryModal').then((m) => ({ default: m.AuthorSanctuaryModal }))
 );
+const SacredGroundsModal = React.lazy(() =>
+  import('./components/maps/SacredGroundsModal').then((m) => ({ default: m.SacredGroundsModal }))
+);
 
 function MainApp() {
   const { user, loading } = useAuth();
@@ -68,6 +71,7 @@ function MainApp() {
   const [isAnthologyOpen, setIsAnthologyOpen] = useState<boolean>(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState<boolean>(false);
   const [thoughtGrammarEnabled, setThoughtGrammarEnabled] = useState<boolean>(true);
+  const [isSacredGroundsOpen, setIsSacredGroundsOpen] = useState<boolean>(false);
 
   // Author Sanctuary Profile State
   const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
@@ -222,6 +226,7 @@ function MainApp() {
           setProfileInitialTab(tab);
           setIsProfileOpen(true);
         }}
+        onOpenSacredGrounds={() => setIsSacredGroundsOpen(true)}
       />
 
       <main className="flex-1 flex overflow-hidden relative">
@@ -436,6 +441,7 @@ function MainApp() {
               setProfileInitialTab(tab);
               setIsProfileOpen(true);
             }}
+            onOpenSacredGrounds={() => setIsSacredGroundsOpen(true)}
           />
         )}
 
@@ -447,6 +453,15 @@ function MainApp() {
             onSaveProfile={handleSaveProfile}
             interactions={allInteractions}
             initialTab={profileInitialTab}
+          />
+        )}
+
+        {isSacredGroundsOpen && (
+          <SacredGroundsModal
+            isOpen={isSacredGroundsOpen}
+            onClose={() => setIsSacredGroundsOpen(false)}
+            interactions={allInteractions}
+            onSelectInteraction={(interaction) => setSelectedInteraction(interaction)}
           />
         )}
       </React.Suspense>

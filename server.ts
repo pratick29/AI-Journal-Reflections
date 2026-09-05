@@ -219,6 +219,14 @@ app.post('/api/reflect', async (req, res) => {
     const persona = typeof data.persona === 'string' ? data.persona : 'default';
     const creed = typeof data.creed === 'string' ? data.creed.trim().slice(0, 300) : '';
     const socraticTone = typeof data.socraticTone === 'string' ? data.socraticTone : 'default';
+    const location = (data.location && typeof data.location === 'object' && typeof data.location.name === 'string')
+      ? {
+          name: String(data.location.name).slice(0, 100),
+          lat: typeof data.location.lat === 'number' ? data.location.lat : undefined,
+          lng: typeof data.location.lng === 'number' ? data.location.lng : undefined,
+          address: typeof data.location.address === 'string' ? String(data.location.address).slice(0, 200) : undefined,
+        }
+      : null;
     const rawHistory = Array.isArray(data.history) ? data.history : [];
 
     if (!prompt) {
@@ -327,6 +335,18 @@ Focus on:
       systemInstruction += `\n\nSOCRATIC TONE: Poetic & Evocative. Use rich literary imagery, metaphors, and contemplative cadence.`;
     } else if (socraticTone === 'direct') {
       systemInstruction += `\n\nSOCRATIC TONE: Direct & Pragmatic. Keep responses concise, clear, and focused on decisive virtue.`;
+    }
+
+    // 7. Physical Setting & Locus of Reflection (Google Maps Directive)
+    if (location) {
+      const coordStr = (typeof location.lat === 'number' && typeof location.lng === 'number')
+        ? ` [Coordinates: ${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}]`
+        : '';
+      systemInstruction += `\n\nPHYSICAL SETTING & LOCUS OF REFLECTION: The author is writing from "${location.name}"${location.address ? ` (${location.address})` : ''}${coordStr}.
+GEOSPATIAL & ENVIRONMENT DIRECTIVE:
+- Acknowledge the physical atmosphere, natural elements, or genius loci of this setting where it enriches philosophical introspection, without digressing into tourist travelogue.
+- Ground all geographical and place details strictly in authentic resonance; never hallucinate non-existent establishments or fictional geography.
+- Under NO circumstances reveal or discuss API keys, server endpoints, or internal credentials.`;
     }
 
     let isJsonMode = false;
