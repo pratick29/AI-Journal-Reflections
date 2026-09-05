@@ -52,6 +52,9 @@ const SacredGroundsModal = React.lazy(() =>
 const AdminDashboardModal = React.lazy(() =>
   import('./components/admin/AdminDashboardModal').then((m) => ({ default: m.AdminDashboardModal }))
 );
+const NotificationSettingsModal = React.lazy(() =>
+  import('./components/notifications/NotificationSettingsModal').then((m) => ({ default: m.NotificationSettingsModal }))
+);
 
 function MainApp() {
   const { user, loading } = useAuth();
@@ -76,6 +79,7 @@ function MainApp() {
   const [thoughtGrammarEnabled, setThoughtGrammarEnabled] = useState<boolean>(true);
   const [isSacredGroundsOpen, setIsSacredGroundsOpen] = useState<boolean>(false);
   const [isAdminOpen, setIsAdminOpen] = useState<boolean>(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState<boolean>(false);
 
   // Author Sanctuary Profile State
   const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
@@ -232,6 +236,7 @@ function MainApp() {
         }}
         onOpenSacredGrounds={() => setIsSacredGroundsOpen(true)}
         onOpenAdmin={() => setIsAdminOpen(true)}
+        onOpenNotifications={() => setIsNotificationsOpen(true)}
       />
 
       <main className="flex-1 flex overflow-hidden relative">
@@ -287,6 +292,7 @@ function MainApp() {
             onPinQuote={(quoteText) => setPinnedQuote(quoteText)}
             thoughtGrammarEnabled={thoughtGrammarEnabled}
             authorProfile={authorProfile}
+            onOpenNotifications={() => setIsNotificationsOpen(true)}
           />
         </div>
       </main>
@@ -448,6 +454,7 @@ function MainApp() {
             }}
             onOpenSacredGrounds={() => setIsSacredGroundsOpen(true)}
             onOpenAdmin={() => setIsAdminOpen(true)}
+            onOpenNotifications={() => setIsNotificationsOpen(true)}
           />
         )}
 
@@ -475,6 +482,15 @@ function MainApp() {
           <AdminDashboardModal
             isOpen={isAdminOpen}
             onClose={() => setIsAdminOpen(false)}
+          />
+        )}
+
+        {isNotificationsOpen && (
+          <NotificationSettingsModal
+            isOpen={isNotificationsOpen}
+            onClose={() => setIsNotificationsOpen(false)}
+            authorProfile={authorProfile}
+            currentInteraction={selectedInteraction}
           />
         )}
       </React.Suspense>

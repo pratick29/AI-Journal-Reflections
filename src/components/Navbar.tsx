@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Plus, LogOut, CheckCircle, ShieldCheck, PanelLeftClose, PanelLeft, Feather, BarChart2, Lock, Calendar, Archive, Headphones, Sparkles, BookOpen, Sun, Compass, PenTool, Search, User, Heart, Award, X, MapPin, Shield } from 'lucide-react';
+import { Plus, LogOut, CheckCircle, ShieldCheck, PanelLeftClose, PanelLeft, Feather, BarChart2, Lock, Calendar, Archive, Headphones, Sparkles, BookOpen, Sun, Compass, PenTool, Search, User, Heart, Award, X, MapPin, Shield, Bell } from 'lucide-react';
 import { AuthorProfile, WAX_SEALS } from '../types';
 
 interface NavbarProps {
@@ -26,6 +26,7 @@ interface NavbarProps {
   onOpenProfile?: (tab?: 'identity' | 'ledger' | 'preferences' | 'grounding') => void;
   onOpenSacredGrounds?: () => void;
   onOpenAdmin?: () => void;
+  onOpenNotifications?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -51,6 +52,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenProfile,
   onOpenSacredGrounds,
   onOpenAdmin,
+  onOpenNotifications,
 }) => {
   const { user, signOutUser } = useAuth();
 
@@ -367,6 +369,22 @@ export const Navbar: React.FC<NavbarProps> = ({
                       <span>Curatorial Scriptorium</span>
                     </div>
                     <span className="text-[9px] font-sans uppercase tracking-wider font-semibold text-[#C4432B]">RBAC</span>
+                  </button>
+                )}
+
+                {onOpenNotifications && (
+                  <button
+                    onClick={() => {
+                      onOpenNotifications();
+                      setIsToolsOpen(false);
+                    }}
+                    className="w-full text-left px-2.5 py-2 text-xs font-serif text-[#2B2A28] hover:bg-[#F7F4EE] transition-colors flex items-center justify-between rounded-xs border-t border-[#E2DDD5]/60 mt-1 pt-1.5"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Bell className="w-3.5 h-3.5 text-[#C4432B]" />
+                      <span>Courier Scriptorium</span>
+                    </div>
+                    <span className="text-[9px] font-sans uppercase tracking-wider font-semibold text-[#C4432B]">Dispatch</span>
                   </button>
                 )}
 

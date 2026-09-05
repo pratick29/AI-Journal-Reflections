@@ -14,6 +14,7 @@ import {
   Quote,
   Layers,
   Plus,
+  Bell,
 } from 'lucide-react';
 import {
   Interaction,
@@ -42,6 +43,7 @@ interface JournalEditorProps {
   onPinQuote?: (text: string) => void;
   thoughtGrammarEnabled?: boolean;
   authorProfile?: AuthorProfile;
+  onOpenNotifications?: () => void;
 }
 
 export const JournalEditor: React.FC<JournalEditorProps> = ({
@@ -52,6 +54,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
   onPinQuote,
   thoughtGrammarEnabled = true,
   authorProfile,
+  onOpenNotifications,
 }) => {
   const { user } = useAuth();
 
@@ -571,6 +574,16 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
               >
                 <Printer className="w-3.5 h-3.5" />
               </button>
+              {onOpenNotifications && (
+                <button
+                  onClick={onOpenNotifications}
+                  className="p-1.5 border border-[#E5E0D8] hover:border-[#C4432B] hover:text-[#C4432B] bg-[#FFFFFF] text-[#57534E] transition-colors flex items-center gap-1 text-[9px] uppercase tracking-wider"
+                  title="Dispatch manuscript to external channels (Slack / Discord / Webhook)"
+                >
+                  <Bell className="w-3.5 h-3.5 text-[#C4432B]" />
+                  <span className="hidden lg:inline">Dispatch</span>
+                </button>
+              )}
             </div>
           )}
 

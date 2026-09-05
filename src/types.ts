@@ -227,4 +227,56 @@ export interface SecurityAuditLog {
   severity: 'info' | 'warning' | 'critical';
 }
 
+export type NotificationChannel = 'slack' | 'discord' | 'email_webhook';
+
+export type NotificationTrigger =
+  | 'socratic_breakthrough'
+  | 'stoic_equanimity'
+  | 'shadow_confrontation'
+  | 'milestone'
+  | 'manual_dispatch';
+
+export interface NotificationChannelConfig {
+  slackWebhookUrl?: string;
+  discordWebhookUrl?: string;
+  emailWebhookUrl?: string;
+  enabledChannels: {
+    slack: boolean;
+    discord: boolean;
+    emailWebhook: boolean;
+  };
+  enabledTriggers: {
+    socratic_breakthrough: boolean;
+    stoic_equanimity: boolean;
+    shadow_confrontation: boolean;
+    milestone: boolean;
+    manual_dispatch: boolean;
+  };
+}
+
+export interface NotificationDispatchPayload {
+  eventId: string;
+  timestamp: string;
+  trigger: NotificationTrigger;
+  channel: NotificationChannel;
+  author: {
+    penName: string;
+    waxSeal: string;
+    uid: string;
+  };
+  manuscript: {
+    interactionId: string;
+    title: string;
+    category: string;
+    locus?: {
+      name: string;
+      address?: string;
+    };
+    excerpt: string;
+    socraticInsight?: string;
+    deepLinkUrl?: string;
+  };
+}
+
+
 

@@ -20,6 +20,7 @@ import {
   Heart,
   MapPin,
   Shield,
+  Bell,
 } from 'lucide-react';
 import { Interaction, PhilosophicalPersona } from '../../types';
 
@@ -45,6 +46,7 @@ interface CommandPaletteModalProps {
   onOpenProfile?: (tab?: 'identity' | 'ledger' | 'preferences' | 'grounding') => void;
   onOpenSacredGrounds?: () => void;
   onOpenAdmin?: () => void;
+  onOpenNotifications?: () => void;
 }
 
 export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
@@ -69,6 +71,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
   onOpenProfile,
   onOpenSacredGrounds,
   onOpenAdmin,
+  onOpenNotifications,
 }) => {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -83,6 +86,21 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
   }, [isOpen]);
 
   const commandItems = [
+    ...(onOpenNotifications
+      ? [
+          {
+            id: 'cmd_notifications',
+            category: 'External',
+            title: 'Courier Scriptorium (External Dispatch: Slack / Discord / Webhook)',
+            shortcut: 'Dispatch',
+            icon: <Bell className="w-4 h-4 text-[#C4432B]" />,
+            action: () => {
+              onOpenNotifications();
+              onClose();
+            },
+          },
+        ]
+      : []),
     ...(onOpenAdmin
       ? [
           {
