@@ -205,4 +205,26 @@ export const SOCRATIC_TONES: { id: SocraticTone; label: string; desc: string }[]
   { id: 'direct', label: 'Direct & Pragmatic', desc: 'Crisp, sobering, and focused on decisive moral action.' },
 ];
 
+export type UserRole = 'author' | 'curator' | 'admin';
+
+export interface AdminTelemetry {
+  totalInquiries: number;
+  activeUsersCount: number;
+  averageLatencyMs: number;
+  rateLimitHits: number;
+  threatAlertsCount: number;
+  modelUsage: Record<string, number>;
+  serverUptimeSeconds: number;
+}
+
+export interface SecurityAuditLog {
+  id: string;
+  timestamp: string;
+  action: string;
+  uid: string;
+  email?: string;
+  details: string;
+  severity: 'info' | 'warning' | 'critical';
+}
+
 

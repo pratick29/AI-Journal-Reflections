@@ -49,6 +49,9 @@ const AuthorSanctuaryModal = React.lazy(() =>
 const SacredGroundsModal = React.lazy(() =>
   import('./components/maps/SacredGroundsModal').then((m) => ({ default: m.SacredGroundsModal }))
 );
+const AdminDashboardModal = React.lazy(() =>
+  import('./components/admin/AdminDashboardModal').then((m) => ({ default: m.AdminDashboardModal }))
+);
 
 function MainApp() {
   const { user, loading } = useAuth();
@@ -72,6 +75,7 @@ function MainApp() {
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState<boolean>(false);
   const [thoughtGrammarEnabled, setThoughtGrammarEnabled] = useState<boolean>(true);
   const [isSacredGroundsOpen, setIsSacredGroundsOpen] = useState<boolean>(false);
+  const [isAdminOpen, setIsAdminOpen] = useState<boolean>(false);
 
   // Author Sanctuary Profile State
   const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
@@ -227,6 +231,7 @@ function MainApp() {
           setIsProfileOpen(true);
         }}
         onOpenSacredGrounds={() => setIsSacredGroundsOpen(true)}
+        onOpenAdmin={() => setIsAdminOpen(true)}
       />
 
       <main className="flex-1 flex overflow-hidden relative">
@@ -442,6 +447,7 @@ function MainApp() {
               setIsProfileOpen(true);
             }}
             onOpenSacredGrounds={() => setIsSacredGroundsOpen(true)}
+            onOpenAdmin={() => setIsAdminOpen(true)}
           />
         )}
 
@@ -462,6 +468,13 @@ function MainApp() {
             onClose={() => setIsSacredGroundsOpen(false)}
             interactions={allInteractions}
             onSelectInteraction={(interaction) => setSelectedInteraction(interaction)}
+          />
+        )}
+
+        {isAdminOpen && (
+          <AdminDashboardModal
+            isOpen={isAdminOpen}
+            onClose={() => setIsAdminOpen(false)}
           />
         )}
       </React.Suspense>

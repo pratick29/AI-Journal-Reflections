@@ -19,6 +19,7 @@ import {
   Award,
   Heart,
   MapPin,
+  Shield,
 } from 'lucide-react';
 import { Interaction, PhilosophicalPersona } from '../../types';
 
@@ -43,6 +44,7 @@ interface CommandPaletteModalProps {
   onSelectPersona?: (persona: PhilosophicalPersona) => void;
   onOpenProfile?: (tab?: 'identity' | 'ledger' | 'preferences' | 'grounding') => void;
   onOpenSacredGrounds?: () => void;
+  onOpenAdmin?: () => void;
 }
 
 export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
@@ -66,6 +68,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
   onSelectPersona,
   onOpenProfile,
   onOpenSacredGrounds,
+  onOpenAdmin,
 }) => {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -80,6 +83,21 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
   }, [isOpen]);
 
   const commandItems = [
+    ...(onOpenAdmin
+      ? [
+          {
+            id: 'cmd_admin',
+            category: 'Security',
+            title: 'Curatorial Scriptorium (Admin Dashboard & RBAC Telemetry)',
+            shortcut: 'Admin',
+            icon: <Shield className="w-4 h-4 text-[#C4432B]" />,
+            action: () => {
+              onOpenAdmin();
+              onClose();
+            },
+          },
+        ]
+      : []),
     ...(onOpenProfile
       ? [
           {
