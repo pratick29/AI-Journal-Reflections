@@ -64,6 +64,16 @@ export interface ChatMessage {
   content: string;
   timestamp: string;
   modelUsed?: string;
+  imageUrl?: string;
+  imageMimeType?: string;
+}
+
+export interface AtmosphericWeather {
+  tempC: number;
+  condition: string;
+  icon: string;
+  isDay: boolean;
+  windSpeedKmh?: number;
 }
 
 export interface JournalLocation {
@@ -72,6 +82,7 @@ export interface JournalLocation {
   lng: number;
   address?: string;
   placeId?: string;
+  weather?: AtmosphericWeather;
 }
 
 export interface Interaction {
@@ -85,6 +96,7 @@ export interface Interaction {
   thinkingMap?: ThinkingMap;
   messages: ChatMessage[];
   location?: JournalLocation;
+  illuminatedArtUrl?: string;
   createdAt: string;
   updatedAt: string;
 }

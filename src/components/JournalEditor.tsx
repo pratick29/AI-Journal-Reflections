@@ -15,6 +15,7 @@ import {
   Layers,
   Plus,
   Bell,
+  Palette,
 } from 'lucide-react';
 import {
   Interaction,
@@ -66,7 +67,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
   const [selectedPersona, setSelectedPersona] = useState<PhilosophicalPersona>('default');
   const [cognitiveAnalysis, setCognitiveAnalysis] = useState<CognitiveAnalysis | null>(null);
   const [thinkingMap, setThinkingMap] = useState<ThinkingMap | null>(null);
-  const [activeTab, setActiveTab] = useState<'dialogue' | 'cognitive_lens' | 'thinking_map'>('dialogue');
+  const [activeTab, setActiveTab] = useState<'dialogue' | 'cognitive_lens' | 'thinking_map' | 'woodcut'>('dialogue');
 
   // Input & state
   const [promptInput, setPromptInput] = useState<string>('');
@@ -79,6 +80,9 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
   const [retryCooldown, setRetryCooldown] = useState<number>(0);
   const [location, setLocation] = useState<JournalLocation | null>(null);
   const [isLocationPickerOpen, setIsLocationPickerOpen] = useState<boolean>(false);
+  const [attachedImage, setAttachedImage] = useState<{ data: string; mimeType: string; name?: string } | null>(null);
+  const [illuminatedArtUrl, setIlluminatedArtUrl] = useState<string | null>(null);
+  const [isGeneratingArt, setIsGeneratingArt] = useState<boolean>(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -101,6 +105,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
       setCognitiveAnalysis(currentInteraction.cognitiveAnalysis || null);
       setThinkingMap(currentInteraction.thinkingMap || null);
       setLocation(currentInteraction.location || null);
+      setIlluminatedArtUrl(currentInteraction.illuminatedArtUrl || null);
       setSaveStatus('saved');
       setErrorMessage(null);
       setPendingUnsavedInteraction(null);
@@ -116,6 +121,8 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
       setCognitiveAnalysis(null);
       setThinkingMap(null);
       setLocation(null);
+      setAttachedImage(null);
+      setIlluminatedArtUrl(null);
       setSaveStatus('unsaved');
       setErrorMessage(null);
       setPendingUnsavedInteraction(null);
@@ -291,6 +298,8 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
         role: 'user',
         content: text,
         timestamp: nowIso,
+        imageUrl: attachedImage?.data,
+        imageMimeType: attachedImage?.mimeType,
       };
       newMessagesList = [...messages, userMessage];
       setMessages(newMessagesList);
@@ -322,6 +331,13 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
                 lat: location.lat,
                 lng: location.lng,
                 address: location.address,
+                weather: location.weather,
+              }
+            : undefined,
+          image: attachedImage
+            ? {
+                data: attachedImage.data,
+                mimeType: attachedImage.mimeType,
               }
             : undefined,
           history: messages.map((m) => ({
@@ -427,12 +443,14 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
         cognitiveAnalysis: updatedAnalysis || undefined,
         thinkingMap: updatedThinkingMap || undefined,
         location: location || undefined,
+        illuminatedArtUrl: illuminatedArtUrl || undefined,
         createdAt: currentInteraction?.createdAt || nowIso,
         updatedAt: new Date().toISOString(),
       };
 
       await commitToFirestore(updatedInteraction);
       if (text) setPromptInput('');
+      setAttachedImage(null);
     } catch (err: any) {
       console.error('API Reflection Error:', err);
       setErrorMessage(err.message || 'An error occurred during synthesis.');
@@ -555,6 +573,17 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
               <Compass className="w-3 h-3 text-[#A94A38]" />
               <span>Thinking Map</span>
             </button>
+            <button
+              onClick={() => setActiveTab('woodcut')}
+              className={`px-3 py-1.5 transition-colors flex items-center gap-1 ${
+                activeTab === 'woodcut'
+                  ? 'bg-[#1A1918] text-[#FBF9F5] font-semibold'
+                  : 'text-[#57534E] hover:text-[#1A1918]'
+              }`}
+            >
+              <Palette className="w-3 h-3 text-[#A94A38]" />
+              <span>Illuminated Art</span>
+            </button>
           </div>
 
           {/* Export & Save Status */}
@@ -675,6 +704,8 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
                 thoughtGrammarEnabled={thoughtGrammarEnabled}
                 location={location}
                 onOpenLocationPicker={() => setIsLocationPickerOpen(true)}
+                attachedImage={attachedImage}
+                setAttachedImage={setAttachedImage}
               />
             </div>
           </div>
@@ -723,6 +754,143 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
                 </button>
               </div>
             )}
+          </div>
+        )}
+
+        {activeTab === 'woodcut' && (
+          <div className="flex-1 overflow-y-auto min-h-0 pr-1 py-4">
+            <div className="bg-[#FFFDF9] border border-[#E2DDD5] border-t-2 border-t-[#C4432B] p-6 sm:p-8 rounded-xs space-y-6 max-w-xl mx-auto shadow-xs">
+              <div className="text-center space-y-2">
+                <div className="w-10 h-10 rounded-full bg-[#C4432B]/10 text-[#C4432B] flex items-center justify-center mx-auto">
+                  <Palette className="w-5 h-5" />
+                </div>
+                <h3 className="text-xl font-serif font-medium text-[#2B2A28]">
+                  Illuminated Manuscript Woodcut
+                </h3>
+                <p className="text-xs text-[#595652] font-serif">
+                  Distill this manuscript’s core realization into an antique Renaissance engraving and illuminated curatorial seal using Google Imagen 3.
+                </p>
+              </div>
+
+              {illuminatedArtUrl ? (
+                <div className="space-y-4 text-center">
+                  <div className="relative inline-block border-4 border-[#2B2A28] p-1 bg-[#F7F4EE] shadow-xl rounded-2xs">
+                    <img
+                      src={illuminatedArtUrl}
+                      alt="Illuminated Manuscript Woodcut Artwork"
+                      className="max-h-80 w-auto object-contain mx-auto rounded-3xs"
+                    />
+                  </div>
+                  <div className="flex items-center justify-center gap-3">
+                    <a
+                      href={illuminatedArtUrl}
+                      download={`illuminated-manuscript-${Date.now()}.jpg`}
+                      className="px-4 py-2 bg-[#2B2A28] hover:bg-[#C4432B] text-[#F7F4EE] text-[10px] font-sans uppercase tracking-wider font-semibold rounded-xs transition-colors flex items-center gap-1.5"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Download Specimen</span>
+                    </a>
+                    <button
+                      onClick={async () => {
+                        if (!user || isGeneratingArt) return;
+                        setIsGeneratingArt(true);
+                        try {
+                          const idToken = await user.getIdToken();
+                          const res = await fetch('/api/generate-woodcut', {
+                            method: 'POST',
+                            headers: {
+                              'Content-Type': 'application/json',
+                              'Authorization': `Bearer ${idToken}`,
+                            },
+                            body: JSON.stringify({
+                              title,
+                              coreAxiom: cognitiveAnalysis?.coreAxiom || messages.find((m) => m.role === 'user')?.content.slice(0, 100),
+                              category,
+                            }),
+                          });
+                          const data = await res.json();
+                          if (data.imageUrl) {
+                            setIlluminatedArtUrl(data.imageUrl);
+                            if (currentInteraction) {
+                              commitToFirestore({
+                                ...currentInteraction,
+                                illuminatedArtUrl: data.imageUrl,
+                                updatedAt: new Date().toISOString(),
+                              });
+                            }
+                          }
+                        } catch (err: any) {
+                          console.error('Woodcut generation failed:', err);
+                        } finally {
+                          setIsGeneratingArt(false);
+                        }
+                      }}
+                      disabled={isGeneratingArt}
+                      className="px-4 py-2 border border-[#E2DDD5] hover:border-[#C4432B] text-[#595652] hover:text-[#C4432B] text-[10px] font-sans uppercase tracking-wider font-semibold rounded-xs transition-colors flex items-center gap-1.5"
+                    >
+                      {isGeneratingArt ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
+                      <span>Re-engrave</span>
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="border border-dashed border-[#E2DDD5] p-8 text-center space-y-4 rounded-xs bg-[#FAF7F0]/40">
+                  <p className="text-xs font-serif italic text-[#8A8478]">
+                    No illuminated seal has been engraved for this manuscript yet.
+                  </p>
+                  <button
+                    onClick={async () => {
+                      if (!user || isGeneratingArt) return;
+                      setIsGeneratingArt(true);
+                      try {
+                        const idToken = await user.getIdToken();
+                        const res = await fetch('/api/generate-woodcut', {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${idToken}`,
+                          },
+                          body: JSON.stringify({
+                            title,
+                            coreAxiom: cognitiveAnalysis?.coreAxiom || messages.find((m) => m.role === 'user')?.content.slice(0, 100),
+                            category,
+                          }),
+                        });
+                        const data = await res.json();
+                        if (data.imageUrl) {
+                          setIlluminatedArtUrl(data.imageUrl);
+                          if (currentInteraction) {
+                            commitToFirestore({
+                              ...currentInteraction,
+                              illuminatedArtUrl: data.imageUrl,
+                              updatedAt: new Date().toISOString(),
+                            });
+                          }
+                        }
+                      } catch (err: any) {
+                        console.error('Woodcut generation failed:', err);
+                      } finally {
+                        setIsGeneratingArt(false);
+                      }
+                    }}
+                    disabled={isGeneratingArt || messages.length === 0}
+                    className="px-6 py-2.5 bg-[#2B2A28] hover:bg-[#C4432B] text-[#F7F4EE] text-[10px] font-sans uppercase tracking-[0.18em] font-semibold rounded-xs transition-colors flex items-center gap-2 mx-auto disabled:opacity-50"
+                  >
+                    {isGeneratingArt ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>Engraving Woodcut Specimen...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-3.5 h-3.5" />
+                        <span>Engrave Illuminated Woodcut →</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

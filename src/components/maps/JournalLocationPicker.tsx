@@ -1,12 +1,50 @@
 import React, { useState } from 'react';
-import { MapPin, X, Compass, Search, Check, Sparkles, Navigation } from 'lucide-react';
-import { JournalLocation } from '../../types';
+import { MapPin, X, Compass, Search, Check, Sparkles, Navigation, CloudSun } from 'lucide-react';
+import { JournalLocation, AtmosphericWeather } from '../../types';
 
 interface JournalLocationPickerProps {
   isOpen: boolean;
   onClose: () => void;
   currentLocation?: JournalLocation | null;
   onSaveLocation: (location: JournalLocation | null) => void;
+}
+
+// Weather code interpreter for Open-Meteo
+function interpretWmoCode(code: number): { condition: string; icon: string } {
+  if (code === 0) return { condition: 'Clear Sky', icon: '☀️' };
+  if (code === 1 || code === 2) return { condition: 'Partly Cloudy', icon: '⛅' };
+  if (code === 3) return { condition: 'Overcast', icon: '☁️' };
+  if (code === 45 || code === 48) return { condition: 'Misty Fog', icon: '🌫️' };
+  if (code >= 51 && code <= 55) return { condition: 'Gentle Drizzle', icon: '🌦️' };
+  if (code >= 61 && code <= 65) return { condition: 'Rain Shower', icon: '🌧️' };
+  if (code >= 71 && code <= 77) return { condition: 'Snowfall', icon: '❄️' };
+  if (code >= 80 && code <= 82) return { condition: 'Rain Showers', icon: '🌧️' };
+  if (code >= 95) return { condition: 'Thunderstorm', icon: '⛈️' };
+  return { condition: 'Atmospheric Solitude', icon: '🌤️' };
+}
+
+async function fetchAtmosphericWeather(lat: number, lng: number): Promise<AtmosphericWeather | undefined> {
+  try {
+    const res = await fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,is_day,weather_code,wind_speed_10m`
+    );
+    if (!res.ok) return undefined;
+    const data = await res.json();
+    const current = data.current;
+    if (!current) return undefined;
+
+    const { condition, icon } = interpretWmoCode(current.weather_code || 0);
+    return {
+      tempC: Math.round(current.temperature_2m),
+      condition,
+      icon,
+      isDay: current.is_day === 1,
+      windSpeedKmh: Math.round(current.wind_speed_10m || 0),
+    };
+  } catch (err) {
+    console.warn('Atmospheric weather fetch notice:', err);
+    return undefined;
+  }
 }
 
 const HISTORIC_SANCTUARIES: { name: string; desc: string; lat: number; lng: number }[] = [
@@ -160,13 +198,29 @@ export const JournalLocationPicker: React.FC<JournalLocationPickerProps> = ({
       return;
     }
 
-    onSaveLocation({
-      name: placeName.trim(),
-      lat: numLat,
-      lng: numLng,
-      address: address.trim() || undefined,
-    });
-    onClose();
+    setIsGeocoding(true);
+    fetchAtmosphericWeather(numLat, numLng)
+      .then((weather) => {
+        onSaveLocation({
+          name: placeName.trim(),
+          lat: numLat,
+          lng: numLng,
+          address: address.trim() || undefined,
+          weather,
+        });
+        setIsGeocoding(false);
+        onClose();
+      })
+      .catch(() => {
+        onSaveLocation({
+          name: placeName.trim(),
+          lat: numLat,
+          lng: numLng,
+          address: address.trim() || undefined,
+        });
+        setIsGeocoding(false);
+        onClose();
+      });
   };
 
   const handleRemove = () => {

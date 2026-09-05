@@ -169,7 +169,16 @@ export const DialogueStream: React.FC<DialogueStreamProps> = ({
 
             {/* Message Body */}
             {isUser ? (
-              <div className="pl-4 border-l-2 border-[#C4432B] py-1">
+              <div className="pl-4 border-l-2 border-[#C4432B] py-1 space-y-2">
+                {msg.imageUrl && (
+                  <div className="mb-2">
+                    <img
+                      src={msg.imageUrl}
+                      alt="Attached reflection specimen"
+                      className="max-h-60 max-w-sm rounded-xs border border-[#E2DDD5] shadow-2xs object-cover"
+                    />
+                  </div>
+                )}
                 <p className="text-base sm:text-lg font-serif text-[#2B2A28] leading-relaxed whitespace-pre-wrap">
                   {msg.content}
                 </p>

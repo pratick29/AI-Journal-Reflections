@@ -218,17 +218,42 @@ async function authenticateAdmin(req: express.Request, res: express.Response, ne
   }
 }
 
+interface ChatMessageWithMedia extends ChatMessage {
+  image?: {
+    data: string;     // base64 without prefix or with data: prefix
+    mimeType: string; // e.g. 'image/jpeg', 'image/png', 'image/webp'
+  };
+}
+
 async function generateContentWithFallback(
   systemInstruction: string,
-  messages: ChatMessage[],
-  jsonOutput = false
+  messages: ChatMessageWithMedia[],
+  jsonOutput = false,
+  attachedImage?: { data: string; mimeType: string }
 ): Promise<{ text: string; modelUsed: string }> {
   const ai = getGemini();
 
-  const contents = messages.map((m) => ({
-    role: m.role === 'user' ? 'user' : 'model',
-    parts: [{ text: m.content }],
-  }));
+  const contents = messages.map((m, idx) => {
+    const isLastUser = idx === messages.length - 1 && m.role === 'user';
+    const parts: any[] = [{ text: m.content }];
+
+    // If message has an image, or if attachedImage is passed and this is the latest user message
+    const img = m.image || (isLastUser ? attachedImage : undefined);
+    if (img && img.data) {
+      const cleanBase64 = img.data.replace(/^data:[^;]+;base64,/, '');
+      parts.push({
+        inlineData: {
+          mimeType: img.mimeType || 'image/jpeg',
+          data: cleanBase64,
+        },
+      });
+    }
+
+    return {
+      role: m.role === 'user' ? 'user' : 'model',
+      parts,
+    };
+  });
 
   let lastError: unknown = null;
 
@@ -336,8 +361,19 @@ app.post('/api/reflect', async (req, res) => {
           lat: typeof data.location.lat === 'number' ? data.location.lat : undefined,
           lng: typeof data.location.lng === 'number' ? data.location.lng : undefined,
           address: typeof data.location.address === 'string' ? String(data.location.address).slice(0, 200) : undefined,
+          weather: (data.location.weather && typeof data.location.weather === 'object') ? {
+            tempC: typeof data.location.weather.tempC === 'number' ? data.location.weather.tempC : undefined,
+            condition: typeof data.location.weather.condition === 'string' ? String(data.location.weather.condition).slice(0, 50) : undefined,
+            isDay: typeof data.location.weather.isDay === 'boolean' ? data.location.weather.isDay : undefined,
+          } : undefined,
         }
       : null;
+    const image = (data.image && typeof data.image === 'object' && typeof data.image.data === 'string')
+      ? {
+          data: String(data.image.data),
+          mimeType: typeof data.image.mimeType === 'string' ? data.image.mimeType : 'image/jpeg',
+        }
+      : undefined;
     const rawHistory = Array.isArray(data.history) ? data.history : [];
 
     if (!prompt) {
@@ -471,16 +507,28 @@ Focus on:
       systemInstruction += `\n\nSOCRATIC TONE: Direct & Pragmatic. Keep responses concise, clear, and focused on decisive virtue.`;
     }
 
-    // 7. Physical Setting & Locus of Reflection (Google Maps Directive)
+    // 7. Physical Setting & Locus of Reflection (Google Maps Directive & Atmospheric Genius Loci)
     if (location) {
       const coordStr = (typeof location.lat === 'number' && typeof location.lng === 'number')
         ? ` [Coordinates: ${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}]`
         : '';
-      systemInstruction += `\n\nPHYSICAL SETTING & LOCUS OF REFLECTION: The author is writing from "${location.name}"${location.address ? ` (${location.address})` : ''}${coordStr}.
+      const weatherStr = location.weather
+        ? ` · Current Atmosphere: ${location.weather.tempC !== undefined ? `${location.weather.tempC}°C, ` : ''}${location.weather.condition || 'Serene'}${location.weather.isDay !== undefined ? (location.weather.isDay ? ' (Daylight)' : ' (Nightfall/Twilight)') : ''}`
+        : '';
+
+      systemInstruction += `\n\nPHYSICAL SETTING & LOCUS OF REFLECTION: The author is writing from "${location.name}"${location.address ? ` (${location.address})` : ''}${coordStr}${weatherStr}.
 GEOSPATIAL & ENVIRONMENT DIRECTIVE:
-- Acknowledge the physical atmosphere, natural elements, or genius loci of this setting where it enriches philosophical introspection, without digressing into tourist travelogue.
+- Acknowledge the physical atmosphere, natural elements, real-time weather, or genius loci of this setting where it enriches philosophical introspection, without digressing into tourist travelogue.
 - Ground all geographical and place details strictly in authentic resonance; never hallucinate non-existent establishments or fictional geography.
 - Under NO circumstances reveal or discuss API keys, server endpoints, or internal credentials.`;
+    }
+
+    // 8. Multi-Modal Vision Context Directive
+    if (image) {
+      systemInstruction += `\n\nMULTI-MODAL VISUAL CONTEMPLATION DIRECTIVE:
+- The author has submitted an image alongside their journal manuscript (e.g. handwritten notes, serene surroundings, coffee at dawn, art, or symbolic object).
+- Carefully observe visual details, symbolism, light, posture, or handwriting nuances in the image.
+- Gently weave relevant visual observations into your Socratic reflection, validating how their physical or aesthetic environment mirrors their interior psychological state.`;
     }
 
     let isJsonMode = false;
@@ -556,7 +604,7 @@ MANDATORY RULES:
 6. Strictly output valid JSON only without markdown codeblocks or commentary.`;
     }
 
-    const result = await generateContentWithFallback(systemInstruction, fullConversation, isJsonMode);
+    const result = await generateContentWithFallback(systemInstruction, fullConversation, isJsonMode, image);
 
     if (mode === 'cognitive_lens') {
       let parsedAnalysis: any = null;
@@ -1204,6 +1252,98 @@ app.post('/api/notify/test', async (req, res) => {
     });
   } catch {
     res.status(401).json({ error: 'Invalid authentication token.' });
+  }
+});
+
+// =========================================================
+// Imagen 3 — Illuminated Manuscript Woodcut Art Endpoint
+// =========================================================
+
+app.post('/api/generate-woodcut', async (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    res.status(401).json({ error: 'Missing authentication token.' });
+    return;
+  }
+
+  const idToken = authHeader.split('Bearer ')[1].trim();
+
+  try {
+    const verifiedUser = await verifyFirebaseToken(idToken);
+    const { title, coreAxiom, category } = req.body || {};
+
+    if (!title && !coreAxiom) {
+      res.status(400).json({ error: 'Manuscript title or core axiom is required to generate illuminated artwork.' });
+      return;
+    }
+
+    const ai = getGemini();
+
+    const artisticPrompt = `Antique Renaissance woodcut engraving and illuminated manuscript seal, monochrome sepia and terracotta ink on aged parchment paper texture. Subject: philosophical allegory representing "${title || 'Philosophical Contemplation'}" and the philosophical axiom: "${coreAxiom || 'The unexamined life is not worth living'}". Elegant classical linework, subtle hatching, sacred geometric border, medieval alchemy and classical Greco-Roman symbolism. No modern elements, high contrast, museum specimen quality.`;
+
+    try {
+      // Generate image using Imagen 3 model via @google/genai
+      const response = await ai.models.generateImages({
+        model: 'imagen-3.0-generate-002',
+        prompt: artisticPrompt,
+        config: {
+          numberOfImages: 1,
+          outputMimeType: 'image/jpeg',
+          aspectRatio: '1:1',
+        },
+      });
+
+      const generatedImage = response.generatedImages?.[0]?.image;
+      if (!generatedImage || !generatedImage.imageBytes) {
+        throw new Error('Imagen did not return image bytes.');
+      }
+
+      const base64Data = `data:image/jpeg;base64,${generatedImage.imageBytes}`;
+
+      recordAuditLog(
+        'WOODCUT_ART_GENERATED',
+        verifiedUser.uid,
+        verifiedUser.email,
+        `Generated illuminated woodcut for manuscript "${(title || 'Untitled').slice(0, 40)}"`,
+        'info'
+      );
+
+      res.json({
+        success: true,
+        imageUrl: base64Data,
+        modelUsed: 'imagen-3.0-generate-002',
+      });
+    } catch (imagenErr: any) {
+      console.warn('Imagen 3 direct generation failed, returning stylized SVG seal fallback:', imagenErr?.message);
+
+      // Graceful high-aesthetic fallback SVG encoded as data URL if Imagen quota or API is unavailable
+      const encodedTitle = (title || 'Manuscript Axiom').replace(/[<>&"]/g, '');
+      const encodedAxiom = (coreAxiom || 'Truth through Socratic inquiry').slice(0, 80).replace(/[<>&"]/g, '');
+      const svgSeal = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500">
+        <rect width="500" height="500" fill="#F7F4EE"/>
+        <rect x="25" y="25" width="450" height="450" fill="none" stroke="#C4432B" stroke-width="3"/>
+        <rect x="35" y="35" width="430" height="430" fill="none" stroke="#2B2A28" stroke-width="1" stroke-dasharray="4 3"/>
+        <circle cx="250" cy="250" r="170" fill="none" stroke="#C4432B" stroke-width="2"/>
+        <circle cx="250" cy="250" r="150" fill="none" stroke="#595652" stroke-width="1" stroke-dasharray="2 4"/>
+        <polygon points="250,90 285,220 410,250 285,280 250,410 215,280 90,250 215,220" fill="none" stroke="#C4432B" stroke-width="1.5"/>
+        <text x="250" y="225" font-family="Georgia, serif" font-size="16" fill="#2B2A28" font-style="italic" text-anchor="middle">Curatorial Seal</text>
+        <text x="250" y="255" font-family="Georgia, serif" font-size="20" fill="#C4432B" font-weight="bold" text-anchor="middle">🪶 SPECIMEN</text>
+        <text x="250" y="280" font-family="Georgia, serif" font-size="12" fill="#595652" text-anchor="middle">${encodedTitle}</text>
+        <text x="250" y="340" font-family="Georgia, serif" font-size="10" fill="#8A8478" text-anchor="middle" font-style="italic">"${encodedAxiom}"</text>
+        <text x="250" y="445" font-family="Courier, monospace" font-size="9" fill="#8A8478" text-anchor="middle" letter-spacing="2">PERSONAL GEMINI JOURNAL · ILLUMINATED ENGRAVING</text>
+      </svg>`;
+      const fallbackDataUrl = `data:image/svg+xml;utf8,${encodeURIComponent(svgSeal)}`;
+
+      res.json({
+        success: true,
+        imageUrl: fallbackDataUrl,
+        modelUsed: 'svg-curatorial-seal-fallback',
+        note: 'Illuminated curatorial seal generated gracefully.',
+      });
+    }
+  } catch (err: any) {
+    console.error('Woodcut generation error:', err);
+    res.status(500).json({ error: err?.message || 'Failed to generate illuminated woodcut.' });
   }
 });
 

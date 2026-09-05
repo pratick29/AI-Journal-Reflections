@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { Loader2, Mic, MicOff, Maximize2, BookTemplate, Compass, X, Sparkles, MapPin } from 'lucide-react';
+import { Loader2, Mic, MicOff, Maximize2, BookTemplate, Compass, X, Sparkles, MapPin, Image as ImageIcon, Trash2 } from 'lucide-react';
 import { ReflectionMode, PhilosophicalPersona, JournalLocation } from '../../types';
 import { InteractiveButton } from '../common/InteractiveButton';
 import { InterlocutorSelector } from '../personas/InterlocutorSelector';
@@ -46,6 +46,8 @@ interface WritingDeskProps {
   thoughtGrammarEnabled?: boolean;
   location?: JournalLocation | null;
   onOpenLocationPicker?: () => void;
+  attachedImage?: { data: string; mimeType: string; name?: string } | null;
+  setAttachedImage?: (img: { data: string; mimeType: string; name?: string } | null) => void;
 }
 
 const TEMPLATES = [
@@ -86,6 +88,8 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
   thoughtGrammarEnabled = true,
   location,
   onOpenLocationPicker,
+  attachedImage,
+  setAttachedImage,
 }) => {
   const isDepthLimitReached = activeMode !== 'cognitive_lens' && userTurnCount >= 15;
   const [isListening, setIsListening] = useState(false);
@@ -93,6 +97,7 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
   const [dismissedDistortionId, setDismissedDistortionId] = useState<string | null>(null);
   const [draftRestored, setDraftRestored] = useState<boolean>(false);
   const recognitionRef = useRef<ISpeechRecognition | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Restore saved draft on mount
   useEffect(() => {
@@ -195,6 +200,34 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
     }
   };
 
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file (JPEG, PNG, WebP).');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image exceeds 5MB limit. Please select a smaller photo.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const dataUrl = event.target?.result as string;
+      if (dataUrl && setAttachedImage) {
+        setAttachedImage({
+          data: dataUrl,
+          mimeType: file.type,
+          name: file.name,
+        });
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
 
   const handleFormSubmit = (e: React.FormEvent) => {
@@ -280,10 +313,15 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
                 type="button"
                 onClick={onOpenLocationPicker}
                 className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-[#F7F4EE] hover:bg-[#EFECE6] border border-[#E2DDD5] text-[#595652] hover:text-[#2B2A28] rounded-xs transition-colors"
-                title={`Inscribed at: ${location.name}`}
+                title={`Inscribed at: ${location.name}${location.weather ? ` (${location.weather.tempC}°C, ${location.weather.condition})` : ''}`}
               >
                 <MapPin className="w-2.5 h-2.5 text-[#C4432B]" />
                 <span className="font-serif italic truncate max-w-[120px]">{location.name}</span>
+                {location.weather && (
+                  <span className="font-sans text-[8px] text-[#8A8478] border-l border-[#E2DDD5] pl-1 ml-0.5">
+                    {location.weather.icon} {location.weather.tempC}°C
+                  </span>
+                )}
               </button>
             ) : (
               <button
@@ -337,6 +375,31 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
             }
           }}
         />
+
+        {/* Attached Photo Preview */}
+        {attachedImage && (
+          <div className="relative inline-flex items-center gap-2 p-1.5 pr-3 bg-[#F7F4EE] border border-[#E2DDD5] rounded-xs shadow-2xs">
+            <img
+              src={attachedImage.data}
+              alt="Visual contemplation attachment"
+              className="w-12 h-12 object-cover rounded-2xs border border-[#E2DDD5]"
+            />
+            <div className="text-[10px] font-sans">
+              <span className="font-bold text-[#C4432B] uppercase tracking-wider block">Photo Contemplation</span>
+              <span className="text-[#8A8478] truncate max-w-[150px] block">{attachedImage.name || 'Visual specimen attached'}</span>
+            </div>
+            {setAttachedImage && (
+              <button
+                type="button"
+                onClick={() => setAttachedImage(null)}
+                className="p-1 hover:bg-[#EFECE6] text-[#8A8478] hover:text-[#C4432B] rounded-xs ml-1 transition-colors"
+                title="Remove photo"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+        )}
 
         {/* Real-time Thought Grammar Hint Banner */}
         {activeDistortion && (
@@ -463,6 +526,29 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
                 </div>
               )}
             </div>
+
+            {/* Photo / Visual Attachment Button */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleImageSelect}
+              accept="image/jpeg,image/png,image/webp"
+              className="hidden"
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isGenerating || isDepthLimitReached}
+              className={`p-1.5 rounded-xs border transition-colors flex items-center gap-1 uppercase tracking-wider text-[10px] ${
+                attachedImage
+                  ? 'bg-[#C4432B]/15 text-[#C4432B] border-[#C4432B]'
+                  : 'bg-[#EFECE6]/60 text-[#595652] border-[#E2DDD5] hover:border-[#C4432B]'
+              }`}
+              title="Attach photo or handwritten notes for visual contemplation"
+            >
+              <ImageIcon className="w-3 h-3 text-[#C4432B]" />
+              <span className="hidden sm:inline">{attachedImage ? 'Photo Attached' : 'Photo'}</span>
+            </button>
 
             {/* Dictation Button */}
             <button
