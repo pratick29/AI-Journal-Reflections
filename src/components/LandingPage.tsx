@@ -262,18 +262,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenWalkthrough }) =
 
           {/* Right Column: Interactive Live App Preview Card */}
           <div className="lg:col-span-6 relative">
-            <div className="absolute inset-0 bg-[#E2DDD5]/60 transform translate-x-2 translate-y-2 -z-10 rounded-sm" />
+            <div className="absolute inset-0 bg-[#E2DDD5]/40 transform translate-x-3 translate-y-3 -z-10 rounded-2xl blur-[2px]" />
 
-            <div className="bg-[#FFFDF9] border border-[#E2DDD5] border-t-2 border-t-[#C4432B] shadow-xl rounded-sm overflow-hidden flex flex-col">
+            <div className="bg-[#FFFFFF] border border-[#E2DDD5]/90 shadow-[0_12px_40px_-8px_rgba(43,42,40,0.1)] rounded-2xl overflow-hidden flex flex-col">
               {/* Interactive Preview Tabs Bar */}
-              <div className="bg-[#F7F4EE] border-b border-[#E2DDD5] px-3 pt-2 flex items-center justify-between gap-1 text-[10px] font-sans uppercase tracking-[0.14em] overflow-x-auto scrollbar-none">
-                <div className="flex items-center gap-1">
+              <div className="bg-[#F7F4EE]/90 border-b border-[#E2DDD5]/70 px-4 pt-3 flex items-center justify-between gap-1.5 text-[10px] font-sans uppercase tracking-[0.14em] overflow-x-auto scrollbar-none">
+                <div className="flex items-center gap-1.5 pb-2">
                   <button
                     onClick={() => setHeroTab('reflection')}
-                    className={`px-3 py-1.5 transition-colors border-b-2 font-medium flex items-center gap-1 whitespace-nowrap ${
+                    className={`px-3 py-1.5 rounded-full transition-all font-medium flex items-center gap-1.5 whitespace-nowrap ${
                       heroTab === 'reflection'
-                        ? 'border-[#C4432B] text-[#2B2A28] bg-[#FFFDF9]'
-                        : 'border-transparent text-[#8A8478] hover:text-[#2B2A28]'
+                        ? 'bg-[#1A1918] text-[#FFFFFF] shadow-xs'
+                        : 'text-[#8A8478] hover:text-[#2B2A28] hover:bg-[#FFFFFF]/60'
                     }`}
                   >
                     <MessageSquare className="w-3 h-3 text-[#C4432B]" />
@@ -282,10 +282,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenWalkthrough }) =
 
                   <button
                     onClick={() => setHeroTab('insights')}
-                    className={`px-3 py-1.5 transition-colors border-b-2 font-medium flex items-center gap-1 whitespace-nowrap ${
+                    className={`px-3 py-1.5 rounded-full transition-all font-medium flex items-center gap-1.5 whitespace-nowrap ${
                       heroTab === 'insights'
-                        ? 'border-[#C4432B] text-[#2B2A28] bg-[#FFFDF9]'
-                        : 'border-transparent text-[#8A8478] hover:text-[#2B2A28]'
+                        ? 'bg-[#1A1918] text-[#FFFFFF] shadow-xs'
+                        : 'text-[#8A8478] hover:text-[#2B2A28] hover:bg-[#FFFFFF]/60'
                     }`}
                   >
                     <Sparkles className="w-3 h-3 text-[#C4432B]" />
@@ -294,10 +294,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenWalkthrough }) =
 
                   <button
                     onClick={() => setHeroTab('maps')}
-                    className={`px-3 py-1.5 transition-colors border-b-2 font-medium flex items-center gap-1 whitespace-nowrap ${
+                    className={`px-3 py-1.5 rounded-full transition-all font-medium flex items-center gap-1.5 whitespace-nowrap ${
                       heroTab === 'maps'
-                        ? 'border-[#C4432B] text-[#2B2A28] bg-[#FFFDF9]'
-                        : 'border-transparent text-[#8A8478] hover:text-[#2B2A28]'
+                        ? 'bg-[#1A1918] text-[#FFFFFF] shadow-xs'
+                        : 'text-[#8A8478] hover:text-[#2B2A28] hover:bg-[#FFFFFF]/60'
                     }`}
                   >
                     <MapPin className="w-3 h-3 text-[#C4432B]" />
@@ -306,10 +306,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenWalkthrough }) =
 
                   <button
                     onClick={() => setHeroTab('artwork')}
-                    className={`px-3 py-1.5 transition-colors border-b-2 font-medium flex items-center gap-1 whitespace-nowrap ${
+                    className={`px-3 py-1.5 rounded-full transition-all font-medium flex items-center gap-1.5 whitespace-nowrap ${
                       heroTab === 'artwork'
-                        ? 'border-[#C4432B] text-[#2B2A28] bg-[#FFFDF9]'
-                        : 'border-transparent text-[#8A8478] hover:text-[#2B2A28]'
+                        ? 'bg-[#1A1918] text-[#FFFFFF] shadow-xs'
+                        : 'text-[#8A8478] hover:text-[#2B2A28] hover:bg-[#FFFFFF]/60'
                     }`}
                   >
                     <Palette className="w-3 h-3 text-[#C4432B]" />
@@ -318,18 +318,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenWalkthrough }) =
 
                   <button
                     onClick={() => setHeroTab('mentors')}
-                    className={`px-3 py-1.5 transition-colors border-b-2 font-medium flex items-center gap-1 whitespace-nowrap ${
+                    className={`px-3 py-1.5 rounded-full transition-all font-medium flex items-center gap-1.5 whitespace-nowrap ${
                       heroTab === 'mentors'
-                        ? 'border-[#C4432B] text-[#2B2A28] bg-[#FFFDF9]'
-                        : 'border-transparent text-[#8A8478] hover:text-[#2B2A28]'
+                        ? 'bg-[#1A1918] text-[#FFFFFF] shadow-xs'
+                        : 'text-[#8A8478] hover:text-[#2B2A28] hover:bg-[#FFFFFF]/60'
                     }`}
                   >
-                    <Users className="w-3 h-3 text-[#C4432B]" />
-                    <span>Guides</span>
+                    <Feather className="w-3 h-3 text-[#C4432B]" />
+                    <span>Mentors</span>
                   </button>
                 </div>
 
-                <span className="text-[9px] text-[#C4432B] font-bold px-2 py-0.5 bg-[#C4432B]/10 rounded-full shrink-0">
+                <span className="text-[9px] text-[#C4432B] font-bold px-2.5 py-0.5 bg-[#C4432B]/10 rounded-full shrink-0">
                   Live Preview
                 </span>
               </div>
@@ -569,31 +569,31 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenWalkthrough }) =
           </div>
 
           {/* 4 Clickable Demo Buttons */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-4xl mx-auto mb-6 font-sans">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 max-w-4xl mx-auto mb-6 font-sans">
             {DEMO_PROMPTS.map((item) => (
               <button
                 key={item.id}
                 onClick={() => setActiveDemoPrompt(item)}
-                className={`p-3 rounded-xs border text-left transition-all flex flex-col justify-between space-y-2 ${
+                className={`p-3.5 rounded-xl border text-left transition-all flex flex-col justify-between space-y-2.5 shadow-2xs ${
                   activeDemoPrompt.id === item.id
-                    ? 'bg-[#FFFDF9] border-[#C4432B] shadow-sm ring-1 ring-[#C4432B]'
-                    : 'bg-[#F4F0E8]/70 border-[#E2DDD5] hover:bg-[#FFFDF9] text-[#595652]'
+                    ? 'bg-[#FFFFFF] border-[#C4432B] shadow-sm ring-2 ring-[#C4432B]/30'
+                    : 'bg-[#FFFFFF]/70 border-[#E2DDD5] hover:bg-[#FFFFFF] hover:border-[#C4432B]/40 text-[#595652]'
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-lg">{item.icon}</span>
+                  <span className="text-xl p-1 bg-[#F7F4EE] rounded-lg">{item.icon}</span>
                   {activeDemoPrompt.id === item.id && (
                     <span className="w-2 h-2 rounded-full bg-[#C4432B]" />
                   )}
                 </div>
-                <span className="text-xs font-medium text-[#2B2A28] line-clamp-1">{item.label}</span>
+                <span className="text-xs font-semibold text-[#2B2A28] line-clamp-1">{item.label}</span>
               </button>
             ))}
           </div>
 
           {/* Active Demo Output Card */}
-          <div className="max-w-4xl mx-auto bg-[#FFFDF9] border border-[#E2DDD5] border-t-2 border-t-[#C4432B] p-6 sm:p-8 rounded-sm shadow-md space-y-6">
-            <div className="space-y-2 border-b border-[#E2DDD5] pb-4">
+          <div className="max-w-4xl mx-auto bg-[#FFFFFF] border border-[#E2DDD5]/90 p-6 sm:p-8 rounded-2xl shadow-[0_8px_30px_-4px_rgba(43,42,40,0.06)] space-y-6">
+            <div className="space-y-2 border-b border-[#E2DDD5]/60 pb-4">
               <span className="text-[10px] font-sans uppercase tracking-wider text-[#8A8478] font-bold block">
                 YOUR THOUGHT:
               </span>
@@ -605,8 +605,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenWalkthrough }) =
             <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
               {/* Left: Guide Response */}
               <div className="md:col-span-8 space-y-3">
-                <div className="flex items-center gap-2">
-                  <span className="text-xl p-1 bg-[#EFECE6] border border-[#E2DDD5] rounded-xs">
+                <div className="flex items-center gap-2.5">
+                  <span className="text-xl p-1.5 bg-[#F7F4EE] border border-[#E2DDD5]/60 rounded-xl">
                     {activeDemoPrompt.guideAvatar}
                   </span>
                   <div>
@@ -619,27 +619,27 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenWalkthrough }) =
                   </div>
                 </div>
 
-                <div className="bg-[#FAF7F0] p-4 border border-[#E2DDD5] rounded-xs text-xs sm:text-sm font-serif text-[#3D3A36] leading-relaxed">
+                <div className="bg-[#F7F4EE]/70 p-4 sm:p-5 border border-[#E2DDD5]/70 rounded-xl text-xs sm:text-sm font-serif text-[#3D3A36] leading-relaxed shadow-2xs">
                   "{activeDemoPrompt.response}"
                 </div>
               </div>
 
               {/* Right: Key Insight Badge */}
-              <div className="md:col-span-4 space-y-3 bg-[#EFECE6]/50 p-4 border border-[#E2DDD5] rounded-xs">
+              <div className="md:col-span-4 space-y-3 bg-[#F7F4EE]/60 p-4 sm:p-5 border border-[#E2DDD5]/70 rounded-xl shadow-2xs">
                 <div>
                   <span className="text-[9px] font-sans uppercase tracking-widest text-[#C4432B] font-bold block">
                     EMOTIONAL TONE
                   </span>
-                  <span className="text-xs font-serif font-medium text-[#2B2A28] block mt-0.5">
+                  <span className="text-xs font-serif font-medium text-[#2B2A28] block mt-1">
                     {activeDemoPrompt.emotion}
                   </span>
                 </div>
 
-                <div className="border-t border-[#E2DDD5] pt-2">
+                <div className="border-t border-[#E2DDD5]/60 pt-2.5">
                   <span className="text-[9px] font-sans uppercase tracking-widest text-[#8A8478] font-bold block">
                     MAIN TAKEAWAY
                   </span>
-                  <p className="text-xs font-serif italic text-[#595652] mt-0.5 leading-snug">
+                  <p className="text-xs font-serif italic text-[#595652] mt-1 leading-relaxed">
                     "{activeDemoPrompt.takeaway}"
                   </p>
                 </div>
@@ -674,8 +674,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenWalkthrough }) =
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Feature 1 */}
-            <div className="bg-[#FFFDF9] border border-[#E2DDD5] hover:border-[#C4432B] p-6 space-y-3 transition-all duration-200 group rounded-xs shadow-2xs">
-              <div className="w-9 h-9 rounded-xs bg-[#C4432B]/10 border border-[#C4432B]/20 flex items-center justify-center text-[#C4432B]">
+            <div className="bg-[#FFFFFF] border border-[#E2DDD5]/80 hover:border-[#C4432B]/50 p-6 space-y-3 transition-all duration-200 group rounded-2xl shadow-[0_4px_20px_-2px_rgba(43,42,40,0.03)] hover:shadow-[0_8px_30px_-4px_rgba(196,67,43,0.08)] hover:-translate-y-0.5">
+              <div className="w-10 h-10 rounded-xl bg-[#C4432B]/10 border border-[#C4432B]/20 flex items-center justify-center text-[#C4432B]">
                 <MapPin className="w-4 h-4" />
               </div>
               <h4 className="text-base font-serif font-medium text-[#2B2A28] group-hover:text-[#C4432B] transition-colors">
@@ -687,8 +687,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenWalkthrough }) =
             </div>
 
             {/* Feature 2 */}
-            <div className="bg-[#FFFDF9] border border-[#E2DDD5] hover:border-[#C4432B] p-6 space-y-3 transition-all duration-200 group rounded-xs shadow-2xs">
-              <div className="w-9 h-9 rounded-xs bg-[#C4432B]/10 border border-[#C4432B]/20 flex items-center justify-center text-[#C4432B]">
+            <div className="bg-[#FFFFFF] border border-[#E2DDD5]/80 hover:border-[#C4432B]/50 p-6 space-y-3 transition-all duration-200 group rounded-2xl shadow-[0_4px_20px_-2px_rgba(43,42,40,0.03)] hover:shadow-[0_8px_30px_-4px_rgba(196,67,43,0.08)] hover:-translate-y-0.5">
+              <div className="w-10 h-10 rounded-xl bg-[#C4432B]/10 border border-[#C4432B]/20 flex items-center justify-center text-[#C4432B]">
                 <Palette className="w-4 h-4" />
               </div>
               <h4 className="text-base font-serif font-medium text-[#2B2A28] group-hover:text-[#C4432B] transition-colors">
@@ -700,8 +700,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenWalkthrough }) =
             </div>
 
             {/* Feature 3 */}
-            <div className="bg-[#FFFDF9] border border-[#E2DDD5] hover:border-[#C4432B] p-6 space-y-3 transition-all duration-200 group rounded-xs shadow-2xs">
-              <div className="w-9 h-9 rounded-xs bg-[#C4432B]/10 border border-[#C4432B]/20 flex items-center justify-center text-[#C4432B]">
+            <div className="bg-[#FFFFFF] border border-[#E2DDD5]/80 hover:border-[#C4432B]/50 p-6 space-y-3 transition-all duration-200 group rounded-2xl shadow-[0_4px_20px_-2px_rgba(43,42,40,0.03)] hover:shadow-[0_8px_30px_-4px_rgba(196,67,43,0.08)] hover:-translate-y-0.5">
+              <div className="w-10 h-10 rounded-xl bg-[#C4432B]/10 border border-[#C4432B]/20 flex items-center justify-center text-[#C4432B]">
                 <Compass className="w-4 h-4" />
               </div>
               <h4 className="text-base font-serif font-medium text-[#2B2A28] group-hover:text-[#C4432B] transition-colors">
@@ -713,8 +713,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenWalkthrough }) =
             </div>
 
             {/* Feature 4 */}
-            <div className="bg-[#FFFDF9] border border-[#E2DDD5] hover:border-[#C4432B] p-6 space-y-3 transition-all duration-200 group rounded-xs shadow-2xs">
-              <div className="w-9 h-9 rounded-xs bg-[#C4432B]/10 border border-[#C4432B]/20 flex items-center justify-center text-[#C4432B]">
+            <div className="bg-[#FFFFFF] border border-[#E2DDD5]/80 hover:border-[#C4432B]/50 p-6 space-y-3 transition-all duration-200 group rounded-2xl shadow-[0_4px_20px_-2px_rgba(43,42,40,0.03)] hover:shadow-[0_8px_30px_-4px_rgba(196,67,43,0.08)] hover:-translate-y-0.5">
+              <div className="w-10 h-10 rounded-xl bg-[#C4432B]/10 border border-[#C4432B]/20 flex items-center justify-center text-[#C4432B]">
                 <Lock className="w-4 h-4" />
               </div>
               <h4 className="text-base font-serif font-medium text-[#2B2A28] group-hover:text-[#C4432B] transition-colors">
@@ -726,8 +726,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenWalkthrough }) =
             </div>
 
             {/* Feature 5 */}
-            <div className="bg-[#FFFDF9] border border-[#E2DDD5] hover:border-[#C4432B] p-6 space-y-3 transition-all duration-200 group rounded-xs shadow-2xs">
-              <div className="w-9 h-9 rounded-xs bg-[#C4432B]/10 border border-[#C4432B]/20 flex items-center justify-center text-[#C4432B]">
+            <div className="bg-[#FFFFFF] border border-[#E2DDD5]/80 hover:border-[#C4432B]/50 p-6 space-y-3 transition-all duration-200 group rounded-2xl shadow-[0_4px_20px_-2px_rgba(43,42,40,0.03)] hover:shadow-[0_8px_30px_-4px_rgba(196,67,43,0.08)] hover:-translate-y-0.5">
+              <div className="w-10 h-10 rounded-xl bg-[#C4432B]/10 border border-[#C4432B]/20 flex items-center justify-center text-[#C4432B]">
                 <Bell className="w-4 h-4" />
               </div>
               <h4 className="text-base font-serif font-medium text-[#2B2A28] group-hover:text-[#C4432B] transition-colors">
@@ -739,8 +739,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenWalkthrough }) =
             </div>
 
             {/* Feature 6 */}
-            <div className="bg-[#FFFDF9] border border-[#E2DDD5] hover:border-[#C4432B] p-6 space-y-3 transition-all duration-200 group rounded-xs shadow-2xs">
-              <div className="w-9 h-9 rounded-xs bg-[#C4432B]/10 border border-[#C4432B]/20 flex items-center justify-center text-[#C4432B]">
+            <div className="bg-[#FFFFFF] border border-[#E2DDD5]/80 hover:border-[#C4432B]/50 p-6 space-y-3 transition-all duration-200 group rounded-2xl shadow-[0_4px_20px_-2px_rgba(43,42,40,0.03)] hover:shadow-[0_8px_30px_-4px_rgba(196,67,43,0.08)] hover:-translate-y-0.5">
+              <div className="w-10 h-10 rounded-xl bg-[#C4432B]/10 border border-[#C4432B]/20 flex items-center justify-center text-[#C4432B]">
                 <Headphones className="w-4 h-4" />
               </div>
               <h4 className="text-base font-serif font-medium text-[#2B2A28] group-hover:text-[#C4432B] transition-colors">
@@ -754,7 +754,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenWalkthrough }) =
         </section>
 
         {/* Bottom Call to Action Card */}
-        <section className="bg-[#FFFDF9] border border-[#E2DDD5] border-t-2 border-t-[#C4432B] p-8 sm:p-12 text-center rounded-sm space-y-5 shadow-sm">
+        <section className="bg-[#FFFFFF] border border-[#E2DDD5]/90 p-8 sm:p-12 text-center rounded-2xl space-y-5 shadow-[0_8px_30px_-4px_rgba(43,42,40,0.06)]">
           <div className="max-w-xl mx-auto space-y-2">
             <span className="text-[10px] font-sans uppercase tracking-[0.25em] text-[#C4432B] font-bold">
               START YOUR SANCTUARY

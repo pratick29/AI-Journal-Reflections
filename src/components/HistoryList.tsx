@@ -233,15 +233,15 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                 tabIndex={0}
                 role="button"
                 aria-pressed={isSelected}
-                className={`group cursor-pointer p-4 border transition-all text-left focus:outline-none rounded-xs ${
+                className={`group cursor-pointer p-4 border transition-all text-left focus:outline-none rounded-xl ${
                   isSelected
-                    ? 'bg-[#FFFDF9] border-2 border-[#C4432B] shadow-2xs'
-                    : 'bg-[#FFFDF9]/80 border-[#E2DDD5] hover:border-[#C4432B] hover:bg-[#FFFDF9]'
+                    ? 'bg-[#FFFFFF] border-2 border-[#C4432B] shadow-[0_4px_20px_-2px_rgba(196,67,43,0.12)]'
+                    : 'bg-[#FFFFFF]/90 border-[#E2DDD5]/80 hover:border-[#C4432B]/50 hover:bg-[#FFFFFF] hover:shadow-sm'
                 }`}
               >
-                <div className="flex items-center justify-between gap-2 mb-1.5">
+                <div className="flex items-center justify-between gap-2 mb-2">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-sans font-bold text-[#C4432B]">
+                    <span className="text-[10px] font-sans font-bold text-[#C4432B] bg-[#C4432B]/10 px-1.5 py-0.5 rounded-full">
                       {itemNumber}
                     </span>
                     <span className="text-[10px] font-sans text-[#8A8478] tracking-wider">
@@ -249,11 +249,11 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1.5">
                     {item.cognitiveAnalysis && (
                       <span
                         title="Key Insights"
-                        className="inline-flex items-center gap-1 text-[8px] font-sans uppercase tracking-widest px-1.5 py-0.5 bg-[#EFECE6] text-[#C4432B] border border-[#E2DDD5]"
+                        className="inline-flex items-center gap-1 text-[8px] font-sans uppercase tracking-wider px-2 py-0.5 bg-[#F7F4EE] text-[#C4432B] border border-[#E2DDD5]/70 rounded-full font-medium"
                       >
                         <Sparkles className="w-2.5 h-2.5 text-[#C4432B]" />
                         <span>Insights</span>
@@ -262,19 +262,19 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                     {item.thinkingMap && (
                       <span
                         title="Idea Map"
-                        className="inline-flex items-center gap-1 text-[8px] font-sans uppercase tracking-widest px-1.5 py-0.5 bg-[#EFECE6] text-[#2B2A28] border border-[#E2DDD5]"
+                        className="inline-flex items-center gap-1 text-[8px] font-sans uppercase tracking-wider px-2 py-0.5 bg-[#F7F4EE] text-[#2B2A28] border border-[#E2DDD5]/70 rounded-full font-medium"
                       >
                         <Compass className="w-2.5 h-2.5 text-[#C4432B]" />
                         <span>Map</span>
                       </span>
                     )}
-                    <span className="text-[8px] font-sans uppercase tracking-widest px-1.5 py-0.5 border border-[#E2DDD5] text-[#595652] bg-[#EFECE6]">
+                    <span className="text-[8px] font-sans uppercase tracking-wider px-2 py-0.5 border border-[#E2DDD5]/70 text-[#595652] bg-[#F7F4EE] rounded-full">
                       {item.category}
                     </span>
                   </div>
                 </div>
 
-                <h3 className="text-base font-serif leading-snug text-[#2B2A28] line-clamp-1 mb-1 font-normal group-hover:text-[#C4432B] transition-colors">
+                <h3 className="text-base font-serif leading-snug text-[#2B2A28] line-clamp-1 mb-1.5 font-normal group-hover:text-[#C4432B] transition-colors">
                   {item.title}
                 </h3>
 
@@ -282,7 +282,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                   {previewSnippet}
                 </p>
 
-                <div className="flex items-center justify-between text-[10px] font-sans border-t border-[#E2DDD5] mt-3 pt-2 text-[#8A8478]">
+                <div className="flex items-center justify-between text-[10px] font-sans border-t border-[#E2DDD5]/60 mt-3 pt-2 text-[#8A8478]">
                   <span className="tracking-wider uppercase text-[9px]">
                     {item.messages.length} {item.messages.length === 1 ? 'exchange' : 'exchanges'}
                   </span>

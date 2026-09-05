@@ -582,7 +582,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
                 });
               }
             }}
-            className="text-[10px] font-sans uppercase tracking-[0.18em] border border-[#E5E0D8] bg-[#F4F0E8] text-[#57534E] px-2.5 py-1 focus:outline-none"
+            className="text-[10px] font-sans uppercase tracking-[0.16em] border border-[#E5E0D8] bg-[#F4F0E8]/70 hover:bg-[#F4F0E8] text-[#57534E] px-3 py-1 rounded-full focus:outline-none transition-colors shadow-2xs"
           >
             <option value="reflection">Reflection</option>
             <option value="brainstorm">Brainstorm</option>
@@ -595,12 +595,12 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
         {/* Perspective Tab Controls & Actions */}
         <div className="flex items-center gap-2">
           {/* Tab Switchers */}
-          <div className="flex border border-[#E5E0D8] bg-[#F4F0E8] p-0.5 text-[10px] font-sans uppercase tracking-[0.15em]">
+          <div className="flex border border-[#E5E0D8] bg-[#F4F0E8]/70 p-1 rounded-full text-[10px] font-sans uppercase tracking-[0.15em] shadow-2xs">
             <button
               onClick={() => setActiveTab('dialogue')}
-              className={`px-3 py-1.5 transition-colors ${
+              className={`px-3.5 py-1.5 rounded-full transition-all ${
                 activeTab === 'dialogue'
-                  ? 'bg-[#1A1918] text-[#FBF9F5] font-semibold'
+                  ? 'bg-[#1A1918] text-[#FBF9F5] font-semibold shadow-xs'
                   : 'text-[#57534E] hover:text-[#1A1918]'
               }`}
             >
@@ -613,9 +613,9 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
                   handleSubmitPrompt('cognitive_lens');
                 }
               }}
-              className={`px-3 py-1.5 transition-colors flex items-center gap-1 ${
+              className={`px-3.5 py-1.5 rounded-full transition-all flex items-center gap-1.5 ${
                 activeTab === 'cognitive_lens'
-                  ? 'bg-[#1A1918] text-[#FBF9F5] font-semibold'
+                  ? 'bg-[#1A1918] text-[#FBF9F5] font-semibold shadow-xs'
                   : 'text-[#57534E] hover:text-[#1A1918]'
               }`}
             >
@@ -629,9 +629,9 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
                   handleSubmitPrompt('thinking_map');
                 }
               }}
-              className={`px-3 py-1.5 transition-colors flex items-center gap-1 ${
+              className={`px-3.5 py-1.5 rounded-full transition-all flex items-center gap-1.5 ${
                 activeTab === 'thinking_map'
-                  ? 'bg-[#1A1918] text-[#FBF9F5] font-semibold'
+                  ? 'bg-[#1A1918] text-[#FBF9F5] font-semibold shadow-xs'
                   : 'text-[#57534E] hover:text-[#1A1918]'
               }`}
             >
@@ -640,9 +640,9 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
             </button>
             <button
               onClick={() => setActiveTab('woodcut')}
-              className={`px-3 py-1.5 transition-colors flex items-center gap-1 ${
+              className={`px-3.5 py-1.5 rounded-full transition-all flex items-center gap-1.5 ${
                 activeTab === 'woodcut'
-                  ? 'bg-[#1A1918] text-[#FBF9F5] font-semibold'
+                  ? 'bg-[#1A1918] text-[#FBF9F5] font-semibold shadow-xs'
                   : 'text-[#57534E] hover:text-[#1A1918]'
               }`}
             >
@@ -653,17 +653,17 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
 
           {/* Export & Save Status */}
           {messages.length > 0 && (
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1.5">
               <button
                 onClick={handleExportText}
-                className="p-1.5 border border-[#E5E0D8] hover:border-[#1A1918] bg-[#FFFFFF] text-[#57534E] transition-colors"
+                className="p-2 border border-[#E5E0D8] hover:border-[#1A1918] bg-[#FFFFFF] text-[#57534E] hover:text-[#1A1918] transition-all rounded-full shadow-2xs"
                 title={copiedExport ? "Entry copied!" : "Copy entry to clipboard"}
               >
                 {copiedExport ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Download className="w-3.5 h-3.5" />}
               </button>
               <button
                 onClick={handlePrintSpecimen}
-                className="p-1.5 border border-[#E5E0D8] hover:border-[#1A1918] bg-[#FFFFFF] text-[#57534E] transition-colors"
+                className="p-2 border border-[#E5E0D8] hover:border-[#1A1918] bg-[#FFFFFF] text-[#57534E] hover:text-[#1A1918] transition-all rounded-full shadow-2xs"
                 title="Print / Export PDF"
               >
                 <Printer className="w-3.5 h-3.5" />
@@ -671,7 +671,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
               {onOpenNotifications && (
                 <button
                   onClick={onOpenNotifications}
-                  className="p-1.5 border border-[#E5E0D8] hover:border-[#C4432B] hover:text-[#C4432B] bg-[#FFFFFF] text-[#57534E] transition-colors flex items-center gap-1 text-[9px] uppercase tracking-wider"
+                  className="px-3 py-1.5 border border-[#E5E0D8] hover:border-[#C4432B] hover:text-[#C4432B] bg-[#FFFFFF] text-[#57534E] transition-all flex items-center gap-1.5 text-[9px] uppercase tracking-wider rounded-full shadow-2xs"
                   title="Send to Slack / Discord / Webhook"
                 >
                   <Bell className="w-3.5 h-3.5 text-[#C4432B]" />
@@ -723,13 +723,15 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
               {messages.length === 0 ? (
                 <div className="space-y-6">
                   {pastMemory && (
-                    <div className="p-4 rounded-xl border border-[#D97706]/30 bg-gradient-to-br from-[#FFFBEB] to-[#FDF8EE] shadow-sm relative overflow-hidden transition-all hover:border-[#D97706]/50">
-                      <div className="flex items-center justify-between gap-3 mb-2">
+                    <div className="p-5 rounded-2xl border border-[#D97706]/35 bg-gradient-to-br from-[#FFFDF7] via-[#FFFBEB] to-[#FDF8EE] shadow-[0_4px_24px_-4px_rgba(217,119,6,0.08),0_1px_3px_0_rgba(43,42,40,0.02)] relative overflow-hidden transition-all hover:border-[#D97706]/60 hover:shadow-[0_8px_30px_-4px_rgba(217,119,6,0.12)]">
+                      <div className="flex items-center justify-between gap-3 mb-2.5">
                         <div className="flex items-center gap-2 text-xs font-sans font-semibold tracking-wider uppercase text-[#B45309]">
-                          <History className="w-3.5 h-3.5 text-[#D97706]" />
+                          <div className="w-6 h-6 rounded-full bg-[#D97706]/10 flex items-center justify-center">
+                            <History className="w-3.5 h-3.5 text-[#D97706]" />
+                          </div>
                           <span>On This Day · {timeAgoText}</span>
                         </div>
-                        <span className="text-[11px] font-sans text-[#8C857B]">
+                        <span className="text-[11px] font-sans text-[#8C857B] bg-[#FFFFFF]/80 px-2.5 py-0.5 rounded-full border border-[#D97706]/20">
                           {new Date(pastMemory.createdAt).toLocaleDateString('en-US', {
                             month: 'short',
                             day: 'numeric',
@@ -738,28 +740,27 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
                         </span>
                       </div>
 
-                      <h4 className="font-serif text-sm font-medium text-[#2C2825] mb-1.5 line-clamp-1">
+                      <h4 className="font-serif text-base font-medium text-[#2C2825] mb-2 line-clamp-1">
                         "{pastMemory.title}"
                       </h4>
 
                       {pastSnippet && (
-                        <p className="font-serif italic text-xs text-[#59534B] line-clamp-2 mb-3 leading-relaxed">
+                        <p className="font-serif italic text-xs sm:text-sm text-[#59534B] line-clamp-2 mb-3.5 leading-relaxed bg-[#FFFFFF]/50 p-3 rounded-xl border border-[#D97706]/15">
                           "{pastSnippet}"
                         </p>
                       )}
 
-                      <div className="flex items-center gap-2 pt-1 border-t border-[#D97706]/20">
+                      <div className="flex items-center gap-2 pt-2 border-t border-[#D97706]/20">
                         {onSelectInteraction && (
                           <button
                             type="button"
                             onClick={() => onSelectInteraction(pastMemory)}
-                            className="text-[11px] font-sans font-medium text-[#B45309] hover:text-[#92400E] underline flex items-center gap-1 transition-colors"
+                            className="text-[11px] font-sans font-medium text-[#B45309] hover:text-[#92400E] px-3 py-1 bg-[#D97706]/10 hover:bg-[#D97706]/20 rounded-full flex items-center gap-1.5 transition-colors"
                           >
                             <BookOpen className="w-3 h-3" />
                             <span>Read Full Entry</span>
                           </button>
                         )}
-                        <span className="text-stone-300">·</span>
                         <button
                           type="button"
                           onClick={() => {
@@ -770,7 +771,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
                               textareaRef.current?.focus();
                             }, 50);
                           }}
-                          className="text-[11px] font-sans font-medium text-[#2C2825] hover:text-[#B45309] flex items-center gap-1 transition-colors ml-auto"
+                          className="text-[11px] font-sans font-semibold text-[#2C2825] hover:text-[#B45309] px-3.5 py-1 bg-[#FFFFFF] border border-[#D97706]/30 hover:border-[#D97706]/60 rounded-full flex items-center gap-1.5 transition-all shadow-2xs ml-auto"
                         >
                           <span>Reflect on Growth</span>
                           <ArrowRight className="w-3 h-3" />

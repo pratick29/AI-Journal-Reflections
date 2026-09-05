@@ -41,7 +41,7 @@ export const InteractiveButton: React.FC<InteractiveButtonProps> = ({
     <button
       {...props}
       onClick={handleClick}
-      className={`relative overflow-hidden interactive-lift text-xs font-sans uppercase tracking-[0.18em] transition-colors rounded-xs select-none disabled:opacity-50 disabled:pointer-events-none ${variantStyles[variant]} ${className}`}
+      className={`relative overflow-hidden interactive-lift text-xs font-sans uppercase tracking-[0.18em] transition-all rounded-full select-none disabled:opacity-50 disabled:pointer-events-none ${variantStyles[variant]} ${className}`}
     >
       {ripples.map((ripple) => (
         <span

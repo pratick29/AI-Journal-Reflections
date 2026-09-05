@@ -48,14 +48,16 @@ export const EmptyStatePrompts: React.FC<EmptyStatePromptsProps> = ({ onSelectPr
             <div
               key={idx}
               onClick={() => onSelectPrompt(p.question)}
-              className="group cursor-pointer bg-[#FFFDF9] border border-[#E2DDD5] border-t-2 border-t-transparent hover:border-t-[#C4432B] hover:border-[#C4432B] p-4.5 transition-all duration-200 space-y-2.5 flex flex-col justify-between shadow-2xs rounded-xs"
+              className="group cursor-pointer bg-[#FFFFFF] border border-[#E2DDD5]/80 hover:border-[#C4432B]/60 p-5 transition-all duration-200 space-y-3 flex flex-col justify-between shadow-[0_4px_20px_-2px_rgba(43,42,40,0.03),0_1px_3px_0_rgba(43,42,40,0.02)] hover:shadow-[0_8px_30px_-4px_rgba(196,67,43,0.09)] hover:-translate-y-0.5 rounded-2xl"
             >
-              <div className="space-y-2">
-                <div className="flex items-center justify-between border-b border-[#E2DDD5] pb-1.5">
-                  <span className="text-[9px] font-sans uppercase tracking-[0.2em] text-[#C4432B] font-bold">
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between border-b border-[#E2DDD5]/50 pb-2">
+                  <span className="text-[9px] font-sans uppercase tracking-[0.2em] text-[#C4432B] font-semibold">
                     {p.category}
                   </span>
-                  <Icon className="w-3.5 h-3.5 text-[#C4432B]" />
+                  <div className="w-6 h-6 rounded-full bg-[#F7F4EE] flex items-center justify-center group-hover:bg-[#C4432B]/10 transition-colors">
+                    <Icon className="w-3.5 h-3.5 text-[#C4432B]" />
+                  </div>
                 </div>
                 <h4 className="text-sm font-serif italic text-[#2B2A28] group-hover:text-[#C4432B] transition-colors leading-snug">
                   "{p.question}"
@@ -65,9 +67,10 @@ export const EmptyStatePrompts: React.FC<EmptyStatePromptsProps> = ({ onSelectPr
                 </p>
               </div>
 
-              <div className="pt-1.5 text-right">
-                <span className="text-[9px] font-sans uppercase tracking-widest text-[#8A8478] group-hover:text-[#C4432B] transition-colors font-medium">
-                  Start Writing →
+              <div className="pt-2 text-right">
+                <span className="text-[9px] font-sans uppercase tracking-widest text-[#8A8478] group-hover:text-[#C4432B] transition-colors font-medium inline-flex items-center gap-1">
+                  <span>Start Writing</span>
+                  <span>→</span>
                 </span>
               </div>
             </div>

@@ -170,13 +170,13 @@ export const DialogueStream: React.FC<DialogueStreamProps> = ({
 
             {/* Message Body */}
             {isUser ? (
-              <div className="pl-4 border-l-2 border-[#C4432B] py-1 space-y-2">
+              <div className="pl-4 border-l-2 border-[#C4432B]/80 py-1 space-y-2">
                 {msg.imageUrl && (
                   <div className="mb-2">
                     <img
                       src={msg.imageUrl}
                       alt="Attached reflection specimen"
-                      className="max-h-60 max-w-sm rounded-xs border border-[#E2DDD5] shadow-2xs object-cover"
+                      className="max-h-60 max-w-sm rounded-xl border border-[#E2DDD5] shadow-xs object-cover"
                     />
                   </div>
                 )}
@@ -185,7 +185,7 @@ export const DialogueStream: React.FC<DialogueStreamProps> = ({
                 </p>
               </div>
             ) : (
-              <div className="bg-[#FFFDF9] border border-[#E2DDD5] p-5 sm:p-7 space-y-4 shadow-2xs rounded-xs">
+              <div className="bg-[#FFFFFF] border border-[#E2DDD5]/80 p-5 sm:p-7 space-y-4 shadow-[0_4px_20px_-2px_rgba(43,42,40,0.04),0_1px_3px_0_rgba(43,42,40,0.02)] rounded-2xl transition-all duration-200 hover:shadow-[0_8px_30px_-4px_rgba(43,42,40,0.07)]">
                 <div className="prose prose-stone max-w-none text-base font-serif text-[#2B2A28] leading-relaxed editorial-drop-cap">
                   <ReactMarkdown>{msg.content}</ReactMarkdown>
                 </div>
