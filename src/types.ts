@@ -105,3 +105,57 @@ export interface FirestoreErrorInfo {
     }[];
   };
 }
+
+export type PhilosophicalPersona =
+  | 'default'
+  | 'marcus_aurelius'
+  | 'carl_jung'
+  | 'socrates'
+  | 'simone_de_beauvoir'
+  | 'alan_watts';
+
+export interface PersonaDefinition {
+  id: PhilosophicalPersona;
+  name: string;
+  title: string;
+  era: string;
+  avatar: string;
+  mantra: string;
+  description: string;
+}
+
+export interface TimeCapsule {
+  id: string;
+  userId: string;
+  title: string;
+  content: string;
+  sealedAt: string;
+  unlocksAt: string;
+  isSealed: boolean;
+  temporalSynthesis?: string;
+}
+
+export interface DailyRitual {
+  id: string;
+  userId: string;
+  date: string; // YYYY-MM-DD
+  type: 'morning_primer' | 'evening_examen';
+  // Morning fields
+  coreIntention?: string;
+  anticipatedFriction?: string;
+  stoicMaxim?: string;
+  // Evening fields
+  alignedActions?: string;
+  emotionalFriction?: string;
+  quietGratitude?: string;
+  createdAt: string;
+}
+
+export interface ThoughtDistortion {
+  id: string;
+  name: string;
+  pattern: RegExp;
+  category: 'all_or_nothing' | 'catastrophizing' | 'should_statement' | 'emotional_reasoning' | 'mind_reading';
+  reframeQuestion: string;
+}
+

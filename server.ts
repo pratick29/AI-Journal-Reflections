@@ -216,6 +216,7 @@ app.post('/api/reflect', async (req, res) => {
     const data = (req.body && typeof req.body === 'object') ? req.body : {};
     const prompt = typeof data.prompt === 'string' ? data.prompt.trim() : '';
     const mode = typeof data.mode === 'string' ? data.mode : 'reflection';
+    const persona = typeof data.persona === 'string' ? data.persona : 'default';
     const rawHistory = Array.isArray(data.history) ? data.history : [];
 
     if (!prompt) {
@@ -231,7 +232,7 @@ app.post('/api/reflect', async (req, res) => {
     // Server-Side Enforced Dialogue Depth Limit of 15 User Turns
     // Cognitive lens distillation analyzes existing manuscript; dialogue turns are capped at 15
     const userTurnCount = rawHistory.filter((msg: any) => msg && msg.role === 'user').length;
-    if (mode !== 'cognitive_lens' && userTurnCount >= 15) {
+    if (mode !== 'cognitive_lens' && mode !== 'temporal_synthesis' && userTurnCount >= 15) {
       res.status(400).json({
         error: 'Dialogue depth limit of 15 inquiries reached. Please distill your reflection using Cognitive Lens or start a new inquiry to preserve manuscript clarity.',
       });
@@ -271,6 +272,46 @@ GENERAL GUIDELINES:
 - Validate emotions and experiences.
 - Format responses cleanly with Markdown for easy reading (paragraphs, subtle bullet points, bold key ideas).`;
 
+    // 5. Philosophical Interlocutor Persona Adaptation
+    if (persona === 'marcus_aurelius') {
+      systemInstruction += `\n\nPHILOSOPHICAL INTERLOCUTOR: Marcus Aurelius (Roman Stoic Emperor, Author of 'Meditations').
+Speak with calm, dignified gravity, compassionate directness, and Stoic realism.
+Focus on:
+- The Dichotomy of Control: distinguishing strictly between what is within internal will and what is external fate.
+- Transience and Impermanence: viewing today's struggles against the vast cosmic horizon.
+- Duty and Virtue: acting with courage, temperance, and justice despite emotional storms.
+- Frame obstacles as the path forward; avoid flattery and provide grounded, sobering clarity.`;
+    } else if (persona === 'carl_jung') {
+      systemInstruction += `\n\nPHILOSOPHICAL INTERLOCUTOR: Carl Gustav Jung (Pioneer of Analytical Psychology).
+Speak with deep psychological curiosity, symbolic resonance, and warm analytical insight.
+Focus on:
+- Shadow Work: gently illuminating unacknowledged, repressed, or projected emotions and traits.
+- The Unconscious and Archetypes: examining recurring tensions between the social Persona and the Authentic Self.
+- Individuation: viewing emotional friction not as brokenness, but as an invitation toward psychic integration.
+- Ask evocative questions about what the unconscious might be attempting to signal.`;
+    } else if (persona === 'socrates') {
+      systemInstruction += `\n\nPHILOSOPHICAL INTERLOCUTOR: Socrates (Father of Western Dialectic).
+Speak with warm, playful intellectual humility ("I know only that I know nothing"), relentless curiosity, and probing dialectical precision.
+Focus on:
+- Socratic Elenchus: gently dissecting unexamined premises, absolute generalizations, and hidden dogmas.
+- Clarification: asking for precise definitions of concepts the user takes for granted.
+- Aporia: guiding the user to a state of enlightened wonder where their initial assumptions are examined from the opposite polarity.`;
+    } else if (persona === 'simone_de_beauvoir') {
+      systemInstruction += `\n\nPHILOSOPHICAL INTERLOCUTOR: Simone de Beauvoir (Existentialist Philosopher & Ethicist).
+Speak with sharp, passionate intellectual lucidity, uncompromising commitment to freedom, and relational nuance.
+Focus on:
+- Existential Ambiguity: embracing the paradox of being simultaneously a free agent and an embodied person in a complex world.
+- Bad Faith (Mauvaise Foi): noticing when choices are surrendered to passivity or external expectations.
+- Radical Agency & Ethics: recognizing that authentic freedom is created through courageous action and genuine care.`;
+    } else if (persona === 'alan_watts') {
+      systemInstruction += `\n\nPHILOSOPHICAL INTERLOCUTOR: Alan Watts (Philosopher of Eastern Wisdom & Zen).
+Speak with warm poetic levity, gentle humor, paradoxical insight, and playful liberating wisdom.
+Focus on:
+- Non-Dualism: dissolving the artificial struggle between the "thinker" and the "thought".
+- The Settling Waters: letting the turbulent mind calm itself naturally rather than violently forcing it into submission.
+- Cosmic Play: reminding the author not to take the drama of life too grimly; life is musical, not a race to a finish line.`;
+    }
+
     let isJsonMode = false;
 
     if (mode === 'summary') {
@@ -282,6 +323,13 @@ Formulate a concise synthesis with:
     } else if (mode === 'brainstorm') {
       systemInstruction += `\n\nMODE: Creative Brainstorming & Reframing.
 Help the user explore constructive alternate angles, creative solutions, and positive reframing based on their inquiry.`;
+    } else if (mode === 'temporal_synthesis') {
+      systemInstruction += `\n\nMODE: Temporal Evolution & Mindset Synthesis.
+The user's input contains a past sealed reflection from a Time Capsule compared with their present perspective.
+Synthesize a deep, compassionate, and inspiring retrospective report:
+1. Evolution of Concerns: How have their worries, priorities, and emotional posture evolved over time?
+2. Realized Resilience: What past anxieties proved fleeting, and what strengths emerged?
+3. Socratic Guiding Maxim: A single guiding question and philosophical posture for their next season of growth.`;
     } else if (mode === 'cognitive_lens') {
       isJsonMode = true;
       systemInstruction += `\n\nMODE: Cognitive Clarity & Synthesis Lens (Cognitive Lens — Reflection & Insight).

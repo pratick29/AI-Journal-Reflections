@@ -21,6 +21,7 @@ import {
   ReflectionMode,
   CognitiveAnalysis,
   ThinkingMap,
+  PhilosophicalPersona,
 } from '../types';
 import { saveInteraction } from '../firebase/interactions';
 import { useAuth } from '../context/AuthContext';
@@ -36,6 +37,7 @@ interface JournalEditorProps {
   onNewSession: () => void;
   onOpenZenMode?: () => void;
   onPinQuote?: (text: string) => void;
+  thoughtGrammarEnabled?: boolean;
 }
 
 export const JournalEditor: React.FC<JournalEditorProps> = ({
@@ -44,6 +46,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
   onNewSession,
   onOpenZenMode,
   onPinQuote,
+  thoughtGrammarEnabled = true,
 }) => {
   const { user } = useAuth();
 
@@ -52,6 +55,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
   const [category, setCategory] = useState<Interaction['category']>('reflection');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [activeMode, setActiveMode] = useState<ReflectionMode>('reflection');
+  const [selectedPersona, setSelectedPersona] = useState<PhilosophicalPersona>('default');
   const [cognitiveAnalysis, setCognitiveAnalysis] = useState<CognitiveAnalysis | null>(null);
   const [thinkingMap, setThinkingMap] = useState<ThinkingMap | null>(null);
   const [activeTab, setActiveTab] = useState<'dialogue' | 'cognitive_lens' | 'thinking_map'>('dialogue');
@@ -294,6 +298,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
         body: JSON.stringify({
           prompt: submittedText,
           mode: modeToUse,
+          persona: selectedPersona,
           history: messages.map((m) => ({
             role: m.role,
             content: m.content,
@@ -609,6 +614,9 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
                 userTurnCount={userTurnCount}
                 textareaRef={textareaRef}
                 onOpenZenMode={onOpenZenMode}
+                selectedPersona={selectedPersona}
+                onSelectPersona={setSelectedPersona}
+                thoughtGrammarEnabled={thoughtGrammarEnabled}
               />
             </div>
           </div>

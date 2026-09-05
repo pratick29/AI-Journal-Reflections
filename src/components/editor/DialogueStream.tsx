@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { ChatMessage } from '../../types';
 import { Sparkles, Copy, CheckCheck, Quote, HelpCircle, HeartHandshake } from 'lucide-react';
+import { AudioNarrator } from './AudioNarrator';
 
 interface DialogueStreamProps {
   messages: ChatMessage[];
@@ -139,6 +140,9 @@ export const DialogueStream: React.FC<DialogueStreamProps> = ({
                 )}
               </div>
               <div className="flex items-center gap-2">
+                {!isUser && (
+                  <AudioNarrator textToRead={msg.content} />
+                )}
                 {onPinQuote && (
                   <button
                     onClick={() => onPinQuote(msg.content.slice(0, 300))}

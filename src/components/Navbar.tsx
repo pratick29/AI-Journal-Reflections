@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Plus, LogOut, CheckCircle, ShieldCheck, PanelLeftClose, PanelLeft, Feather, BarChart2, Lock, Calendar, Archive, Headphones, Sparkles } from 'lucide-react';
+import { Plus, LogOut, CheckCircle, ShieldCheck, PanelLeftClose, PanelLeft, Feather, BarChart2, Lock, Calendar, Archive, Headphones, Sparkles, BookOpen, Sun, Compass, PenTool } from 'lucide-react';
 
 interface NavbarProps {
   onNewReflection: () => void;
@@ -14,6 +14,12 @@ interface NavbarProps {
   onToggleSidebar: () => void;
   isAmbientMotion?: boolean;
   onToggleAmbientMotion?: () => void;
+  onOpenCapsule?: () => void;
+  onOpenRitual?: () => void;
+  onOpenConstellation?: () => void;
+  onOpenAnthology?: () => void;
+  thoughtGrammarEnabled?: boolean;
+  onToggleThoughtGrammar?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -28,6 +34,12 @@ export const Navbar: React.FC<NavbarProps> = ({
   onToggleSidebar,
   isAmbientMotion = true,
   onToggleAmbientMotion,
+  onOpenCapsule,
+  onOpenRitual,
+  onOpenConstellation,
+  onOpenAnthology,
+  thoughtGrammarEnabled = true,
+  onToggleThoughtGrammar,
 }) => {
   const { user, signOutUser } = useAuth();
 
@@ -126,6 +138,71 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </span>
                 </div>
 
+                {/* Reflective & Mindful Tools */}
+                {onOpenConstellation && (
+                  <button
+                    onClick={() => {
+                      onOpenConstellation();
+                      setIsToolsOpen(false);
+                    }}
+                    className="w-full text-left px-2.5 py-2 text-xs font-serif text-[#2B2A28] hover:bg-[#F7F4EE] transition-colors flex items-center justify-between rounded-xs"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Compass className="w-3.5 h-3.5 text-[#C4432B]" />
+                      <span>Idea Constellation</span>
+                    </div>
+                    <span className="text-[9px] font-sans uppercase tracking-wider text-[#8A8478]">Galaxy</span>
+                  </button>
+                )}
+
+                {onOpenRitual && (
+                  <button
+                    onClick={() => {
+                      onOpenRitual();
+                      setIsToolsOpen(false);
+                    }}
+                    className="w-full text-left px-2.5 py-2 text-xs font-serif text-[#2B2A28] hover:bg-[#F7F4EE] transition-colors flex items-center justify-between rounded-xs"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Sun className="w-3.5 h-3.5 text-amber-600" />
+                      <span>Daily Dual Rituals</span>
+                    </div>
+                    <span className="text-[9px] font-sans uppercase tracking-wider text-[#8A8478]">Primer</span>
+                  </button>
+                )}
+
+                {onOpenCapsule && (
+                  <button
+                    onClick={() => {
+                      onOpenCapsule();
+                      setIsToolsOpen(false);
+                    }}
+                    className="w-full text-left px-2.5 py-2 text-xs font-serif text-[#2B2A28] hover:bg-[#F7F4EE] transition-colors flex items-center justify-between rounded-xs"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs">🕯️</span>
+                      <span>Time Capsules &amp; Letters</span>
+                    </div>
+                    <span className="text-[9px] font-sans uppercase tracking-wider text-[#8A8478]">Future</span>
+                  </button>
+                )}
+
+                {onOpenAnthology && (
+                  <button
+                    onClick={() => {
+                      onOpenAnthology();
+                      setIsToolsOpen(false);
+                    }}
+                    className="w-full text-left px-2.5 py-2 text-xs font-serif text-[#2B2A28] hover:bg-[#F7F4EE] transition-colors flex items-center justify-between rounded-xs"
+                  >
+                    <div className="flex items-center gap-2">
+                      <BookOpen className="w-3.5 h-3.5 text-[#C4432B]" />
+                      <span>Book Anthology Specimen</span>
+                    </div>
+                    <span className="text-[9px] font-sans uppercase tracking-wider text-[#8A8478]">Memoir</span>
+                  </button>
+                )}
+
                 <button
                   onClick={() => {
                     onOpenSoundscapes();
@@ -196,12 +273,29 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <span className="text-[9px] font-sans uppercase tracking-wider text-[#8A8478]">JSON</span>
                 </button>
 
+                {onToggleThoughtGrammar && (
+                  <button
+                    onClick={() => {
+                      onToggleThoughtGrammar();
+                    }}
+                    className="w-full text-left px-2.5 py-2 text-xs font-serif text-[#2B2A28] hover:bg-[#F7F4EE] transition-colors flex items-center justify-between rounded-xs border-t border-[#E2DDD5]/60 mt-1 pt-1.5"
+                  >
+                    <div className="flex items-center gap-2">
+                      <PenTool className="w-3.5 h-3.5 text-[#C4432B]" />
+                      <span>Thought Grammar Spotter</span>
+                    </div>
+                    <span className="text-[9px] font-sans uppercase tracking-wider font-bold text-[#C4432B]">
+                      {thoughtGrammarEnabled ? 'ON' : 'OFF'}
+                    </span>
+                  </button>
+                )}
+
                 {onToggleAmbientMotion && (
                   <button
                     onClick={() => {
                       onToggleAmbientMotion();
                     }}
-                    className="w-full text-left px-2.5 py-2 text-xs font-serif text-[#2B2A28] hover:bg-[#F7F4EE] transition-colors flex items-center justify-between rounded-xs border-t border-[#E2DDD5]/60 mt-1 pt-1.5"
+                    className="w-full text-left px-2.5 py-2 text-xs font-serif text-[#2B2A28] hover:bg-[#F7F4EE] transition-colors flex items-center justify-between rounded-xs"
                   >
                     <div className="flex items-center gap-2">
                       <Sparkles className="w-3.5 h-3.5 text-[#C4432B]" />

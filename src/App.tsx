@@ -13,6 +13,10 @@ import { QuoteCardModal } from './components/QuoteCardModal';
 import { ZenMode } from './components/editor/ZenMode';
 import { AmbientCanvas } from './components/common/AmbientCanvas';
 import { SoundscapePlayer } from './components/common/SoundscapePlayer';
+import { TimeCapsuleModal } from './components/capsule/TimeCapsuleModal';
+import { DailyRitualModal } from './components/rituals/DailyRitualModal';
+import { ConstellationModal } from './components/constellation/ConstellationModal';
+import { AnthologyModal } from './components/anthology/AnthologyModal';
 import { Interaction } from './types';
 import { subscribeUserInteractions } from './firebase/interactions';
 import { Loader2 } from 'lucide-react';
@@ -30,6 +34,13 @@ function MainApp() {
   const [isZenModeOpen, setIsZenModeOpen] = useState<boolean>(false);
   const [pinnedQuote, setPinnedQuote] = useState<string | null>(null);
   const [zenPromptInput, setZenPromptInput] = useState<string>('');
+
+  // 7-Feature State
+  const [isCapsuleOpen, setIsCapsuleOpen] = useState<boolean>(false);
+  const [isRitualOpen, setIsRitualOpen] = useState<boolean>(false);
+  const [isConstellationOpen, setIsConstellationOpen] = useState<boolean>(false);
+  const [isAnthologyOpen, setIsAnthologyOpen] = useState<boolean>(false);
+  const [thoughtGrammarEnabled, setThoughtGrammarEnabled] = useState<boolean>(true);
 
   const [isVaultLocked, setIsVaultLocked] = useState<boolean>(false);
   const [savedPin, setSavedPin] = useState<string | null>(() => {
@@ -132,6 +143,12 @@ function MainApp() {
         onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
         isAmbientMotion={isAmbientMotion}
         onToggleAmbientMotion={() => setIsAmbientMotion((prev) => !prev)}
+        onOpenCapsule={() => setIsCapsuleOpen(true)}
+        onOpenRitual={() => setIsRitualOpen(true)}
+        onOpenConstellation={() => setIsConstellationOpen(true)}
+        onOpenAnthology={() => setIsAnthologyOpen(true)}
+        thoughtGrammarEnabled={thoughtGrammarEnabled}
+        onToggleThoughtGrammar={() => setThoughtGrammarEnabled((prev) => !prev)}
       />
 
       <main className="flex-1 flex overflow-hidden relative">
@@ -185,6 +202,7 @@ function MainApp() {
             onNewSession={() => setSelectedInteraction(null)}
             onOpenZenMode={() => setIsZenModeOpen(true)}
             onPinQuote={(quoteText) => setPinnedQuote(quoteText)}
+            thoughtGrammarEnabled={thoughtGrammarEnabled}
           />
         </div>
       </main>
@@ -263,6 +281,38 @@ function MainApp() {
         onUnlock={() => setIsVaultLocked(false)}
         onSetPin={handleSetPin}
         savedPin={savedPin}
+      />
+
+      {/* Time Capsule & Letters to Future Self Modal */}
+      <TimeCapsuleModal
+        isOpen={isCapsuleOpen}
+        onClose={() => setIsCapsuleOpen(false)}
+        recentInteractions={allInteractions}
+      />
+
+      {/* Daily Dual Rituals (Morning Primer & Evening Examen) Modal */}
+      <DailyRitualModal
+        isOpen={isRitualOpen}
+        onClose={() => setIsRitualOpen(false)}
+        onSaveRitualAsInquiry={(interaction) => {
+          setSelectedInteraction(interaction);
+        }}
+        userId={user?.uid}
+      />
+
+      {/* The Idea Constellation (Galaxy Mind Map) Modal */}
+      <ConstellationModal
+        isOpen={isConstellationOpen}
+        onClose={() => setIsConstellationOpen(false)}
+        interactions={allInteractions}
+        onSelectInteraction={(interaction) => setSelectedInteraction(interaction)}
+      />
+
+      {/* Book-Bound Memoir Anthology Modal */}
+      <AnthologyModal
+        isOpen={isAnthologyOpen}
+        onClose={() => setIsAnthologyOpen(false)}
+        interactions={allInteractions}
       />
     </div>
   );

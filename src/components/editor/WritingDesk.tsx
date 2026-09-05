@@ -1,7 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Loader2, Mic, MicOff, Maximize2, BookTemplate, Compass, X } from 'lucide-react';
-import { ReflectionMode } from '../../types';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
+import { Loader2, Mic, MicOff, Maximize2, BookTemplate, Compass, X, Sparkles } from 'lucide-react';
+import { ReflectionMode, PhilosophicalPersona } from '../../types';
 import { InteractiveButton } from '../common/InteractiveButton';
+import { InterlocutorSelector } from '../personas/InterlocutorSelector';
+import { scanForThoughtDistortions, DistortionMatch } from './thoughtGrammarEngine';
 
 const MOODS = [
   { id: 'equanimity', label: 'Equanimity', icon: '🌿' },
@@ -39,6 +41,9 @@ interface WritingDeskProps {
   userTurnCount: number;
   textareaRef?: React.RefObject<HTMLTextAreaElement | null>;
   onOpenZenMode?: () => void;
+  selectedPersona?: PhilosophicalPersona;
+  onSelectPersona?: (persona: PhilosophicalPersona) => void;
+  thoughtGrammarEnabled?: boolean;
 }
 
 const TEMPLATES = [
@@ -74,11 +79,22 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
   userTurnCount,
   textareaRef,
   onOpenZenMode,
+  selectedPersona = 'default',
+  onSelectPersona,
+  thoughtGrammarEnabled = true,
 }) => {
   const isDepthLimitReached = activeMode !== 'cognitive_lens' && userTurnCount >= 15;
   const [isListening, setIsListening] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
+  const [dismissedDistortionId, setDismissedDistortionId] = useState<string | null>(null);
   const recognitionRef = useRef<ISpeechRecognition | null>(null);
+
+  const distortions = useMemo(() => {
+    if (!thoughtGrammarEnabled || !promptInput || isGenerating) return [];
+    return scanForThoughtDistortions(promptInput);
+  }, [promptInput, thoughtGrammarEnabled, isGenerating]);
+
+  const activeDistortion = distortions.find((d) => d.id !== dismissedDistortionId);
 
   useEffect(() => {
     return () => {
@@ -245,6 +261,29 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
           }}
         />
 
+        {/* Real-time Thought Grammar Hint Banner */}
+        {activeDistortion && (
+          <div className="bg-[#FAF6F0] border border-[#E2DDD5] border-l-2 border-l-[#C4432B] px-3 py-1.5 rounded-xs flex items-center justify-between text-[11px] font-serif text-[#595652] animate-in fade-in duration-150">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-xs">💡</span>
+              <span className="font-sans text-[9px] uppercase tracking-wider font-bold text-[#C4432B]">
+                {activeDistortion.distortionName}:
+              </span>
+              <span className="italic">
+                "{activeDistortion.reframeQuestion}"
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setDismissedDistortionId(activeDistortion.id)}
+              className="text-[#8A8478] hover:text-[#2B2A28] text-[9px] font-sans uppercase tracking-wider ml-2 shrink-0"
+              title="Dismiss thought hint"
+            >
+              <X className="w-3 h-3" />
+            </button>
+          </div>
+        )}
+
         {/* Consolidated Bottom Toolbar */}
         <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[#E2DDD5]/60 text-[10px] font-sans">
           {/* Left Instrument Controls */}
@@ -259,6 +298,14 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
               <option value="summary">Summarize</option>
               <option value="brainstorm">Brainstorm</option>
             </select>
+
+            {/* Philosophical Interlocutor Selector (The Lyceum) */}
+            {onSelectPersona && (
+              <InterlocutorSelector
+                selectedPersona={selectedPersona}
+                onSelectPersona={onSelectPersona}
+              />
+            )}
 
             {/* Headspace Selector Dropdown */}
             <div className="relative" ref={moodMenuRef}>
