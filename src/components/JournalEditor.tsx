@@ -539,7 +539,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
                   : 'text-[#57534E] hover:text-[#1A1918]'
               }`}
             >
-              Dialogue ({messages.length})
+              Conversation ({messages.length})
             </button>
             <button
               onClick={() => {
@@ -555,7 +555,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
               }`}
             >
               <Sparkles className="w-3 h-3 text-[#A94A38]" />
-              <span>Lens</span>
+              <span>Key Insights</span>
             </button>
             <button
               onClick={() => {
@@ -571,7 +571,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
               }`}
             >
               <Compass className="w-3 h-3 text-[#A94A38]" />
-              <span>Thinking Map</span>
+              <span>Idea Map</span>
             </button>
             <button
               onClick={() => setActiveTab('woodcut')}
@@ -582,7 +582,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
               }`}
             >
               <Palette className="w-3 h-3 text-[#A94A38]" />
-              <span>Illuminated Art</span>
+              <span>Entry Art</span>
             </button>
           </div>
 
@@ -592,14 +592,14 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
               <button
                 onClick={handleExportText}
                 className="p-1.5 border border-[#E5E0D8] hover:border-[#1A1918] bg-[#FFFFFF] text-[#57534E] transition-colors"
-                title={copiedExport ? "Manuscript copied!" : "Export manuscript to clipboard"}
+                title={copiedExport ? "Entry copied!" : "Copy entry to clipboard"}
               >
                 {copiedExport ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Download className="w-3.5 h-3.5" />}
               </button>
               <button
                 onClick={handlePrintSpecimen}
                 className="p-1.5 border border-[#E5E0D8] hover:border-[#1A1918] bg-[#FFFFFF] text-[#57534E] transition-colors"
-                title="Print / Export PDF Editorial Specimen"
+                title="Print / Export PDF"
               >
                 <Printer className="w-3.5 h-3.5" />
               </button>
@@ -607,10 +607,10 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
                 <button
                   onClick={onOpenNotifications}
                   className="p-1.5 border border-[#E5E0D8] hover:border-[#C4432B] hover:text-[#C4432B] bg-[#FFFFFF] text-[#57534E] transition-colors flex items-center gap-1 text-[9px] uppercase tracking-wider"
-                  title="Dispatch manuscript to external channels (Slack / Discord / Webhook)"
+                  title="Send to Slack / Discord / Webhook"
                 >
                   <Bell className="w-3.5 h-3.5 text-[#C4432B]" />
-                  <span className="hidden lg:inline">Dispatch</span>
+                  <span className="hidden lg:inline">Send</span>
                 </button>
               )}
             </div>
@@ -738,10 +738,10 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
                 <Compass className="w-8 h-8 text-[#C4432B] mx-auto" />
                 <div className="max-w-md mx-auto space-y-2">
                   <h3 className="text-2xl font-serif font-light text-[#2B2A28]">
-                    Thinking Map Canvas
+                    Idea Map
                   </h3>
                   <p className="text-xs text-[#595652] font-serif">
-                    Visualize the topological architecture of your reasoning in a 4-stage directed graph.
+                    Visualize the flow of your thoughts, questions, and insights in an interactive graph.
                   </p>
                 </div>
                 <button
@@ -750,7 +750,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
                   className="inline-flex items-center gap-2 bg-[#2B2A28] text-[#F7F4EE] hover:bg-[#C4432B] text-xs font-sans uppercase tracking-[0.2em] px-6 py-3 transition-all duration-200 rounded-sm font-semibold"
                 >
                   <Compass className="w-4 h-4" />
-                  <span>Synthesize Thinking Map →</span>
+                  <span>Generate Idea Map →</span>
                 </button>
               </div>
             )}
@@ -765,10 +765,10 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
                   <Palette className="w-5 h-5" />
                 </div>
                 <h3 className="text-xl font-serif font-medium text-[#2B2A28]">
-                  Illuminated Manuscript Woodcut
+                  AI Entry Artwork
                 </h3>
                 <p className="text-xs text-[#595652] font-serif">
-                  Distill this manuscript’s core realization into an antique Renaissance engraving and illuminated curatorial seal using Google Imagen 3.
+                  Turn this entry's core reflection into custom artwork using Google Imagen 3.
                 </p>
               </div>
 
@@ -784,11 +784,11 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
                   <div className="flex items-center justify-center gap-3">
                     <a
                       href={illuminatedArtUrl}
-                      download={`illuminated-manuscript-${Date.now()}.jpg`}
+                      download={`entry-artwork-${Date.now()}.jpg`}
                       className="px-4 py-2 bg-[#2B2A28] hover:bg-[#C4432B] text-[#F7F4EE] text-[10px] font-sans uppercase tracking-wider font-semibold rounded-xs transition-colors flex items-center gap-1.5"
                     >
                       <Download className="w-3.5 h-3.5" />
-                      <span>Download Specimen</span>
+                      <span>Download Art</span>
                     </a>
                     <button
                       onClick={async () => {
@@ -820,7 +820,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
                             }
                           }
                         } catch (err: any) {
-                          console.error('Woodcut generation failed:', err);
+                          console.error('Artwork generation failed:', err);
                         } finally {
                           setIsGeneratingArt(false);
                         }
@@ -829,14 +829,14 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
                       className="px-4 py-2 border border-[#E2DDD5] hover:border-[#C4432B] text-[#595652] hover:text-[#C4432B] text-[10px] font-sans uppercase tracking-wider font-semibold rounded-xs transition-colors flex items-center gap-1.5"
                     >
                       {isGeneratingArt ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
-                      <span>Re-engrave</span>
+                      <span>New Artwork</span>
                     </button>
                   </div>
                 </div>
               ) : (
                 <div className="border border-dashed border-[#E2DDD5] p-8 text-center space-y-4 rounded-xs bg-[#FAF7F0]/40">
                   <p className="text-xs font-serif italic text-[#8A8478]">
-                    No illuminated seal has been engraved for this manuscript yet.
+                    No artwork has been created for this entry yet.
                   </p>
                   <button
                     onClick={async () => {
@@ -868,7 +868,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
                           }
                         }
                       } catch (err: any) {
-                        console.error('Woodcut generation failed:', err);
+                        console.error('Artwork generation failed:', err);
                       } finally {
                         setIsGeneratingArt(false);
                       }
@@ -879,12 +879,12 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
                     {isGeneratingArt ? (
                       <>
                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                        <span>Engraving Woodcut Specimen...</span>
+                        <span>Generating Artwork...</span>
                       </>
                     ) : (
                       <>
                         <Sparkles className="w-3.5 h-3.5" />
-                        <span>Engrave Illuminated Woodcut →</span>
+                        <span>Generate Entry Artwork →</span>
                       </>
                     )}
                   </button>

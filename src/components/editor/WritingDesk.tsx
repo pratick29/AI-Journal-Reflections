@@ -52,24 +52,24 @@ interface WritingDeskProps {
 
 const TEMPLATES = [
   {
-    name: 'Stoic Evening Audit',
-    content: `1. What went well today and brought clarity?\n\n2. What caused internal friction or anxiety?\n\n3. How can I reframe today's main challenge with equanimity?`,
+    name: 'Evening Reflection',
+    content: `1. What went well today and brought clarity?\n\n2. What caused friction or worry?\n\n3. What is one positive takeaway or reframe from today?`,
   },
   {
-    name: 'Hegelian Dialectic',
-    content: `• THESIS: My initial belief or assumption is...\n\n• ANTITHESIS: The strongest counter-argument or opposing view is...\n\n• SYNTHESIS: The deeper reconciliation between both perspectives is...`,
+    name: 'Thesis & Counter-Perspective',
+    content: `• MY INITIAL VIEW: My current perspective or assumption is...\n\n• COUNTER-PERSPECTIVE: An opposing or alternative point of view is...\n\n• SYNTHESIS: A balanced, deeper understanding reconciling both is...`,
   },
   {
-    name: 'Cognitive Reframe',
-    content: `• AUTOMATIC THOUGHT: What am I telling myself right now?\n\n• DISTORTION: Am I catastrophizing, black-and-white thinking, or assuming?\n\n• GROUNDED REALITY: What is an objective, balanced statement of truth?`,
+    name: 'Thought Reframe',
+    content: `• AUTOMATIC THOUGHT: What am I telling myself right now?\n\n• REALITY CHECK: Is this an assumption or fact? What evidence supports or contradicts it?\n\n• BALANCED STATEMENT: What is a calmer, more objective statement?`,
   },
   {
     name: '5 Whys Root Cause',
     content: `1. What problem or emotion am I experiencing?\n2. Why is this occurring?\n3. Why does that matter to me?\n4. Why is that important?\n5. At the root, what core value or fear does this touch?`,
   },
   {
-    name: 'Gratitude & Posture',
-    content: `• OBSERVATION 1: A subtle detail I noticed today...\n\n• OBSERVATION 2: Something I am quietly grateful for...\n\n• GUIDING POSTURE: My single core intention for tomorrow...`,
+    name: 'Daily Gratitude & Intention',
+    content: `• GRATITUDE 1: A subtle detail I noticed and appreciated today...\n\n• GRATITUDE 2: Someone or something I am quietly thankful for...\n\n• TOMORROW'S INTENTION: My single guiding focus for tomorrow...`,
   },
 ];
 
@@ -278,10 +278,10 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
         <div className="flex items-center gap-2">
           <span className="w-1.5 h-1.5 rounded-full bg-[#C4432B]" />
           <span className="uppercase tracking-[0.22em] font-bold text-[#2B2A28]">
-            Manuscript Desk
+            Journal Entry
           </span>
           <span className="tracking-widest text-[#8A8478]">
-            ({userTurnCount}/15 Inquiries)
+            ({userTurnCount}/15)
           </span>
           {wordCount > 0 && (
             <span className="text-[#8A8478] tracking-normal font-mono text-[9px] border-l border-[#E2DDD5]/60 pl-2">
@@ -313,7 +313,7 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
                 type="button"
                 onClick={onOpenLocationPicker}
                 className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-[#F7F4EE] hover:bg-[#EFECE6] border border-[#E2DDD5] text-[#595652] hover:text-[#2B2A28] rounded-xs transition-colors"
-                title={`Inscribed at: ${location.name}${location.weather ? ` (${location.weather.tempC}°C, ${location.weather.condition})` : ''}`}
+                title={`Location: ${location.name}${location.weather ? ` (${location.weather.tempC}°C, ${location.weather.condition})` : ''}`}
               >
                 <MapPin className="w-2.5 h-2.5 text-[#C4432B]" />
                 <span className="font-serif italic truncate max-w-[120px]">{location.name}</span>
@@ -328,10 +328,10 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
                 type="button"
                 onClick={onOpenLocationPicker}
                 className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider text-[#8A8478] hover:text-[#C4432B] transition-colors border border-transparent hover:border-[#E2DDD5] px-1 py-0.5 rounded-xs"
-                title="Pin locus of reflection"
+                title="Add location to this entry"
               >
                 <MapPin className="w-2.5 h-2.5 text-[#8A8478]" />
-                <span>Pin Locus</span>
+                <span>Add Location</span>
               </button>
             )
           )}
@@ -341,11 +341,11 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
           {isListening ? (
             <span className="inline-flex items-center gap-1.5 text-xs text-[#C4432B] font-medium animate-pulse">
               <span className="w-2 h-2 rounded-full bg-[#C4432B]" />
-              Listening to dictation...
+              Listening...
             </span>
           ) : (
             <span className="font-script text-[#C4432B] text-base font-normal hidden xs:inline">
-              for honest thoughts...
+              take your time...
             </span>
           )}
         </div>
@@ -361,10 +361,10 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
           disabled={isGenerating || isDepthLimitReached}
           placeholder={
             isDepthLimitReached
-              ? 'Dialogue depth limit of 15 inquiries reached. Please distill your reflection using Cognitive Lens or start a new inquiry.'
+              ? 'Limit of 15 entries reached for this thread. Please distill your reflection using Key Insights or start a new entry.'
               : selectedMoodObj
               ? `Reflecting through ${selectedMoodObj.label}...`
-              : 'Begin writing into the quiet...'
+              : "What's on your mind? Write freely here..."
           }
           rows={3}
           className="w-full bg-transparent text-base font-serif text-[#2B2A28] placeholder-[#8A8478]/60 focus:outline-none resize-none leading-relaxed"
@@ -447,7 +447,7 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
               />
             )}
 
-            {/* Headspace Selector Dropdown */}
+            {/* Mood Selector Dropdown */}
             <div className="relative" ref={moodMenuRef}>
               <button
                 type="button"
@@ -457,17 +457,17 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
                     ? 'bg-[#C4432B] text-[#F7F4EE] border-[#C4432B]'
                     : 'bg-[#EFECE6]/60 text-[#595652] border-[#E2DDD5] hover:border-[#C4432B]'
                 }`}
-                title="Select Emotional Headspace"
+                title="Select Mood"
               >
                 <Compass className="w-3 h-3" />
-                <span>{selectedMoodObj ? selectedMoodObj.label : 'Headspace'}</span>
+                <span>{selectedMoodObj ? selectedMoodObj.label : 'Mood'}</span>
                 <span className="text-[8px] opacity-60">▾</span>
               </button>
 
               {showMoodMenu && (
                 <div className="absolute left-0 bottom-full mb-1.5 z-40 w-44 bg-[#FFFDF9] border border-[#E2DDD5] shadow-xl p-1.5 rounded-xs space-y-0.5">
                   <span className="text-[9px] font-sans uppercase tracking-widest text-[#8A8478] px-2 py-1 block font-bold border-b border-[#E2DDD5]/60 mb-1">
-                    Select Headspace
+                    Select Mood
                   </span>
                   {MOODS.map((m) => (
                     <button
@@ -497,7 +497,7 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
                 type="button"
                 onClick={() => setShowTemplates((prev) => !prev)}
                 className="px-2 py-1 border border-[#E2DDD5] bg-[#EFECE6]/60 text-[#595652] hover:border-[#C4432B] transition-all rounded-xs flex items-center gap-1 uppercase tracking-wider text-[10px]"
-                title="Select Socratic Reflection Template"
+                title="Writing Prompts & Templates"
               >
                 <BookTemplate className="w-3 h-3 text-[#C4432B]" />
                 <span>Templates</span>
@@ -507,7 +507,7 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
               {showTemplates && (
                 <div className="absolute left-0 bottom-full mb-1.5 z-40 w-56 bg-[#FFFDF9] border border-[#E2DDD5] shadow-xl p-1.5 rounded-xs space-y-0.5">
                   <span className="text-[9px] font-sans uppercase tracking-widest text-[#8A8478] px-2 py-1 block font-bold border-b border-[#E2DDD5]/60 mb-1">
-                    Socratic Templates
+                    Writing Templates
                   </span>
                   {TEMPLATES.map((tmpl) => (
                     <button
@@ -544,10 +544,10 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
                   ? 'bg-[#C4432B]/15 text-[#C4432B] border-[#C4432B]'
                   : 'bg-[#EFECE6]/60 text-[#595652] border-[#E2DDD5] hover:border-[#C4432B]'
               }`}
-              title="Attach photo or handwritten notes for visual contemplation"
+              title="Attach a photo to your entry"
             >
               <ImageIcon className="w-3 h-3 text-[#C4432B]" />
-              <span className="hidden sm:inline">{attachedImage ? 'Photo Attached' : 'Photo'}</span>
+              <span className="hidden sm:inline">{attachedImage ? 'Photo Added' : 'Photo'}</span>
             </button>
 
             {/* Dictation Button */}
@@ -555,7 +555,7 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
               type="button"
               onClick={handleToggleDictation}
               disabled={isGenerating || isDepthLimitReached}
-              title={isListening ? 'Stop audio dictation' : 'Start audio dictation'}
+              title={isListening ? 'Stop voice recording' : 'Voice dictation'}
               className={`p-1.5 rounded-xs border transition-colors flex items-center gap-1 uppercase tracking-wider text-[10px] ${
                 isListening
                   ? 'bg-[#C4432B] text-[#F7F4EE] border-[#C4432B]'
@@ -563,7 +563,7 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
               }`}
             >
               {isListening ? <MicOff className="w-3 h-3" /> : <Mic className="w-3 h-3" />}
-              <span className="hidden sm:inline">{isListening ? 'Stop' : 'Dictate'}</span>
+              <span className="hidden sm:inline">{isListening ? 'Stop' : 'Voice'}</span>
             </button>
 
             {/* Zen Mode Button */}
@@ -572,7 +572,7 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
                 type="button"
                 onClick={onOpenZenMode}
                 className="px-2 py-1 border border-[#E2DDD5] bg-[#EFECE6]/60 text-[#595652] hover:border-[#C4432B] transition-all rounded-xs flex items-center gap-1 uppercase tracking-wider text-[10px]"
-                title="Enter Distraction-Free Zen Studio"
+                title="Distraction-Free Zen Mode"
               >
                 <Maximize2 className="w-3 h-3" />
                 <span className="hidden sm:inline">Zen</span>

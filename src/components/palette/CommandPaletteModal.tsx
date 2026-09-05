@@ -91,7 +91,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
           {
             id: 'cmd_notifications',
             category: 'External',
-            title: 'Courier Scriptorium (External Dispatch: Slack / Discord / Webhook)',
+            title: 'External Notifications (Slack, Discord, Webhooks)',
             shortcut: 'Dispatch',
             icon: <Bell className="w-4 h-4 text-[#C4432B]" />,
             action: () => {
@@ -106,7 +106,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
           {
             id: 'cmd_admin',
             category: 'Security',
-            title: 'Curatorial Scriptorium (Admin Dashboard & RBAC Telemetry)',
+            title: 'Admin Security Dashboard (Roles & Permissions)',
             shortcut: 'Admin',
             icon: <Shield className="w-4 h-4 text-[#C4432B]" />,
             action: () => {
@@ -121,8 +121,8 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
           {
             id: 'cmd_profile',
             category: 'Sanctuary',
-            title: 'Author Sanctuary & Identity (Pen Name, Creed & Seal)',
-            shortcut: 'Creed',
+            title: 'Profile & Preferences (Pen Name & Goals)',
+            shortcut: 'Profile',
             icon: <User className="w-4 h-4 text-[#C4432B]" />,
             action: () => {
               onOpenProfile('identity');
@@ -132,8 +132,8 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
           {
             id: 'cmd_laurels',
             category: 'Sanctuary',
-            title: 'Lifetime Ledger & Socratic Laurels',
-            shortcut: 'Laurels',
+            title: 'Milestones & Achievements',
+            shortcut: 'Badges',
             icon: <Award className="w-4 h-4 text-[#C4432B]" />,
             action: () => {
               onOpenProfile('ledger');
@@ -143,7 +143,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
           {
             id: 'cmd_grounding',
             category: 'Sanctuary',
-            title: 'Stoic Grounding Anchor & Breath Pacer (4-4-4)',
+            title: 'Breathing Exercise (4-4-4 Grounding)',
             shortcut: 'Breathe',
             icon: <Heart className="w-4 h-4 text-[#C4432B]" />,
             action: () => {
@@ -156,7 +156,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
     {
       id: 'cmd_new',
       category: 'Actions',
-      title: 'New Reflection Inquiry',
+      title: 'New Journal Entry',
       shortcut: '⌘N',
       icon: <Plus className="w-4 h-4 text-[#C4432B]" />,
       action: () => {
@@ -167,7 +167,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
     {
       id: 'cmd_zen',
       category: 'Actions',
-      title: 'Enter Zen Distraction-Free Studio',
+      title: 'Distraction-Free Zen Mode',
       shortcut: 'Zen',
       icon: <Maximize2 className="w-4 h-4 text-[#C4432B]" />,
       action: () => {
@@ -178,7 +178,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
     {
       id: 'cmd_constellation',
       category: 'Studio',
-      title: 'Open Idea Constellation (Galaxy Map)',
+      title: 'Idea Constellation Map',
       shortcut: 'Galaxy',
       icon: <Compass className="w-4 h-4 text-[#C4432B]" />,
       action: () => {
@@ -191,8 +191,8 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
           {
             id: 'cmd_sacred_grounds',
             category: 'Studio',
-            title: 'Open Sacred Grounds Atlas (Map of Reflection Loci)',
-            shortcut: 'Atlas',
+            title: 'Places Map (Google Maps Entries)',
+            shortcut: 'Maps',
             icon: <MapPin className="w-4 h-4 text-[#C4432B]" />,
             action: () => {
               onOpenSacredGrounds();
@@ -204,8 +204,8 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
     {
       id: 'cmd_rituals',
       category: 'Studio',
-      title: 'Inscribe Daily Dual Rituals (Morning / Evening)',
-      shortcut: 'Ritual',
+      title: 'Daily Rituals (Morning & Evening)',
+      shortcut: 'Habits',
       icon: <Sun className="w-4 h-4 text-amber-600" />,
       action: () => {
         onOpenRitual();
@@ -215,7 +215,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
     {
       id: 'cmd_capsule',
       category: 'Studio',
-      title: 'Time Capsules & Letters to Future Self',
+      title: 'Time Capsules (Letters to Future Self)',
       shortcut: 'Future',
       icon: <span className="text-sm">🕯️</span>,
       action: () => {
@@ -226,7 +226,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
     {
       id: 'cmd_anthology',
       category: 'Studio',
-      title: 'Generate Book-Bound Memoir Anthology',
+      title: 'Export Book / Anthology (PDF)',
       shortcut: 'PDF',
       icon: <BookOpen className="w-4 h-4 text-[#C4432B]" />,
       action: () => {
@@ -237,7 +237,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
     {
       id: 'cmd_sound',
       category: 'Atmosphere',
-      title: 'Ambient Acoustics Soundscapes (Rain, Hearth, Library)',
+      title: 'Ambient Sounds (Rain, Hearth, Library)',
       shortcut: 'Audio',
       icon: <Headphones className="w-4 h-4 text-[#C4432B]" />,
       action: () => {
@@ -248,8 +248,8 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
     {
       id: 'cmd_calendar',
       category: 'Insights',
-      title: 'Writing Calendar & Heatmap Streaks',
-      shortcut: 'Streak',
+      title: 'Writing Calendar & Streaks',
+      shortcut: 'Calendar',
       icon: <Calendar className="w-4 h-4 text-[#C4432B]" />,
       action: () => {
         onOpenCalendar();
@@ -259,8 +259,8 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
     {
       id: 'cmd_analytics',
       category: 'Insights',
-      title: 'Cognitive Shift Analytics & Biases',
-      shortcut: 'Metrics',
+      title: 'Journal Insights & Analytics',
+      shortcut: 'Analytics',
       icon: <BarChart2 className="w-4 h-4 text-[#C4432B]" />,
       action: () => {
         onOpenAnalytics();
@@ -270,8 +270,8 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
     {
       id: 'cmd_grammar',
       category: 'Studio',
-      title: 'Toggle Real-Time Thought Grammar Spotter',
-      shortcut: 'CBT',
+      title: 'Thought Clarity Helper (Toggle)',
+      shortcut: 'Clarity',
       icon: <PenTool className="w-4 h-4 text-[#C4432B]" />,
       action: () => {
         onToggleThoughtGrammar();
@@ -281,7 +281,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
     {
       id: 'cmd_atmosphere',
       category: 'Atmosphere',
-      title: 'Toggle Living Atmosphere Embers Canvas',
+      title: 'Animated Background (Toggle)',
       shortcut: 'Canvas',
       icon: <Sparkles className="w-4 h-4 text-[#C4432B]" />,
       action: () => {

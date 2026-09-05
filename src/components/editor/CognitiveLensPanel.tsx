@@ -21,10 +21,10 @@ export const CognitiveLensPanel: React.FC<CognitiveLensPanelProps> = ({
         </div>
         <div className="max-w-md mx-auto space-y-2">
           <h3 className="text-2xl font-serif font-light text-[#2B2A28]">
-            Cognitive Clarity Dossier
+            Key Insights &amp; Reflection
           </h3>
           <p className="text-xs text-[#595652] leading-relaxed font-serif">
-            Distill your manuscript into core axioms, emotional nuances, unexamined assumptions, and deep Socratic inquiries.
+            Distill your journal entry into the main takeaway, emotional tones, helpful reframes, and reflection questions.
           </p>
         </div>
         <button
@@ -33,7 +33,7 @@ export const CognitiveLensPanel: React.FC<CognitiveLensPanelProps> = ({
           className="inline-flex items-center gap-2 bg-[#2B2A28] text-[#F7F4EE] hover:bg-[#C4432B] text-xs font-sans uppercase tracking-[0.2em] px-6 py-3 transition-all duration-200 disabled:opacity-50 font-semibold rounded-sm"
         >
           <Sparkles className="w-4 h-4 text-[#C4432B]" />
-          <span>Generate Cognitive Lens →</span>
+          <span>Generate Insights →</span>
         </button>
       </div>
     );
@@ -46,14 +46,14 @@ export const CognitiveLensPanel: React.FC<CognitiveLensPanelProps> = ({
         <div>
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-sans uppercase tracking-[0.25em] text-[#C4432B] font-bold">
-              EPISTEMIC ANALYSIS DOSSIER
+              KEY INSIGHTS
             </span>
             <span className="font-script text-[#C4432B] text-lg font-normal">
-              synthesized patterns...
+              synthesized reflections...
             </span>
           </div>
           <h3 className="text-3xl font-serif font-light text-[#2B2A28] mt-1">
-            Cognitive Lens
+            Clarity &amp; Insights
           </h3>
         </div>
         <button
@@ -61,15 +61,15 @@ export const CognitiveLensPanel: React.FC<CognitiveLensPanelProps> = ({
           disabled={isGenerating}
           className="self-start sm:self-auto text-[10px] font-sans uppercase tracking-[0.18em] border border-[#E2DDD5] hover:border-[#C4432B] px-3.5 py-2 bg-[#EFECE6]/60 hover:bg-[#EFECE6] transition-colors text-[#595652] rounded-xs"
         >
-          Re-Analyze Manuscript
+          Update Insights
         </button>
       </div>
 
-      {/* 1. Core Axiom */}
+      {/* 1. Core Axiom / Main Takeaway */}
       <div className="space-y-3">
         <span className="text-[10px] font-sans uppercase tracking-[0.2em] text-[#8A8478] font-bold flex items-center gap-1.5">
           <Compass className="w-3.5 h-3.5 text-[#C4432B]" />
-          WHAT I NOTICE · CORE AXIOM
+          MAIN TAKEAWAY
         </span>
         <div className="bg-[#EFECE6]/60 border-l-2 border-[#C4432B] p-5">
           <p className="text-lg font-serif italic text-[#2B2A28] leading-relaxed">
@@ -82,7 +82,7 @@ export const CognitiveLensPanel: React.FC<CognitiveLensPanelProps> = ({
       {analysis.emotionalResonance && analysis.emotionalResonance.length > 0 && (
         <div className="space-y-3 border-t border-[#E2DDD5] pt-6">
           <span className="text-[10px] font-sans uppercase tracking-[0.2em] text-[#8A8478] font-bold">
-            THE EMOTIONAL TEXTURE
+            EMOTIONAL TONE
           </span>
           <div className="flex flex-wrap gap-2 pt-1">
             {analysis.emotionalResonance.map((emotion, idx) => (
@@ -102,7 +102,7 @@ export const CognitiveLensPanel: React.FC<CognitiveLensPanelProps> = ({
         <div className="space-y-3 border-t border-[#E2DDD5] pt-6">
           <span className="text-[10px] font-sans uppercase tracking-[0.2em] text-[#8A8478] font-bold flex items-center gap-1.5">
             <AlertTriangle className="w-3.5 h-3.5 text-[#C4432B]" />
-            THE TENSION &amp; REFRAME
+            PERSPECTIVES &amp; REFRAMES
           </span>
           <div className="space-y-3">
             {analysis.cognitiveBlindspots.map((blindspot, idx) => (
@@ -119,7 +119,7 @@ export const CognitiveLensPanel: React.FC<CognitiveLensPanelProps> = ({
         <div className="space-y-3 border-t border-[#E2DDD5] pt-6">
           <span className="text-[10px] font-sans uppercase tracking-[0.2em] text-[#8A8478] font-bold flex items-center gap-1.5">
             <HelpCircle className="w-3.5 h-3.5 text-[#C4432B]" />
-            QUESTIONS TO CARRY
+            QUESTIONS FOR REFLECTION
           </span>
           <div className="space-y-3">
             {analysis.socraticQuestions.map((q, idx) => (

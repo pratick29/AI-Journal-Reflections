@@ -93,10 +93,12 @@ export const InterlocutorSelector: React.FC<InterlocutorSelectorProps> = ({
             ? 'bg-[#C4432B]/10 text-[#C4432B] border-[#C4432B]/40 font-semibold'
             : 'bg-[#EFECE6]/60 text-[#595652] border-[#E2DDD5] hover:border-[#C4432B]'
         }`}
-        title="Consult The Lyceum: Select a Philosophical Interlocutor"
+        title="Select a Writing Guide or Reflection Mentor"
       >
         <span className="text-xs">{currentPersona.avatar}</span>
-        <span className="truncate max-w-[110px] sm:max-w-none">{currentPersona.name}</span>
+        <span className="truncate max-w-[110px] sm:max-w-none">
+          {currentPersona.id === 'default' ? 'Guide: Scribe' : `Guide: ${currentPersona.name.split(' ')[0]}`}
+        </span>
         <span className="text-[8px] opacity-60">▾</span>
       </button>
 
@@ -106,7 +108,7 @@ export const InterlocutorSelector: React.FC<InterlocutorSelectorProps> = ({
             <div className="flex items-center gap-1.5">
               <Sparkles className="w-3 h-3 text-[#C4432B]" />
               <span className="text-[9px] font-sans uppercase tracking-[0.2em] font-bold text-[#2B2A28]">
-                The Lyceum: Interlocutor
+                Choose Writing Guide
               </span>
             </div>
             <button

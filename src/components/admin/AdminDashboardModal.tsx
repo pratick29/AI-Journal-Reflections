@@ -157,7 +157,7 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-sm font-sans font-bold uppercase tracking-[0.2em] text-[#F3EFE6]">
-                  The Curatorial Scriptorium
+                  Admin Security Dashboard
                 </h2>
                 <span
                   className={`text-[9px] font-sans px-2 py-0.5 rounded-full uppercase tracking-wider font-semibold border ${
@@ -172,7 +172,7 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
                 </span>
               </div>
               <p className="text-[11px] font-sans text-[#8C8478]">
-                Role-Based Access Control (RBAC) &amp; Platform Security Telemetry
+                Role-Based Access Control (RBAC) &amp; Security Health
               </p>
             </div>
           </div>
@@ -242,7 +242,7 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
             }`}
           >
             <Activity className="w-3.5 h-3.5" />
-            <span>Platform Telemetry</span>
+            <span>System Metrics</span>
           </button>
 
           <button
@@ -255,7 +255,7 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
             }`}
           >
             <ShieldAlert className="w-3.5 h-3.5" />
-            <span>Audit Trail ({auditLogs.length})</span>
+            <span>Security Logs ({auditLogs.length})</span>
           </button>
 
           <button
@@ -268,7 +268,7 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
             }`}
           >
             <Users className="w-3.5 h-3.5" />
-            <span>RBAC Matrix</span>
+            <span>Roles &amp; Permissions</span>
           </button>
 
           <button
@@ -281,7 +281,7 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
             }`}
           >
             <Terminal className="w-3.5 h-3.5" />
-            <span>AI Security Directive</span>
+            <span>AI Security Guidelines</span>
           </button>
         </div>
 

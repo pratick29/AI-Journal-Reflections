@@ -106,7 +106,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <h2 className="text-[11px] font-sans font-bold uppercase tracking-[0.22em] text-[#2B2A28]">
-              Literary Archive
+              Past Entries
             </h2>
             <span className="text-[10px] font-sans text-[#595652] px-1.5 py-0.2 border border-[#E2DDD5] bg-[#FFFDF9] font-medium">
               {filteredInteractions.length}
@@ -121,8 +121,8 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                 if (onClose) onClose();
               }}
               className="p-1.5 border border-[#E2DDD5] hover:border-[#C4432B] text-[#2B2A28] hover:bg-[#C4432B] hover:text-[#F7F4EE] transition-colors rounded-sm"
-              title="Create New Inquiry (⌘N)"
-              aria-label="Create New Inquiry"
+              title="Create New Entry (⌘N)"
+              aria-label="Create New Entry"
             >
               <Plus className="w-3.5 h-3.5" />
             </button>
@@ -130,8 +130,8 @@ export const HistoryList: React.FC<HistoryListProps> = ({
               <button
                 onClick={onClose}
                 className="lg:hidden p-1.5 border border-[#E2DDD5] hover:border-[#C4432B] text-[#2B2A28] hover:bg-[#C4432B] hover:text-[#F7F4EE] transition-colors rounded-sm"
-                title="Close Archives Drawer"
-                aria-label="Close Archives"
+                title="Close Entries"
+                aria-label="Close Entries"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -147,7 +147,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search manuscripts..."
+            placeholder="Search past entries..."
             className="w-full pl-8 pr-8 py-1.5 text-xs font-sans bg-[#FFFDF9] border border-[#E2DDD5] focus:outline-none focus:border-[#C4432B] text-[#2B2A28] transition-colors placeholder:text-[#8A8478] rounded-xs"
           />
           {searchTerm && (
@@ -252,16 +252,16 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                   <div className="flex items-center gap-1">
                     {item.cognitiveAnalysis && (
                       <span
-                        title="Cognitive Lens"
+                        title="Key Insights"
                         className="inline-flex items-center gap-1 text-[8px] font-sans uppercase tracking-widest px-1.5 py-0.5 bg-[#EFECE6] text-[#C4432B] border border-[#E2DDD5]"
                       >
                         <Sparkles className="w-2.5 h-2.5 text-[#C4432B]" />
-                        <span>Lens</span>
+                        <span>Insights</span>
                       </span>
                     )}
                     {item.thinkingMap && (
                       <span
-                        title="Thinking Map"
+                        title="Idea Map"
                         className="inline-flex items-center gap-1 text-[8px] font-sans uppercase tracking-widest px-1.5 py-0.5 bg-[#EFECE6] text-[#2B2A28] border border-[#E2DDD5]"
                       >
                         <Compass className="w-2.5 h-2.5 text-[#C4432B]" />

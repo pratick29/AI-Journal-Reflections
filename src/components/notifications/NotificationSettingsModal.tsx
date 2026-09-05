@@ -186,14 +186,14 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-base font-serif font-medium text-[#2B2A28]">
-                  The Courier Scriptorium
+                  External Notifications
                 </h2>
                 <span className="text-[9px] font-sans uppercase tracking-widest px-2 py-0.5 bg-[#C4432B]/10 text-[#C4432B] border border-[#C4432B]/20 rounded-xs font-bold">
-                  External Dispatch
+                  Slack / Discord / Webhook
                 </span>
               </div>
               <p className="text-[10px] font-sans text-[#8A8478] tracking-wide">
-                Slack · Discord · Email &amp; Webhook Relays · AI Notification API Directive
+                Slack, Discord, Email &amp; Webhook integrations for your journal entries
               </p>
             </div>
           </div>
@@ -227,7 +227,7 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
             }`}
           >
             <Globe className="w-3.5 h-3.5 text-[#C4432B]" />
-            <span>Webhook Channels</span>
+            <span>Channels</span>
           </button>
 
           <button
@@ -239,7 +239,7 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
             }`}
           >
             <Zap className="w-3.5 h-3.5 text-amber-600" />
-            <span>Entry Triggers</span>
+            <span>When to Send</span>
           </button>
 
           <button
@@ -251,7 +251,7 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
             }`}
           >
             <Code2 className="w-3.5 h-3.5 text-[#C4432B]" />
-            <span>API Directive &amp; Schema</span>
+            <span>Payload Schema</span>
           </button>
 
           <button
@@ -263,7 +263,7 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
             }`}
           >
             <Send className="w-3.5 h-3.5 text-[#C4432B]" />
-            <span>Live Dispatch &amp; Test</span>
+            <span>Send &amp; Test</span>
           </button>
         </div>
 

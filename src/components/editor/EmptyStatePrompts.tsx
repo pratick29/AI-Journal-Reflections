@@ -1,5 +1,5 @@
 import React from 'react';
-import { Compass, Lightbulb, AlertTriangle } from 'lucide-react';
+import { Compass, Lightbulb, Heart } from 'lucide-react';
 
 interface EmptyStatePromptsProps {
   onSelectPrompt: (promptText: string) => void;
@@ -8,35 +8,35 @@ interface EmptyStatePromptsProps {
 export const EmptyStatePrompts: React.FC<EmptyStatePromptsProps> = ({ onSelectPrompt }) => {
   const prompts = [
     {
-      category: 'PROFESSIONAL CROSSROADS',
+      category: 'UNPACKING TODAY',
       icon: Compass,
-      question: 'What direction am I avoiding, and why?',
-      detail: 'Explore hidden friction between current commitments and your genuine long-term ambition.',
+      question: 'What is occupying the most space in your mind right now?',
+      detail: 'Untangle current thoughts, decisions, or worries without any judgment or pressure.',
     },
     {
-      category: 'RECURRING FRICTION',
-      icon: AlertTriangle,
-      question: 'What keeps bothering me that I have learned to tolerate?',
-      detail: 'Identify subtle compromises and emotional drains hiding in daily routine.',
+      category: 'GRATITUDE & SMALL WINS',
+      icon: Heart,
+      question: 'What is one small thing that brought you comfort or joy today?',
+      detail: 'Take a quiet moment to appreciate a person, a brief interaction, or a simple victory.',
     },
     {
-      category: 'UNSPOKEN PRIORITY',
+      category: 'LOOKING FORWARD',
       icon: Lightbulb,
-      question: 'What does my calendar reveal that my words don’t?',
-      detail: 'Examine where attention actually flows versus where you claim your priorities lie.',
+      question: 'What is the single most important intention for tomorrow?',
+      detail: 'Choose one calm focus or mindset you want to carry into the day ahead.',
     },
   ];
 
   return (
     <div className="py-3 space-y-4">
       <div className="text-center max-w-lg mx-auto space-y-1">
-        <span className="text-[10px] font-sans uppercase tracking-[0.25em] text-[#C4432B] font-bold">
-          EDITORIAL PROMPTS
+        <span className="text-[10px] font-sans uppercase tracking-[0.22em] text-[#C4432B] font-bold">
+          WRITING INSPIRATION
         </span>
         <h3 className="text-2xl sm:text-3xl font-serif font-light text-[#2B2A28]">
-          Inquiries for Honest Contemplation
+          What's on your mind today?
           <span className="font-script text-[#C4432B] text-xl block mt-0.5 font-normal">
-            select a theme to begin writing...
+            pick a prompt or simply start typing below...
           </span>
         </h3>
       </div>
@@ -67,7 +67,7 @@ export const EmptyStatePrompts: React.FC<EmptyStatePromptsProps> = ({ onSelectPr
 
               <div className="pt-1.5 text-right">
                 <span className="text-[9px] font-sans uppercase tracking-widest text-[#8A8478] group-hover:text-[#C4432B] transition-colors font-medium">
-                  Begin Entry →
+                  Start Writing →
                 </span>
               </div>
             </div>
