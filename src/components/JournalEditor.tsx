@@ -6,6 +6,7 @@ import {
   Sparkles,
   Compass,
   Download,
+  Check,
   Printer,
   BookOpen,
   ArrowRight,
@@ -511,9 +512,9 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
               <button
                 onClick={handleExportText}
                 className="p-1.5 border border-[#E5E0D8] hover:border-[#1A1918] bg-[#FFFFFF] text-[#57534E] transition-colors"
-                title="Export manuscript to clipboard"
+                title={copiedExport ? "Manuscript copied!" : "Export manuscript to clipboard"}
               >
-                <Download className="w-3.5 h-3.5" />
+                {copiedExport ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Download className="w-3.5 h-3.5" />}
               </button>
               <button
                 onClick={handlePrintSpecimen}

@@ -158,144 +158,70 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
     onSubmitInquiry(e);
   };
 
+  const [showMoodMenu, setShowMoodMenu] = useState(false);
+  const moodMenuRef = useRef<HTMLDivElement>(null);
+  const templateMenuRef = useRef<HTMLDivElement>(null);
+
+  // Close menus on click outside
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (moodMenuRef.current && !moodMenuRef.current.contains(e.target as Node)) {
+        setShowMoodMenu(false);
+      }
+      if (templateMenuRef.current && !templateMenuRef.current.contains(e.target as Node)) {
+        setShowTemplates(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, []);
+
+  const selectedMoodObj = MOODS.find((m) => m.id === selectedMood);
+
   return (
-    <div id="writing-desk" className="bg-[#FFFDF9] border border-[#E2DDD5] border-t-2 border-t-[#C4432B] p-4.5 sm:p-6 shadow-xs space-y-3.5 rounded-xs relative">
-      {/* Writing Desk Label & Mode Selector Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-[#E2DDD5] pb-2.5">
+    <div id="writing-desk" className="bg-[#FFFDF9] border border-[#E2DDD5] border-t-2 border-t-[#C4432B] p-4 sm:p-5 shadow-xs space-y-2.5 rounded-xs relative">
+      {/* Top Header: Understated Status */}
+      <div className="flex items-center justify-between border-b border-[#E2DDD5]/60 pb-2 text-[10px] font-sans">
         <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-[#C4432B]" />
-          <span className="text-[10px] font-sans uppercase tracking-[0.22em] font-bold text-[#2B2A28]">
-            Writing Desk
+          <span className="w-1.5 h-1.5 rounded-full bg-[#C4432B]" />
+          <span className="uppercase tracking-[0.22em] font-bold text-[#2B2A28]">
+            Manuscript Desk
           </span>
-          <span className="text-[10px] font-sans uppercase tracking-widest text-[#8A8478]">
+          <span className="tracking-widest text-[#8A8478]">
             ({userTurnCount}/15 Inquiries)
           </span>
+          {selectedMoodObj && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#C4432B]/10 text-[#C4432B] border border-[#C4432B]/20 rounded-xs">
+              <span>{selectedMoodObj.icon}</span>
+              <span>{selectedMoodObj.label}</span>
+              <button
+                type="button"
+                onClick={() => setSelectedMood(null)}
+                className="hover:opacity-70 ml-0.5"
+                title="Clear mood"
+              >
+                <X className="w-2.5 h-2.5" />
+              </button>
+            </span>
+          )}
+        </div>
+
+        <div>
           {isListening ? (
-            <span className="inline-flex items-center gap-1.5 text-xs text-[#C4432B] font-sans font-medium animate-pulse ml-2">
+            <span className="inline-flex items-center gap-1.5 text-xs text-[#C4432B] font-medium animate-pulse">
               <span className="w-2 h-2 rounded-full bg-[#C4432B]" />
               Listening to dictation...
             </span>
           ) : (
-            <span className="font-script text-[#C4432B] text-base font-normal ml-2 hidden xs:inline">
-              it's about expression...
+            <span className="font-script text-[#C4432B] text-base font-normal hidden xs:inline">
+              for honest thoughts...
             </span>
           )}
-        </div>
-
-        {/* Mode Selector & Action Buttons */}
-        <div className="flex items-center gap-1.5 flex-wrap">
-          {/* Templates Dropdown Button */}
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setShowTemplates((prev) => !prev)}
-              className="px-2.5 py-1 text-[10px] font-sans uppercase tracking-[0.15em] border border-[#E2DDD5] bg-[#EFECE6]/60 text-[#595652] hover:border-[#C4432B] transition-all rounded-xs flex items-center gap-1"
-              title="Select Socratic Reflection Template"
-            >
-              <BookTemplate className="w-3 h-3 text-[#C4432B]" />
-              <span>Templates</span>
-            </button>
-
-            {showTemplates && (
-              <div className="absolute right-0 top-full mt-1.5 z-40 w-64 bg-[#FFFDF9] border border-[#E2DDD5] shadow-lg p-2 rounded-xs space-y-1">
-                <span className="text-[9px] font-sans uppercase tracking-widest text-[#8A8478] px-2 py-1 block font-bold">
-                  Socratic Reflection Templates
-                </span>
-                {TEMPLATES.map((tmpl) => (
-                  <button
-                    key={tmpl.name}
-                    type="button"
-                    onClick={() => {
-                      setPromptInput(tmpl.content);
-                      setShowTemplates(false);
-                      setTimeout(() => textareaRef?.current?.focus(), 50);
-                    }}
-                    className="w-full text-left text-xs font-serif p-2 hover:bg-[#F7F4EE] text-[#2B2A28] transition-colors rounded-xs border-l-2 border-l-transparent hover:border-l-[#C4432B]"
-                  >
-                    {tmpl.name}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Zen Mode Button */}
-          {onOpenZenMode && (
-            <button
-              type="button"
-              onClick={onOpenZenMode}
-              className="px-2.5 py-1 text-[10px] font-sans uppercase tracking-[0.15em] border border-[#E2DDD5] bg-[#EFECE6]/60 text-[#595652] hover:border-[#C4432B] transition-all rounded-xs flex items-center gap-1"
-              title="Enter Distraction-Free Zen Writing Studio"
-            >
-              <Maximize2 className="w-3 h-3 text-[#2B2A28]" />
-              <span>Zen Studio</span>
-            </button>
-          )}
-
-          <button
-            type="button"
-            onClick={() => setActiveMode('reflection')}
-            className={`px-3 py-1 text-[10px] font-sans uppercase tracking-[0.15em] border transition-all rounded-xs ${
-              activeMode === 'reflection'
-                ? 'bg-[#2B2A28] text-[#F7F4EE] border-[#2B2A28] font-semibold'
-                : 'bg-[#EFECE6]/60 text-[#595652] border-[#E2DDD5] hover:border-[#C4432B]'
-            }`}
-          >
-            Reflect
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveMode('summary')}
-            className={`px-3 py-1 text-[10px] font-sans uppercase tracking-[0.15em] border transition-all rounded-xs ${
-              activeMode === 'summary'
-                ? 'bg-[#2B2A28] text-[#F7F4EE] border-[#2B2A28] font-semibold'
-                : 'bg-[#EFECE6]/60 text-[#595652] border-[#E2DDD5] hover:border-[#C4432B]'
-            }`}
-          >
-            Summarize
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveMode('brainstorm')}
-            className={`px-3 py-1 text-[10px] font-sans uppercase tracking-[0.15em] border transition-all rounded-xs ${
-              activeMode === 'brainstorm'
-                ? 'bg-[#2B2A28] text-[#F7F4EE] border-[#2B2A28] font-semibold'
-                : 'bg-[#EFECE6]/60 text-[#595652] border-[#E2DDD5] hover:border-[#C4432B]'
-            }`}
-          >
-            Brainstorm
-          </button>
-        </div>
-      </div>
-
-      {/* Emotional Spectrum Mood Dial Selector */}
-      <div className="flex items-center justify-between overflow-x-auto pb-1 gap-2 text-[10px] font-sans">
-        <div className="flex items-center gap-1.5 shrink-0 text-[#8A8478] uppercase tracking-wider">
-          <Compass className="w-3 h-3 text-[#C4432B]" />
-          <span>Headspace:</span>
-        </div>
-        <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
-          {MOODS.map((m) => (
-            <button
-              key={m.id}
-              type="button"
-              onClick={() => setSelectedMood(selectedMood === m.id ? null : m.id)}
-              className={`px-2 py-0.5 border rounded-xs transition-all flex items-center gap-1 whitespace-nowrap text-[10px] ${
-                selectedMood === m.id
-                  ? 'bg-[#C4432B] text-[#F7F4EE] border-[#C4432B] font-semibold shadow-xs'
-                  : 'bg-[#F7F4EE] text-[#595652] border-[#E2DDD5] hover:border-[#C4432B]'
-              }`}
-            >
-              <span>{m.icon}</span>
-              <span>{m.label}</span>
-              {selectedMood === m.id && <X className="w-2.5 h-2.5 ml-0.5" />}
-            </button>
-          ))}
         </div>
       </div>
 
       {/* Main Manuscript Input Form */}
-      <form onSubmit={handleFormSubmit} className="space-y-3">
+      <form onSubmit={handleFormSubmit} className="space-y-2.5">
         <textarea
           id="manuscript-input"
           ref={textareaRef}
@@ -305,12 +231,12 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
           placeholder={
             isDepthLimitReached
               ? 'Dialogue depth limit of 15 inquiries reached. Please distill your reflection using Cognitive Lens or start a new inquiry.'
-              : selectedMood
-              ? `Reflecting through ${MOODS.find((m) => m.id === selectedMood)?.label}...`
-              : 'Begin with what has been occupying your mind...'
+              : selectedMoodObj
+              ? `Reflecting through ${selectedMoodObj.label}...`
+              : 'Begin writing into the quiet...'
           }
           rows={3}
-          className="w-full bg-transparent text-base font-serif text-[#2B2A28] placeholder-[#8A8478] focus:outline-none resize-none leading-relaxed"
+          className="w-full bg-transparent text-base font-serif text-[#2B2A28] placeholder-[#8A8478]/60 focus:outline-none resize-none leading-relaxed"
           onKeyDown={(e) => {
             if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
               e.preventDefault();
@@ -319,45 +245,155 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
           }}
         />
 
-        {/* Action Controls & Footer */}
-        <div className="flex items-center justify-between pt-2.5 border-t border-[#E2DDD5] text-[10px] font-sans text-[#8A8478]">
-          <div className="flex items-center gap-3">
-            <span className="hidden sm:inline tracking-wider">
-              Press <kbd className="px-1.5 py-0.5 border border-[#E2DDD5] bg-[#EFECE6] font-mono">⌘ + Enter</kbd> to submit
-            </span>
+        {/* Consolidated Bottom Toolbar */}
+        <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[#E2DDD5]/60 text-[10px] font-sans">
+          {/* Left Instrument Controls */}
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {/* Mode Selector */}
+            <select
+              value={activeMode}
+              onChange={(e) => setActiveMode(e.target.value as ReflectionMode)}
+              className="px-2 py-1 bg-[#EFECE6]/60 border border-[#E2DDD5] text-[#2B2A28] uppercase tracking-wider text-[10px] rounded-xs focus:outline-none focus:border-[#C4432B] cursor-pointer"
+            >
+              <option value="reflection">Reflect</option>
+              <option value="summary">Summarize</option>
+              <option value="brainstorm">Brainstorm</option>
+            </select>
+
+            {/* Headspace Selector Dropdown */}
+            <div className="relative" ref={moodMenuRef}>
+              <button
+                type="button"
+                onClick={() => setShowMoodMenu((prev) => !prev)}
+                className={`px-2 py-1 border rounded-xs transition-colors flex items-center gap-1 uppercase tracking-wider text-[10px] ${
+                  selectedMood
+                    ? 'bg-[#C4432B] text-[#F7F4EE] border-[#C4432B]'
+                    : 'bg-[#EFECE6]/60 text-[#595652] border-[#E2DDD5] hover:border-[#C4432B]'
+                }`}
+                title="Select Emotional Headspace"
+              >
+                <Compass className="w-3 h-3" />
+                <span>{selectedMoodObj ? selectedMoodObj.label : 'Headspace'}</span>
+                <span className="text-[8px] opacity-60">▾</span>
+              </button>
+
+              {showMoodMenu && (
+                <div className="absolute left-0 bottom-full mb-1.5 z-40 w-44 bg-[#FFFDF9] border border-[#E2DDD5] shadow-xl p-1.5 rounded-xs space-y-0.5">
+                  <span className="text-[9px] font-sans uppercase tracking-widest text-[#8A8478] px-2 py-1 block font-bold border-b border-[#E2DDD5]/60 mb-1">
+                    Select Headspace
+                  </span>
+                  {MOODS.map((m) => (
+                    <button
+                      key={m.id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedMood(selectedMood === m.id ? null : m.id);
+                        setShowMoodMenu(false);
+                      }}
+                      className={`w-full text-left px-2 py-1.5 text-xs font-serif flex items-center justify-between rounded-xs transition-colors ${
+                        selectedMood === m.id ? 'bg-[#C4432B]/10 text-[#C4432B] font-semibold' : 'hover:bg-[#F7F4EE] text-[#2B2A28]'
+                      }`}
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <span>{m.icon}</span>
+                        <span>{m.label}</span>
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Templates Selector */}
+            <div className="relative" ref={templateMenuRef}>
+              <button
+                type="button"
+                onClick={() => setShowTemplates((prev) => !prev)}
+                className="px-2 py-1 border border-[#E2DDD5] bg-[#EFECE6]/60 text-[#595652] hover:border-[#C4432B] transition-all rounded-xs flex items-center gap-1 uppercase tracking-wider text-[10px]"
+                title="Select Socratic Reflection Template"
+              >
+                <BookTemplate className="w-3 h-3 text-[#C4432B]" />
+                <span>Templates</span>
+                <span className="text-[8px] opacity-60">▾</span>
+              </button>
+
+              {showTemplates && (
+                <div className="absolute left-0 bottom-full mb-1.5 z-40 w-56 bg-[#FFFDF9] border border-[#E2DDD5] shadow-xl p-1.5 rounded-xs space-y-0.5">
+                  <span className="text-[9px] font-sans uppercase tracking-widest text-[#8A8478] px-2 py-1 block font-bold border-b border-[#E2DDD5]/60 mb-1">
+                    Socratic Templates
+                  </span>
+                  {TEMPLATES.map((tmpl) => (
+                    <button
+                      key={tmpl.name}
+                      type="button"
+                      onClick={() => {
+                        setPromptInput(tmpl.content);
+                        setShowTemplates(false);
+                        setTimeout(() => textareaRef?.current?.focus(), 50);
+                      }}
+                      className="w-full text-left text-xs font-serif p-1.5 hover:bg-[#F7F4EE] text-[#2B2A28] transition-colors rounded-xs border-l-2 border-l-transparent hover:border-l-[#C4432B]"
+                    >
+                      {tmpl.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Dictation Button */}
             <button
               type="button"
               onClick={handleToggleDictation}
               disabled={isGenerating || isDepthLimitReached}
               title={isListening ? 'Stop audio dictation' : 'Start audio dictation'}
-              className={`p-1.5 rounded-xs border transition-colors flex items-center gap-1 text-[10px] uppercase tracking-wider font-sans ${
+              className={`p-1.5 rounded-xs border transition-colors flex items-center gap-1 uppercase tracking-wider text-[10px] ${
                 isListening
                   ? 'bg-[#C4432B] text-[#F7F4EE] border-[#C4432B]'
                   : 'bg-[#EFECE6]/60 text-[#595652] border-[#E2DDD5] hover:border-[#C4432B]'
               }`}
             >
-              {isListening ? <MicOff className="w-3.5 h-3.5" /> : <Mic className="w-3.5 h-3.5" />}
-              <span className="hidden xs:inline">{isListening ? 'Stop Dictating' : 'Dictate'}</span>
+              {isListening ? <MicOff className="w-3 h-3" /> : <Mic className="w-3 h-3" />}
+              <span className="hidden sm:inline">{isListening ? 'Stop' : 'Dictate'}</span>
             </button>
+
+            {/* Zen Mode Button */}
+            {onOpenZenMode && (
+              <button
+                type="button"
+                onClick={onOpenZenMode}
+                className="px-2 py-1 border border-[#E2DDD5] bg-[#EFECE6]/60 text-[#595652] hover:border-[#C4432B] transition-all rounded-xs flex items-center gap-1 uppercase tracking-wider text-[10px]"
+                title="Enter Distraction-Free Zen Studio"
+              >
+                <Maximize2 className="w-3 h-3" />
+                <span className="hidden sm:inline">Zen</span>
+              </button>
+            )}
           </div>
 
-          <InteractiveButton
-            id="submit-inquiry-btn"
-            type="submit"
-            disabled={isGenerating || !promptInput.trim() || isDepthLimitReached}
-            className="px-6 py-2.5 font-semibold active:scale-[0.99] ml-auto rounded-sm"
-          >
-            {isGenerating ? (
-              <>
-                <Loader2 className="w-3.5 h-3.5 animate-spin text-[#F7F4EE]" />
-                <span>Reflecting…</span>
-              </>
-            ) : (
-              <>
-                <span>Reflect →</span>
-              </>
-            )}
-          </InteractiveButton>
+          {/* Right: Submit Button & Hint */}
+          <div className="flex items-center gap-3 ml-auto">
+            <span className="hidden md:inline tracking-wider text-[#8A8478] text-[9px]">
+              <kbd className="px-1 py-0.5 border border-[#E2DDD5] bg-[#EFECE6] font-mono">⌘ + Enter</kbd>
+            </span>
+
+            <InteractiveButton
+              id="submit-inquiry-btn"
+              type="submit"
+              disabled={isGenerating || !promptInput.trim() || isDepthLimitReached}
+              className="px-5 py-2 font-semibold active:scale-[0.99] rounded-sm text-[10px] uppercase tracking-[0.18em]"
+            >
+              {isGenerating ? (
+                <>
+                  <Loader2 className="w-3 h-3 animate-spin text-[#F7F4EE]" />
+                  <span>Reflecting…</span>
+                </>
+              ) : (
+                <>
+                  <span>Reflect →</span>
+                </>
+              )}
+            </InteractiveButton>
+          </div>
         </div>
       </form>
     </div>
