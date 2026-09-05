@@ -4,22 +4,45 @@ import { LandingPage } from './components/LandingPage';
 import { Navbar } from './components/Navbar';
 import { HistoryList } from './components/HistoryList';
 import { JournalEditor } from './components/JournalEditor';
-import { TestWalkthroughModal } from './components/TestWalkthroughModal';
-import { AnalyticsModal } from './components/AnalyticsModal';
 import { VaultLockModal } from './components/VaultLockModal';
-import { JournalCalendarModal } from './components/JournalCalendarModal';
-import { VaultBackupModal } from './components/VaultBackupModal';
-import { QuoteCardModal } from './components/QuoteCardModal';
 import { ZenMode } from './components/editor/ZenMode';
 import { AmbientCanvas } from './components/common/AmbientCanvas';
 import { SoundscapePlayer } from './components/common/SoundscapePlayer';
-import { TimeCapsuleModal } from './components/capsule/TimeCapsuleModal';
-import { DailyRitualModal } from './components/rituals/DailyRitualModal';
-import { ConstellationModal } from './components/constellation/ConstellationModal';
-import { AnthologyModal } from './components/anthology/AnthologyModal';
-import { Interaction } from './types';
+import { Interaction, PhilosophicalPersona } from './types';
 import { subscribeUserInteractions } from './firebase/interactions';
 import { Loader2 } from 'lucide-react';
+
+// Dynamic Code-Splitting: Lazy-load heavy modals for instantaneous initial load speeds
+const TestWalkthroughModal = React.lazy(() =>
+  import('./components/TestWalkthroughModal').then((m) => ({ default: m.TestWalkthroughModal }))
+);
+const AnalyticsModal = React.lazy(() =>
+  import('./components/AnalyticsModal').then((m) => ({ default: m.AnalyticsModal }))
+);
+const JournalCalendarModal = React.lazy(() =>
+  import('./components/JournalCalendarModal').then((m) => ({ default: m.JournalCalendarModal }))
+);
+const VaultBackupModal = React.lazy(() =>
+  import('./components/VaultBackupModal').then((m) => ({ default: m.VaultBackupModal }))
+);
+const QuoteCardModal = React.lazy(() =>
+  import('./components/QuoteCardModal').then((m) => ({ default: m.QuoteCardModal }))
+);
+const TimeCapsuleModal = React.lazy(() =>
+  import('./components/capsule/TimeCapsuleModal').then((m) => ({ default: m.TimeCapsuleModal }))
+);
+const DailyRitualModal = React.lazy(() =>
+  import('./components/rituals/DailyRitualModal').then((m) => ({ default: m.DailyRitualModal }))
+);
+const ConstellationModal = React.lazy(() =>
+  import('./components/constellation/ConstellationModal').then((m) => ({ default: m.ConstellationModal }))
+);
+const AnthologyModal = React.lazy(() =>
+  import('./components/anthology/AnthologyModal').then((m) => ({ default: m.AnthologyModal }))
+);
+const CommandPaletteModal = React.lazy(() =>
+  import('./components/palette/CommandPaletteModal').then((m) => ({ default: m.CommandPaletteModal }))
+);
 
 function MainApp() {
   const { user, loading } = useAuth();
@@ -40,6 +63,7 @@ function MainApp() {
   const [isRitualOpen, setIsRitualOpen] = useState<boolean>(false);
   const [isConstellationOpen, setIsConstellationOpen] = useState<boolean>(false);
   const [isAnthologyOpen, setIsAnthologyOpen] = useState<boolean>(false);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState<boolean>(false);
   const [thoughtGrammarEnabled, setThoughtGrammarEnabled] = useState<boolean>(true);
 
   const [isVaultLocked, setIsVaultLocked] = useState<boolean>(false);
@@ -87,6 +111,11 @@ function MainApp() {
           e.preventDefault();
           setSelectedInteraction(null);
         }
+      }
+      // Cmd+K or Ctrl+K: Universal Command Palette
+      if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault();
+        setIsCommandPaletteOpen((prev) => !prev);
       }
       // Escape: close mobile sidebar if open
       if (e.key === 'Escape' && isSidebarOpen && window.innerWidth < 1024) {
@@ -149,6 +178,7 @@ function MainApp() {
         onOpenAnthology={() => setIsAnthologyOpen(true)}
         thoughtGrammarEnabled={thoughtGrammarEnabled}
         onToggleThoughtGrammar={() => setThoughtGrammarEnabled((prev) => !prev)}
+        onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
       />
 
       <main className="flex-1 flex overflow-hidden relative">
@@ -214,41 +244,6 @@ function MainApp() {
         <span className="truncate">Encryption: AES-256</span>
       </footer>
 
-      {/* Security & Test Walkthrough Modal */}
-      <TestWalkthroughModal
-        isOpen={isWalkthroughOpen}
-        onClose={() => setIsWalkthroughOpen(false)}
-      />
-
-      {/* Cognitive Shift & Emotional Analytics Modal */}
-      <AnalyticsModal
-        isOpen={isAnalyticsOpen}
-        onClose={() => setIsAnalyticsOpen(false)}
-        interactions={allInteractions}
-      />
-
-      {/* Philosophical Writing Calendar & Streaks Modal */}
-      <JournalCalendarModal
-        isOpen={isCalendarOpen}
-        onClose={() => setIsCalendarOpen(false)}
-        interactions={allInteractions}
-      />
-
-      {/* Vault JSON Backup & Restore Modal */}
-      <VaultBackupModal
-        isOpen={isBackupOpen}
-        onClose={() => setIsBackupOpen(false)}
-        interactions={allInteractions}
-      />
-
-      {/* Editorial Quote Card Specimen Modal */}
-      <QuoteCardModal
-        isOpen={Boolean(pinnedQuote)}
-        onClose={() => setPinnedQuote(null)}
-        quoteText={pinnedQuote || ''}
-        sourceTitle={selectedInteraction?.title}
-      />
-
       {/* Zen Distraction-Free Writing Studio */}
       <ZenMode
         isOpen={isZenModeOpen}
@@ -256,7 +251,6 @@ function MainApp() {
         promptInput={zenPromptInput}
         setPromptInput={setZenPromptInput}
         onSubmitInquiry={() => {
-          // Zen mode inquiry submission triggers main prompt
           const manuscriptInput = document.getElementById('manuscript-input') as HTMLTextAreaElement;
           if (manuscriptInput) {
             manuscriptInput.value = zenPromptInput;
@@ -283,37 +277,106 @@ function MainApp() {
         savedPin={savedPin}
       />
 
-      {/* Time Capsule & Letters to Future Self Modal */}
-      <TimeCapsuleModal
-        isOpen={isCapsuleOpen}
-        onClose={() => setIsCapsuleOpen(false)}
-        recentInteractions={allInteractions}
-      />
+      {/* Lazy-Loaded Modals wrapped in Suspense */}
+      <React.Suspense fallback={null}>
+        {isWalkthroughOpen && (
+          <TestWalkthroughModal
+            isOpen={isWalkthroughOpen}
+            onClose={() => setIsWalkthroughOpen(false)}
+          />
+        )}
 
-      {/* Daily Dual Rituals (Morning Primer & Evening Examen) Modal */}
-      <DailyRitualModal
-        isOpen={isRitualOpen}
-        onClose={() => setIsRitualOpen(false)}
-        onSaveRitualAsInquiry={(interaction) => {
-          setSelectedInteraction(interaction);
-        }}
-        userId={user?.uid}
-      />
+        {isAnalyticsOpen && (
+          <AnalyticsModal
+            isOpen={isAnalyticsOpen}
+            onClose={() => setIsAnalyticsOpen(false)}
+            interactions={allInteractions}
+          />
+        )}
 
-      {/* The Idea Constellation (Galaxy Mind Map) Modal */}
-      <ConstellationModal
-        isOpen={isConstellationOpen}
-        onClose={() => setIsConstellationOpen(false)}
-        interactions={allInteractions}
-        onSelectInteraction={(interaction) => setSelectedInteraction(interaction)}
-      />
+        {isCalendarOpen && (
+          <JournalCalendarModal
+            isOpen={isCalendarOpen}
+            onClose={() => setIsCalendarOpen(false)}
+            interactions={allInteractions}
+          />
+        )}
 
-      {/* Book-Bound Memoir Anthology Modal */}
-      <AnthologyModal
-        isOpen={isAnthologyOpen}
-        onClose={() => setIsAnthologyOpen(false)}
-        interactions={allInteractions}
-      />
+        {isBackupOpen && (
+          <VaultBackupModal
+            isOpen={isBackupOpen}
+            onClose={() => setIsBackupOpen(false)}
+            interactions={allInteractions}
+          />
+        )}
+
+        {pinnedQuote && (
+          <QuoteCardModal
+            isOpen={Boolean(pinnedQuote)}
+            onClose={() => setPinnedQuote(null)}
+            quoteText={pinnedQuote}
+            sourceTitle={selectedInteraction?.title}
+          />
+        )}
+
+        {isCapsuleOpen && (
+          <TimeCapsuleModal
+            isOpen={isCapsuleOpen}
+            onClose={() => setIsCapsuleOpen(false)}
+            recentInteractions={allInteractions}
+          />
+        )}
+
+        {isRitualOpen && (
+          <DailyRitualModal
+            isOpen={isRitualOpen}
+            onClose={() => setIsRitualOpen(false)}
+            onSaveRitualAsInquiry={(interaction) => {
+              setSelectedInteraction(interaction);
+            }}
+            userId={user?.uid}
+          />
+        )}
+
+        {isConstellationOpen && (
+          <ConstellationModal
+            isOpen={isConstellationOpen}
+            onClose={() => setIsConstellationOpen(false)}
+            interactions={allInteractions}
+            onSelectInteraction={(interaction) => setSelectedInteraction(interaction)}
+          />
+        )}
+
+        {isAnthologyOpen && (
+          <AnthologyModal
+            isOpen={isAnthologyOpen}
+            onClose={() => setIsAnthologyOpen(false)}
+            interactions={allInteractions}
+          />
+        )}
+
+        {isCommandPaletteOpen && (
+          <CommandPaletteModal
+            isOpen={isCommandPaletteOpen}
+            onClose={() => setIsCommandPaletteOpen(false)}
+            interactions={allInteractions}
+            onSelectInteraction={(interaction) => setSelectedInteraction(interaction)}
+            onNewInquiry={() => setSelectedInteraction(null)}
+            onOpenZen={() => setIsZenModeOpen(true)}
+            onOpenConstellation={() => setIsConstellationOpen(true)}
+            onOpenRitual={() => setIsRitualOpen(true)}
+            onOpenCapsule={() => setIsCapsuleOpen(true)}
+            onOpenAnthology={() => setIsAnthologyOpen(true)}
+            onOpenSoundscapes={() => setIsSoundscapesOpen(true)}
+            onOpenCalendar={() => setIsCalendarOpen(true)}
+            onOpenAnalytics={() => setIsAnalyticsOpen(true)}
+            onLockVault={() => setIsVaultLocked(true)}
+            onOpenBackup={() => setIsBackupOpen(true)}
+            onToggleThoughtGrammar={() => setThoughtGrammarEnabled((prev) => !prev)}
+            onToggleAtmosphere={() => setIsAmbientMotion((prev) => !prev)}
+          />
+        )}
+      </React.Suspense>
     </div>
   );
 }

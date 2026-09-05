@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Plus, LogOut, CheckCircle, ShieldCheck, PanelLeftClose, PanelLeft, Feather, BarChart2, Lock, Calendar, Archive, Headphones, Sparkles, BookOpen, Sun, Compass, PenTool } from 'lucide-react';
+import { Plus, LogOut, CheckCircle, ShieldCheck, PanelLeftClose, PanelLeft, Feather, BarChart2, Lock, Calendar, Archive, Headphones, Sparkles, BookOpen, Sun, Compass, PenTool, Search } from 'lucide-react';
 
 interface NavbarProps {
   onNewReflection: () => void;
@@ -20,6 +20,7 @@ interface NavbarProps {
   onOpenAnthology?: () => void;
   thoughtGrammarEnabled?: boolean;
   onToggleThoughtGrammar?: () => void;
+  onOpenCommandPalette?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -40,6 +41,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenAnthology,
   thoughtGrammarEnabled = true,
   onToggleThoughtGrammar,
+  onOpenCommandPalette,
 }) => {
   const { user, signOutUser } = useAuth();
 
@@ -116,6 +118,18 @@ export const Navbar: React.FC<NavbarProps> = ({
             <Plus className="w-3.5 h-3.5" />
             <span>New Inquiry</span>
           </button>
+
+          {/* Quick Search & Command Palette Button */}
+          {onOpenCommandPalette && (
+            <button
+              onClick={onOpenCommandPalette}
+              className="inline-flex items-center gap-1.5 text-[10px] font-sans uppercase tracking-[0.15em] border border-[#E2DDD5] hover:border-[#C4432B] px-2.5 py-1.5 sm:px-3 sm:py-2 bg-[#FFFDF9] hover:bg-[#EFECE6] transition-colors text-[#595652] hover:text-[#2B2A28] rounded-sm"
+              title="Search & Command Palette (⌘K)"
+            >
+              <Search className="w-3.5 h-3.5 text-[#8A8478]" />
+              <span className="hidden md:inline font-mono text-[9px] text-[#8A8478]">⌘K</span>
+            </button>
+          )}
 
           {/* Unified Studio Tools Dropdown Menu */}
           <div className="relative" ref={toolsMenuRef}>

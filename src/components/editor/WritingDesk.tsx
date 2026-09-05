@@ -87,7 +87,41 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
   const [isListening, setIsListening] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
   const [dismissedDistortionId, setDismissedDistortionId] = useState<string | null>(null);
+  const [draftRestored, setDraftRestored] = useState<boolean>(false);
   const recognitionRef = useRef<ISpeechRecognition | null>(null);
+
+  // Restore saved draft on mount
+  useEffect(() => {
+    try {
+      const savedDraft = localStorage.getItem('journal_desk_draft');
+      if (savedDraft && !promptInput.trim()) {
+        setPromptInput(savedDraft);
+        setDraftRestored(true);
+        setTimeout(() => setDraftRestored(false), 3000);
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  // Debounced auto-save to localStorage
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      try {
+        if (promptInput.trim()) {
+          localStorage.setItem('journal_desk_draft', promptInput);
+        } else {
+          localStorage.removeItem('journal_desk_draft');
+        }
+      } catch {
+        // ignore
+      }
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [promptInput]);
+
+  const wordCount = promptInput.trim() ? promptInput.trim().split(/\s+/).length : 0;
+  const readingTimeMinutes = Math.max(1, Math.ceil(wordCount / 180));
 
   const distortions = useMemo(() => {
     if (!thoughtGrammarEnabled || !promptInput || isGenerating) return [];
@@ -167,10 +201,16 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
       setPromptInput(contextualInput);
       // Submit with updated text
       setTimeout(() => {
+        try {
+          localStorage.removeItem('journal_desk_draft');
+        } catch {}
         onSubmitInquiry(e);
       }, 20);
       return;
     }
+    try {
+      localStorage.removeItem('journal_desk_draft');
+    } catch {}
     onSubmitInquiry(e);
   };
 
@@ -206,6 +246,16 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
           <span className="tracking-widest text-[#8A8478]">
             ({userTurnCount}/15 Inquiries)
           </span>
+          {wordCount > 0 && (
+            <span className="text-[#8A8478] tracking-normal font-mono text-[9px] border-l border-[#E2DDD5]/60 pl-2">
+              {wordCount} {wordCount === 1 ? 'word' : 'words'} · ~{readingTimeMinutes}m read
+            </span>
+          )}
+          {draftRestored && (
+            <span className="text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-xs font-mono text-[8px]">
+              Draft restored
+            </span>
+          )}
           {selectedMoodObj && (
             <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#C4432B]/10 text-[#C4432B] border border-[#C4432B]/20 rounded-xs">
               <span>{selectedMoodObj.icon}</span>

@@ -134,35 +134,54 @@ export const SoundscapePlayer: React.FC<SoundscapePlayerProps> = ({ isOpen, onCl
     noiseSourceRef.current = osc1;
   };
 
-  // Switch sound track
+  // Switch sound track with smooth crossfade
   const handleSelectTrack = (track: SoundTrack) => {
-    stopCurrentSound();
-
-    if (track === 'none') {
-      setActiveTrack('none');
-      return;
-    }
-
     const ctx = getAudioContext();
     if (!gainNodeRef.current) return;
 
-    if (track === 'rain') {
-      startRainSound(ctx, gainNodeRef.current);
-    } else if (track === 'hearth') {
-      startHearthSound(ctx, gainNodeRef.current);
-    } else if (track === 'library') {
-      startLibrarySound(ctx, gainNodeRef.current);
-    }
+    // Smooth fade out
+    const now = ctx.currentTime;
+    gainNodeRef.current.gain.cancelScheduledValues(now);
+    gainNodeRef.current.gain.setValueAtTime(gainNodeRef.current.gain.value, now);
+    gainNodeRef.current.gain.linearRampToValueAtTime(0.001, now + 0.6);
 
-    setActiveTrack(track);
+    setTimeout(() => {
+      stopCurrentSound();
+
+      if (track === 'none') {
+        setActiveTrack('none');
+        return;
+      }
+
+      if (!gainNodeRef.current || !audioCtxRef.current) return;
+
+      if (track === 'rain') {
+        startRainSound(ctx, gainNodeRef.current);
+      } else if (track === 'hearth') {
+        startHearthSound(ctx, gainNodeRef.current);
+      } else if (track === 'library') {
+        startLibrarySound(ctx, gainNodeRef.current);
+      }
+
+      // Smooth fade in
+      const fadeInNow = ctx.currentTime;
+      gainNodeRef.current.gain.cancelScheduledValues(fadeInNow);
+      gainNodeRef.current.gain.setValueAtTime(0.001, fadeInNow);
+      gainNodeRef.current.gain.linearRampToValueAtTime(volume, fadeInNow + 1.2);
+
+      setActiveTrack(track);
+    }, 600);
   };
 
-  // Volume change
+  // Volume change with smooth linear ramp
   useEffect(() => {
-    if (gainNodeRef.current && audioCtxRef.current) {
-      gainNodeRef.current.gain.setValueAtTime(volume, audioCtxRef.current.currentTime);
+    if (gainNodeRef.current && audioCtxRef.current && activeTrack !== 'none') {
+      const now = audioCtxRef.current.currentTime;
+      gainNodeRef.current.gain.cancelScheduledValues(now);
+      gainNodeRef.current.gain.setValueAtTime(gainNodeRef.current.gain.value, now);
+      gainNodeRef.current.gain.linearRampToValueAtTime(volume, now + 0.15);
     }
-  }, [volume]);
+  }, [volume, activeTrack]);
 
   // Cleanup on unmount
   useEffect(() => {
