@@ -143,6 +143,108 @@
   transform: translateY(-1px);
 }
 
+/* ==========================================================================
+   Candlelight Dark Sanctuary (Midnight Editorial Theme)
+   ========================================================================== */
+html.candlelight,
+html.dark {
+  --paper-canvas: #161513;
+  --paper-surface: #1F1E1B;
+  --paper-subtle: #2A2825;
+  --ink-primary: #F2EDE4;
+  --ink-secondary: #C2BCB1;
+  --ink-muted: #8E887E;
+  --rust-accent: #E2634C;
+  --rust-hover: #F0755F;
+  --rust-subtle-bg: rgba(226, 99, 76, 0.16);
+  --paper-rule: #34312B;
+  --paper-rule-dark: #4C4840;
+  --selection-bg: #E2634C;
+  --selection-text: #161513;
+}
+
+html.candlelight body,
+html.dark body {
+  background-color: var(--paper-canvas);
+  color: var(--ink-primary);
+}
+
+html.candlelight .paper-texture,
+html.dark .paper-texture {
+  background-color: var(--paper-canvas);
+  background-image: radial-gradient(rgba(242, 237, 228, 0.04) 1px, transparent 1px);
+}
+
+html.candlelight .box-sanctuary,
+html.dark .box-sanctuary {
+  background-color: var(--paper-surface);
+  border-color: rgba(76, 72, 64, 0.55);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.45), 0 1px 3px 0 rgba(0, 0, 0, 0.25);
+}
+
+html.candlelight .box-sanctuary-hover:hover,
+html.dark .box-sanctuary-hover:hover {
+  border-color: rgba(226, 99, 76, 0.45);
+  box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.65), 0 2px 6px 0 rgba(0, 0, 0, 0.35);
+}
+
+html.candlelight #app-navbar,
+html.dark #app-navbar {
+  background-color: rgba(22, 21, 19, 0.94);
+  border-bottom-color: var(--paper-rule);
+}
+
+/* Palette Adaptors for Candlelight Midnight Sanctuary */
+html.candlelight .bg-\[\#FFFDF9\],
+html.dark .bg-\[\#FFFDF9\] {
+  background-color: var(--paper-surface) !important;
+}
+
+html.candlelight .bg-\[\#F7F4EE\],
+html.dark .bg-\[\#F7F4EE\] {
+  background-color: var(--paper-canvas) !important;
+}
+
+html.candlelight .bg-\[\#EFECE6\],
+html.dark .bg-\[\#EFECE6\] {
+  background-color: var(--paper-subtle) !important;
+}
+
+html.candlelight .text-\[\#2B2A28\],
+html.dark .text-\[\#2B2A28\] {
+  color: var(--ink-primary) !important;
+}
+
+html.candlelight .text-\[\#595652\],
+html.dark .text-\[\#595652\] {
+  color: var(--ink-secondary) !important;
+}
+
+html.candlelight .text-\[\#8A8478\],
+html.dark .text-\[\#8A8478\] {
+  color: var(--ink-muted) !important;
+}
+
+html.candlelight .border-\[\#E2DDD5\],
+html.dark .border-\[\#E2DDD5\] {
+  border-color: var(--paper-rule) !important;
+}
+
+html.candlelight .border-\[\#2B2A28\],
+html.dark .border-\[\#2B2A28\] {
+  border-color: var(--ink-primary) !important;
+}
+
+html.candlelight .bg-\[\#2B2A28\],
+html.dark .bg-\[\#2B2A28\] {
+  background-color: #2D2B27 !important;
+}
+
+html.candlelight .text-\[\#F7F4EE\],
+html.dark .text-\[\#F7F4EE\] {
+  color: #F2EDE4 !important;
+}
+
 /* Printable PDF & Paper Editorial Specimen CSS */
 @media print {
   body {

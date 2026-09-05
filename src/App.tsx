@@ -124,6 +124,31 @@ function MainApp() {
     return null;
   });
 
+  // Candlelight Sanctuary Theme State
+  const [theme, setTheme] = useState<'paper' | 'candlelight'>(() => {
+    if (typeof window !== 'undefined') {
+      return (localStorage.getItem('journal_theme') as 'paper' | 'candlelight') || 'paper';
+    }
+    return 'paper';
+  });
+
+  useEffect(() => {
+    if (theme === 'candlelight') {
+      document.documentElement.classList.add('candlelight', 'dark');
+    } else {
+      document.documentElement.classList.remove('candlelight', 'dark');
+    }
+    try {
+      localStorage.setItem('journal_theme', theme);
+    } catch {
+      // ignore
+    }
+  }, [theme]);
+
+  const handleToggleTheme = () => {
+    setTheme((prev) => (prev === 'paper' ? 'candlelight' : 'paper'));
+  };
+
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
       return window.innerWidth >= 1024;
@@ -237,6 +262,8 @@ function MainApp() {
         onOpenSacredGrounds={() => setIsSacredGroundsOpen(true)}
         onOpenAdmin={() => setIsAdminOpen(true)}
         onOpenNotifications={() => setIsNotificationsOpen(true)}
+        theme={theme}
+        onToggleTheme={handleToggleTheme}
       />
 
       <main className="flex-1 flex overflow-hidden relative">

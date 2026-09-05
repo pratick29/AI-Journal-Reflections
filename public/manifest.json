@@ -1,0 +1,19 @@
+{
+  "short_name": "Sanctuary",
+  "name": "Sanctuary — AI Philosophical Journal & Reflections",
+  "description": "A private, philosophical journaling sanctuary powered by Gemini AI and Cloud Firestore.",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192 512x512 any",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#F7F4EE",
+  "theme_color": "#C4432B",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "scope": "/"
+}

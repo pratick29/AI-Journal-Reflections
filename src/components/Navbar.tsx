@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Plus, LogOut, CheckCircle, ShieldCheck, PanelLeftClose, PanelLeft, Feather, BarChart2, Lock, Calendar, Archive, Headphones, Sparkles, BookOpen, Sun, Compass, PenTool, Search, User, Heart, Award, X, MapPin, Shield, Bell } from 'lucide-react';
+import { Plus, LogOut, CheckCircle, ShieldCheck, PanelLeftClose, PanelLeft, Feather, BarChart2, Lock, Calendar, Archive, Headphones, Sparkles, BookOpen, Sun, Moon, Compass, PenTool, Search, User, Heart, Award, X, MapPin, Shield, Bell } from 'lucide-react';
 import { AuthorProfile, WAX_SEALS } from '../types';
 
 interface NavbarProps {
@@ -27,6 +27,8 @@ interface NavbarProps {
   onOpenSacredGrounds?: () => void;
   onOpenAdmin?: () => void;
   onOpenNotifications?: () => void;
+  theme?: 'paper' | 'candlelight';
+  onToggleTheme?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -53,6 +55,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenSacredGrounds,
   onOpenAdmin,
   onOpenNotifications,
+  theme = 'paper',
+  onToggleTheme,
 }) => {
   const { user, signOutUser } = useAuth();
 
@@ -147,6 +151,28 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <Search className="w-3.5 h-3.5 text-[#8A8478]" />
               <span className="hidden md:inline font-mono text-[9px] text-[#8A8478]">⌘K</span>
+            </button>
+          )}
+
+          {/* Candlelight / Midnight Sanctuary Theme Switcher */}
+          {onToggleTheme && (
+            <button
+              onClick={onToggleTheme}
+              className="inline-flex items-center gap-1.5 text-[10px] font-sans uppercase tracking-[0.15em] border border-[#E2DDD5] hover:border-[#C4432B] px-2.5 py-1.5 sm:px-3 sm:py-2 bg-[#FFFDF9] hover:bg-[#EFECE6] transition-colors text-[#595652] hover:text-[#2B2A28] rounded-sm"
+              title={theme === 'candlelight' ? 'Switch to Daytime Paper Canvas' : 'Enter Candlelight Dark Sanctuary'}
+              aria-label="Toggle Candlelight Dark Mode"
+            >
+              {theme === 'candlelight' ? (
+                <>
+                  <Sun className="w-3.5 h-3.5 text-amber-500" />
+                  <span className="hidden lg:inline text-[9px]">Day</span>
+                </>
+              ) : (
+                <>
+                  <Moon className="w-3.5 h-3.5 text-[#C4432B]" />
+                  <span className="hidden lg:inline text-[9px]">Night</span>
+                </>
+              )}
             </button>
           )}
 
@@ -403,6 +429,27 @@ export const Navbar: React.FC<NavbarProps> = ({
                       </div>
                       <span className="text-[9px] font-sans uppercase tracking-wider font-bold text-[#C4432B]">
                         {isAmbientMotion ? 'ON' : 'OFF'}
+                      </span>
+                    </button>
+                  )}
+
+                  {onToggleTheme && (
+                    <button
+                      onClick={() => {
+                        onToggleTheme();
+                      }}
+                      className="w-full text-left px-2.5 py-1.5 text-xs font-serif text-[#2B2A28] hover:bg-[#F7F4EE] transition-colors flex items-center justify-between rounded-xs"
+                    >
+                      <div className="flex items-center gap-2">
+                        {theme === 'candlelight' ? (
+                          <Sun className="w-3.5 h-3.5 text-amber-500" />
+                        ) : (
+                          <Moon className="w-3.5 h-3.5 text-[#C4432B]" />
+                        )}
+                        <span>Candlelight Mode</span>
+                      </div>
+                      <span className="text-[9px] font-sans uppercase tracking-wider font-bold text-[#C4432B]">
+                        {theme === 'candlelight' ? 'NIGHT' : 'DAY'}
                       </span>
                     </button>
                   )}

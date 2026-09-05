@@ -18,6 +18,7 @@ import {
   Palette,
   Calendar,
   History,
+  FileText,
 } from 'lucide-react';
 import {
   Interaction,
@@ -539,6 +540,50 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
     setTimeout(() => setCopiedExport(false), 2000);
   };
 
+  const handleExportMarkdown = () => {
+    const dateIso = currentInteraction?.createdAt || new Date().toISOString();
+    const cleanDate = dateIso.split('T')[0];
+    const tagsList = [category, 'personal-journal'];
+    if (selectedPersona && selectedPersona !== 'default') tagsList.push(selectedPersona);
+
+    let frontmatter = `---\n`;
+    frontmatter += `title: "${title.replace(/"/g, '\\"')}"\n`;
+    frontmatter += `date: ${cleanDate}\n`;
+    frontmatter += `category: ${category}\n`;
+    frontmatter += `tags: [${tagsList.map(t => `"${t}"`).join(', ')}]\n`;
+    if (authorProfile?.penName) frontmatter += `author: "${authorProfile.penName}"\n`;
+    if (location) {
+      frontmatter += `location: "${location.name}"\n`;
+      if (location.weather) frontmatter += `weather: "${location.weather.tempC}°C, ${location.weather.condition}"\n`;
+    }
+    if (cognitiveAnalysis?.coreAxiom) {
+      frontmatter += `key_takeaway: "${cognitiveAnalysis.coreAxiom.replace(/"/g, '\\"')}"\n`;
+    }
+    frontmatter += `---\n\n`;
+
+    let body = `# ${title}\n\n`;
+    if (cognitiveAnalysis?.coreAxiom) {
+      body += `> 💡 **Main Takeaway**: ${cognitiveAnalysis.coreAxiom}\n\n`;
+    }
+
+    body += messages.map((m) => {
+      const speaker = m.role === 'user' ? (authorProfile?.penName || 'Author') : 'Gemini Mentor';
+      return `### ${speaker} · ${m.timestamp}\n\n${m.content}\n`;
+    }).join('\n---\n\n');
+
+    const fullContent = frontmatter + body;
+    const blob = new Blob([fullContent], { type: 'text/markdown;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    const safeFilename = title.replace(/[^a-z0-9_-]/gi, '_').toLowerCase() || 'journal_entry';
+    link.href = url;
+    link.download = `${cleanDate}_${safeFilename}.md`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   const handlePrintSpecimen = () => {
     window.print();
   };
@@ -660,6 +705,14 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
                 title={copiedExport ? "Entry copied!" : "Copy entry to clipboard"}
               >
                 {copiedExport ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Download className="w-3.5 h-3.5" />}
+              </button>
+              <button
+                onClick={handleExportMarkdown}
+                className="px-2.5 py-1.5 border border-[#E5E0D8] hover:border-[#7C3AED] hover:text-[#7C3AED] bg-[#FFFFFF] text-[#57534E] transition-all flex items-center gap-1 text-[9px] uppercase tracking-wider rounded-full shadow-2xs"
+                title="Download Markdown file for Obsidian, Notion, or Logseq"
+              >
+                <FileText className="w-3.5 h-3.5 text-[#7C3AED]" />
+                <span className="hidden sm:inline font-mono font-medium">.MD</span>
               </button>
               <button
                 onClick={handlePrintSpecimen}
