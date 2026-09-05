@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Plus, LogOut, CheckCircle, ShieldCheck, PanelLeftClose, PanelLeft, Feather, BarChart2, Lock, Calendar, Archive } from 'lucide-react';
+import { Plus, LogOut, CheckCircle, ShieldCheck, PanelLeftClose, PanelLeft, Feather, BarChart2, Lock, Calendar, Archive, Headphones, Sparkles } from 'lucide-react';
 
 interface NavbarProps {
   onNewReflection: () => void;
@@ -8,9 +8,12 @@ interface NavbarProps {
   onOpenAnalytics: () => void;
   onOpenCalendar: () => void;
   onOpenBackup: () => void;
+  onOpenSoundscapes: () => void;
   onLockVault: () => void;
   isSidebarOpen: boolean;
   onToggleSidebar: () => void;
+  isAmbientMotion?: boolean;
+  onToggleAmbientMotion?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -19,9 +22,12 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenAnalytics,
   onOpenCalendar,
   onOpenBackup,
+  onOpenSoundscapes,
   onLockVault,
   isSidebarOpen,
   onToggleSidebar,
+  isAmbientMotion = true,
+  onToggleAmbientMotion,
 }) => {
   const { user, signOutUser } = useAuth();
 
@@ -35,7 +41,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <header
       id="app-navbar"
-      className="bg-[#F7F4EE] border-b border-[#E2DDD5] px-4 py-3 sm:px-6 sticky top-0 z-30 transition-colors"
+      className="bg-[#F7F4EE]/90 backdrop-blur-md border-b border-[#E2DDD5] px-4 py-3 sm:px-6 sticky top-0 z-30 transition-colors"
     >
       <div className="flex items-center justify-between gap-4">
         {/* Left: Sidebar Toggle + Wordmark */}
@@ -64,16 +70,32 @@ export const Navbar: React.FC<NavbarProps> = ({
               <h1 className="text-lg sm:text-xl font-serif font-normal tracking-tight leading-none text-[#2B2A28]">
                 Personal Gemini Journal
               </h1>
-              <span className="hidden lg:inline-flex items-center gap-1 px-2 py-0.5 border border-[#E2DDD5] text-[9px] font-sans uppercase tracking-[0.18em] bg-[#EFECE6] text-[#595652]">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#C4432B]"></span>
-                <span>Firestore Isolated</span>
-              </span>
+              {onToggleAmbientMotion && (
+                <button
+                  onClick={onToggleAmbientMotion}
+                  title="Toggle Living Atmosphere Canvas"
+                  className="hidden xl:inline-flex items-center gap-1 px-2 py-0.5 border border-[#E2DDD5] text-[9px] font-sans uppercase tracking-[0.18em] bg-[#EFECE6] text-[#595652] hover:border-[#C4432B] transition-colors"
+                >
+                  <span className={`w-1.5 h-1.5 rounded-full ${isAmbientMotion ? 'bg-[#C4432B] animate-pulse' : 'bg-[#8A8478]'}`}></span>
+                  <span>Atmosphere: {isAmbientMotion ? 'On' : 'Off'}</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
 
         {/* Right Actions & Session Info */}
         <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* Soundscapes Button */}
+          <button
+            onClick={onOpenSoundscapes}
+            className="inline-flex items-center gap-1 text-[10px] font-sans uppercase tracking-[0.15em] border border-[#E2DDD5] hover:border-[#C4432B] px-2.5 py-1.5 sm:px-3 sm:py-2 bg-[#FFFDF9] hover:bg-[#EFECE6] transition-colors text-[#595652] hover:text-[#2B2A28] rounded-sm"
+            title="Literary Ambient Soundscapes"
+          >
+            <Headphones className="w-3.5 h-3.5 text-[#C4432B]" />
+            <span className="hidden md:inline">Acoustics</span>
+          </button>
+
           <button
             onClick={onOpenCalendar}
             className="inline-flex items-center gap-1 text-[10px] font-sans uppercase tracking-[0.15em] border border-[#E2DDD5] hover:border-[#C4432B] px-2.5 py-1.5 sm:px-3 sm:py-2 bg-[#FFFDF9] hover:bg-[#EFECE6] transition-colors text-[#595652] hover:text-[#2B2A28] rounded-sm"

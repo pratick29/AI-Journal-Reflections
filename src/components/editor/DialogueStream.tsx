@@ -46,7 +46,24 @@ export const DialogueStream: React.FC<DialogueStreamProps> = ({
   if (messages.length === 0) return null;
 
   return (
-    <div className="space-y-8 py-4 relative" onMouseUp={handleTextSelection}>
+    <div className="space-y-8 py-2 relative" onMouseUp={handleTextSelection}>
+      {/* Dialogue Depth Indicator Bar */}
+      <div className="sticky top-0 z-20 bg-[#F7F4EE]/95 backdrop-blur-xs py-1.5 px-2 border-b border-[#E2DDD5] flex items-center justify-between text-[9px] font-sans uppercase tracking-[0.2em] text-[#8A8478] rounded-xs">
+        <span className="flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#C4432B]" />
+          <span>Manuscript Flow ({messages.length}/15 turns)</span>
+        </span>
+        <div className="flex items-center gap-2">
+          <span>Depth</span>
+          <div className="w-20 h-1 bg-[#E2DDD5] rounded-full overflow-hidden">
+            <div
+              className="h-full bg-[#C4432B] transition-all duration-300"
+              style={{ width: `${Math.min(100, (messages.length / 15) * 100)}%` }}
+            />
+          </div>
+        </div>
+      </div>
+
       {/* Floating Inline Text Selection Popover Toolbar */}
       {selectionPos && selectedText && onSelectPassageAction && (
         <div
@@ -155,7 +172,7 @@ export const DialogueStream: React.FC<DialogueStreamProps> = ({
               </div>
             ) : (
               <div className="bg-[#FFFDF9] border border-[#E2DDD5] p-5 sm:p-7 space-y-4 shadow-2xs rounded-xs">
-                <div className="prose prose-stone max-w-none text-base font-serif text-[#2B2A28] leading-relaxed">
+                <div className="prose prose-stone max-w-none text-base font-serif text-[#2B2A28] leading-relaxed editorial-drop-cap">
                   <ReactMarkdown>{msg.content}</ReactMarkdown>
                 </div>
               </div>

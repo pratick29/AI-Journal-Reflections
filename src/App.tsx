@@ -11,6 +11,8 @@ import { JournalCalendarModal } from './components/JournalCalendarModal';
 import { VaultBackupModal } from './components/VaultBackupModal';
 import { QuoteCardModal } from './components/QuoteCardModal';
 import { ZenMode } from './components/editor/ZenMode';
+import { AmbientCanvas } from './components/common/AmbientCanvas';
+import { SoundscapePlayer } from './components/common/SoundscapePlayer';
 import { Interaction } from './types';
 import { subscribeUserInteractions } from './firebase/interactions';
 import { Loader2 } from 'lucide-react';
@@ -23,6 +25,8 @@ function MainApp() {
   const [isAnalyticsOpen, setIsAnalyticsOpen] = useState<boolean>(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
   const [isBackupOpen, setIsBackupOpen] = useState<boolean>(false);
+  const [isSoundscapesOpen, setIsSoundscapesOpen] = useState<boolean>(false);
+  const [isAmbientMotion, setIsAmbientMotion] = useState<boolean>(true);
   const [isZenModeOpen, setIsZenModeOpen] = useState<boolean>(false);
   const [pinnedQuote, setPinnedQuote] = useState<string | null>(null);
   const [zenPromptInput, setZenPromptInput] = useState<string>('');
@@ -112,16 +116,22 @@ function MainApp() {
   }
 
   return (
-    <div id="dashboard-container" className="h-screen w-full flex flex-col bg-[#FBF9F5] text-[#1A1918] font-serif overflow-hidden paper-texture">
+    <div id="dashboard-container" className="h-screen w-full flex flex-col bg-[#FBF9F5] text-[#1A1918] font-serif overflow-hidden paper-texture relative">
+      {/* Living Atmospheric Background Motion Canvas */}
+      <AmbientCanvas enabled={isAmbientMotion} />
+
       <Navbar
         onNewReflection={() => setSelectedInteraction(null)}
         onOpenWalkthrough={() => setIsWalkthroughOpen(true)}
         onOpenAnalytics={() => setIsAnalyticsOpen(true)}
         onOpenCalendar={() => setIsCalendarOpen(true)}
         onOpenBackup={() => setIsBackupOpen(true)}
+        onOpenSoundscapes={() => setIsSoundscapesOpen(true)}
         onLockVault={() => setIsVaultLocked(true)}
         isSidebarOpen={isSidebarOpen}
         onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
+        isAmbientMotion={isAmbientMotion}
+        onToggleAmbientMotion={() => setIsAmbientMotion((prev) => !prev)}
       />
 
       <main className="flex-1 flex overflow-hidden relative">
@@ -239,6 +249,12 @@ function MainApp() {
           if (submitBtn) submitBtn.click();
         }}
         isGenerating={false}
+      />
+
+      {/* Literary Ambient Soundscapes Studio */}
+      <SoundscapePlayer
+        isOpen={isSoundscapesOpen}
+        onClose={() => setIsSoundscapesOpen(false)}
       />
 
       {/* Journal Vault Lock Modal */}

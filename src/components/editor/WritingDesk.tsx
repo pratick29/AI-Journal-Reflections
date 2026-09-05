@@ -1,6 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Loader2, Mic, MicOff, Maximize2, BookTemplate } from 'lucide-react';
+import { Loader2, Mic, MicOff, Maximize2, BookTemplate, Compass, X } from 'lucide-react';
 import { ReflectionMode } from '../../types';
+import { InteractiveButton } from '../common/InteractiveButton';
+
+const MOODS = [
+  { id: 'equanimity', label: 'Equanimity', icon: '🌿' },
+  { id: 'creative', label: 'Creative Fire', icon: '⚡' },
+  { id: 'friction', label: 'Inner Friction', icon: '🌪️' },
+  { id: 'curiosity', label: 'Deep Curiosity', icon: '🔍' },
+  { id: 'melancholy', label: 'Melancholy', icon: '🌙' },
+];
 
 interface ISpeechRecognition extends EventTarget {
   continuous: boolean;
@@ -132,6 +141,23 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
     }
   };
 
+  const [selectedMood, setSelectedMood] = useState<string | null>(null);
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (selectedMood && promptInput.trim() && !promptInput.includes('[Headspace:')) {
+      const moodObj = MOODS.find((m) => m.id === selectedMood);
+      const contextualInput = `[Headspace: ${moodObj ? `${moodObj.icon} ${moodObj.label}` : selectedMood}]\n${promptInput}`;
+      setPromptInput(contextualInput);
+      // Submit with updated text
+      setTimeout(() => {
+        onSubmitInquiry(e);
+      }, 20);
+      return;
+    }
+    onSubmitInquiry(e);
+  };
+
   return (
     <div id="writing-desk" className="bg-[#FFFDF9] border border-[#E2DDD5] border-t-2 border-t-[#C4432B] p-4.5 sm:p-6 shadow-xs space-y-3.5 rounded-xs relative">
       {/* Writing Desk Label & Mode Selector Bar */}
@@ -242,8 +268,34 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
         </div>
       </div>
 
+      {/* Emotional Spectrum Mood Dial Selector */}
+      <div className="flex items-center justify-between overflow-x-auto pb-1 gap-2 text-[10px] font-sans">
+        <div className="flex items-center gap-1.5 shrink-0 text-[#8A8478] uppercase tracking-wider">
+          <Compass className="w-3 h-3 text-[#C4432B]" />
+          <span>Headspace:</span>
+        </div>
+        <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
+          {MOODS.map((m) => (
+            <button
+              key={m.id}
+              type="button"
+              onClick={() => setSelectedMood(selectedMood === m.id ? null : m.id)}
+              className={`px-2 py-0.5 border rounded-xs transition-all flex items-center gap-1 whitespace-nowrap text-[10px] ${
+                selectedMood === m.id
+                  ? 'bg-[#C4432B] text-[#F7F4EE] border-[#C4432B] font-semibold shadow-xs'
+                  : 'bg-[#F7F4EE] text-[#595652] border-[#E2DDD5] hover:border-[#C4432B]'
+              }`}
+            >
+              <span>{m.icon}</span>
+              <span>{m.label}</span>
+              {selectedMood === m.id && <X className="w-2.5 h-2.5 ml-0.5" />}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Main Manuscript Input Form */}
-      <form onSubmit={onSubmitInquiry} className="space-y-3">
+      <form onSubmit={handleFormSubmit} className="space-y-3">
         <textarea
           id="manuscript-input"
           ref={textareaRef}
@@ -253,6 +305,8 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
           placeholder={
             isDepthLimitReached
               ? 'Dialogue depth limit of 15 inquiries reached. Please distill your reflection using Cognitive Lens or start a new inquiry.'
+              : selectedMood
+              ? `Reflecting through ${MOODS.find((m) => m.id === selectedMood)?.label}...`
               : 'Begin with what has been occupying your mind...'
           }
           rows={3}
@@ -260,7 +314,7 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
           onKeyDown={(e) => {
             if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
               e.preventDefault();
-              onSubmitInquiry(e);
+              handleFormSubmit(e);
             }
           }}
         />
@@ -287,11 +341,11 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
             </button>
           </div>
 
-          <button
+          <InteractiveButton
             id="submit-inquiry-btn"
             type="submit"
             disabled={isGenerating || !promptInput.trim() || isDepthLimitReached}
-            className="inline-flex items-center gap-2 bg-[#2B2A28] text-[#F7F4EE] hover:bg-[#C4432B] disabled:opacity-40 text-[10px] uppercase tracking-[0.2em] px-6 py-2.5 transition-all duration-200 font-semibold active:scale-[0.99] ml-auto rounded-sm"
+            className="px-6 py-2.5 font-semibold active:scale-[0.99] ml-auto rounded-sm"
           >
             {isGenerating ? (
               <>
@@ -303,7 +357,7 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
                 <span>Reflect →</span>
               </>
             )}
-          </button>
+          </InteractiveButton>
         </div>
       </form>
     </div>
