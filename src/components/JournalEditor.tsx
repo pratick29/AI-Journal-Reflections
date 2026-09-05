@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
   Loader2,
   AlertCircle,
@@ -16,6 +16,8 @@ import {
   Plus,
   Bell,
   Palette,
+  Calendar,
+  History,
 } from 'lucide-react';
 import {
   Interaction,
@@ -45,6 +47,8 @@ interface JournalEditorProps {
   thoughtGrammarEnabled?: boolean;
   authorProfile?: AuthorProfile;
   onOpenNotifications?: () => void;
+  allInteractions?: Interaction[];
+  onSelectInteraction?: (interaction: Interaction) => void;
 }
 
 export const JournalEditor: React.FC<JournalEditorProps> = ({
@@ -56,6 +60,8 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
   thoughtGrammarEnabled = true,
   authorProfile,
   onOpenNotifications,
+  allInteractions = [],
+  onSelectInteraction,
 }) => {
   const { user } = useAuth();
 
@@ -136,6 +142,65 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages, isGenerating, activeTab]);
+
+  // "On This Day" Time Travel Memory calculation
+  const pastMemory = useMemo(() => {
+    if (!allInteractions || allInteractions.length === 0) return null;
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentDate = now.getDate();
+
+    // 1. Look for an entry created on the exact calendar day in a previous month or year
+    const exactDayMatch = allInteractions.find((item) => {
+      if (!item.createdAt || item.id === currentInteraction?.id) return false;
+      const d = new Date(item.createdAt);
+      const daysDiff = (now.getTime() - d.getTime()) / (1000 * 60 * 60 * 24);
+      return d.getDate() === currentDate && daysDiff >= 3;
+    });
+
+    if (exactDayMatch) return exactDayMatch;
+
+    // 2. Fallback to an insightful past entry written at least 3 days ago
+    const olderEntries = allInteractions.filter((item) => {
+      if (!item.createdAt || item.id === currentInteraction?.id) return false;
+      const diffDays = (now.getTime() - new Date(item.createdAt).getTime()) / (1000 * 60 * 60 * 24);
+      return diffDays >= 3 && item.messages && item.messages.length > 0;
+    });
+
+    if (olderEntries.length > 0) {
+      // Return a random older entry to keep it fresh
+      return olderEntries[Math.floor(Math.random() * olderEntries.length)];
+    }
+
+    return null;
+  }, [allInteractions, currentInteraction]);
+
+  const timeAgoText = useMemo(() => {
+    if (!pastMemory?.createdAt) return '';
+    const d = new Date(pastMemory.createdAt);
+    const diffMs = Date.now() - d.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    if (diffDays >= 365) {
+      const years = Math.floor(diffDays / 365);
+      return `${years} year${years > 1 ? 's' : ''} ago`;
+    }
+    if (diffDays >= 30) {
+      const months = Math.floor(diffDays / 30);
+      return `${months} month${months > 1 ? 's' : ''} ago`;
+    }
+    if (diffDays >= 7) {
+      const weeks = Math.floor(diffDays / 7);
+      return `${weeks} week${weeks > 1 ? 's' : ''} ago`;
+    }
+    return `${diffDays} days ago`;
+  }, [pastMemory]);
+
+  const pastSnippet = useMemo(() => {
+    if (!pastMemory) return '';
+    if (pastMemory.summary) return pastMemory.summary;
+    const firstUserMsg = pastMemory.messages?.find((m) => m.role === 'user');
+    return firstUserMsg?.content || '';
+  }, [pastMemory]);
 
   // Commit interaction to Firestore with guaranteed transaction verification
   const commitToFirestore = async (updatedInteraction: Interaction): Promise<boolean> => {
@@ -656,14 +721,73 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
             {/* Scrollable Upper Area for Prompts / Dialogue Messages */}
             <div className="flex-1 overflow-y-auto min-h-0 pr-1 space-y-4">
               {messages.length === 0 ? (
-                <EmptyStatePrompts
-                  onSelectPrompt={(question) => {
-                    setPromptInput(question);
-                    setTimeout(() => {
-                      textareaRef.current?.focus();
-                    }, 50);
-                  }}
-                />
+                <div className="space-y-6">
+                  {pastMemory && (
+                    <div className="p-4 rounded-xl border border-[#D97706]/30 bg-gradient-to-br from-[#FFFBEB] to-[#FDF8EE] shadow-sm relative overflow-hidden transition-all hover:border-[#D97706]/50">
+                      <div className="flex items-center justify-between gap-3 mb-2">
+                        <div className="flex items-center gap-2 text-xs font-sans font-semibold tracking-wider uppercase text-[#B45309]">
+                          <History className="w-3.5 h-3.5 text-[#D97706]" />
+                          <span>On This Day · {timeAgoText}</span>
+                        </div>
+                        <span className="text-[11px] font-sans text-[#8C857B]">
+                          {new Date(pastMemory.createdAt).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                          })}
+                        </span>
+                      </div>
+
+                      <h4 className="font-serif text-sm font-medium text-[#2C2825] mb-1.5 line-clamp-1">
+                        "{pastMemory.title}"
+                      </h4>
+
+                      {pastSnippet && (
+                        <p className="font-serif italic text-xs text-[#59534B] line-clamp-2 mb-3 leading-relaxed">
+                          "{pastSnippet}"
+                        </p>
+                      )}
+
+                      <div className="flex items-center gap-2 pt-1 border-t border-[#D97706]/20">
+                        {onSelectInteraction && (
+                          <button
+                            type="button"
+                            onClick={() => onSelectInteraction(pastMemory)}
+                            className="text-[11px] font-sans font-medium text-[#B45309] hover:text-[#92400E] underline flex items-center gap-1 transition-colors"
+                          >
+                            <BookOpen className="w-3 h-3" />
+                            <span>Read Full Entry</span>
+                          </button>
+                        )}
+                        <span className="text-stone-300">·</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setPromptInput(
+                              `Reflecting on my words from ${timeAgoText} ("${pastSnippet.slice(0, 120)}..."): How has my perspective matured since then, and what does this show about my trajectory?`
+                            );
+                            setTimeout(() => {
+                              textareaRef.current?.focus();
+                            }, 50);
+                          }}
+                          className="text-[11px] font-sans font-medium text-[#2C2825] hover:text-[#B45309] flex items-center gap-1 transition-colors ml-auto"
+                        >
+                          <span>Reflect on Growth</span>
+                          <ArrowRight className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  <EmptyStatePrompts
+                    onSelectPrompt={(question) => {
+                      setPromptInput(question);
+                      setTimeout(() => {
+                        textareaRef.current?.focus();
+                      }, 50);
+                    }}
+                  />
+                </div>
               ) : (
                 <DialogueStream
                   messages={messages}

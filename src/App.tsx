@@ -293,6 +293,8 @@ function MainApp() {
             thoughtGrammarEnabled={thoughtGrammarEnabled}
             authorProfile={authorProfile}
             onOpenNotifications={() => setIsNotificationsOpen(true)}
+            allInteractions={allInteractions}
+            onSelectInteraction={(item) => setSelectedInteraction(item)}
           />
         </div>
       </main>
@@ -376,6 +378,8 @@ function MainApp() {
             onClose={() => setPinnedQuote(null)}
             quoteText={pinnedQuote}
             sourceTitle={selectedInteraction?.title}
+            locationName={selectedInteraction?.location?.name}
+            authorProfile={authorProfile}
           />
         )}
 

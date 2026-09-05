@@ -140,14 +140,15 @@ export const DialogueStream: React.FC<DialogueStreamProps> = ({
                 )}
               </div>
               <div className="flex items-center gap-2">
-                {!isUser && (
-                  <AudioNarrator textToRead={msg.content} />
-                )}
+                <AudioNarrator
+                  textToRead={msg.content}
+                  label={isUser ? 'Read' : 'Listen'}
+                />
                 {onPinQuote && (
                   <button
                     onClick={() => onPinQuote(msg.content.slice(0, 300))}
                     className="hover:text-[#C4432B] transition-colors p-1"
-                    title="Pin to Quote Card Studio"
+                    title="Generate Shareable Quote Card"
                   >
                     <Quote className="w-3 h-3" />
                   </button>

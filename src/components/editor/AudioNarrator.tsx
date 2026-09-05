@@ -3,9 +3,10 @@ import { Volume2, VolumeX, Pause, Play } from 'lucide-react';
 
 interface AudioNarratorProps {
   textToRead: string;
+  label?: string;
 }
 
-export const AudioNarrator: React.FC<AudioNarratorProps> = ({ textToRead }) => {
+export const AudioNarrator: React.FC<AudioNarratorProps> = ({ textToRead, label = 'Listen' }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [isSupported, setIsSupported] = useState(true);
@@ -58,13 +59,23 @@ export const AudioNarrator: React.FC<AudioNarratorProps> = ({ textToRead }) => {
     if (!spokenText) return;
 
     const utterance = new SpeechSynthesisUtterance(spokenText);
-    utterance.rate = 0.92; // Slightly measured, contemplative pacing
-    utterance.pitch = 0.96; // Warm, grounded pitch
+    utterance.rate = 0.94; // Calm, meditative pacing
+    utterance.pitch = 0.98; // Natural, warm resonance
 
-    // Choose the best voice available
+    // Select the highest-fidelity natural English voice available
     const voices = window.speechSynthesis.getVoices();
     const preferredVoice =
-      voices.find((v) => v.lang.startsWith('en') && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Daniel') || v.name.includes('Serena'))) ||
+      voices.find(
+        (v) =>
+          v.lang.startsWith('en') &&
+          (v.name.includes('Natural') ||
+            v.name.includes('Google') ||
+            v.name.includes('Daniel') ||
+            v.name.includes('Samantha') ||
+            v.name.includes('Arthur') ||
+            v.name.includes('Oliver') ||
+            v.name.includes('Serena'))
+      ) ||
       voices.find((v) => v.lang.startsWith('en')) ||
       voices[0];
 
@@ -102,12 +113,18 @@ export const AudioNarrator: React.FC<AudioNarratorProps> = ({ textToRead }) => {
   };
 
   return (
-    <div className="inline-flex items-center gap-1.5 bg-[#F4F0E8]/90 border border-[#E2DDD5] px-2 py-0.5 rounded-xs text-[10px] font-sans">
+    <div className="inline-flex items-center gap-1.5 bg-[#F4F0E8]/90 hover:bg-[#EFECE6] border border-[#E2DDD5] px-2 py-0.5 rounded-xs text-[10px] font-sans transition-colors">
       <button
         type="button"
         onClick={handleTogglePlay}
         className="flex items-center gap-1 text-[#595652] hover:text-[#C4432B] transition-colors"
-        title={isPlaying ? (isPaused ? 'Resume spoken narration' : 'Pause spoken narration') : 'Listen to spoken reflection'}
+        title={
+          isPlaying
+            ? isPaused
+              ? 'Resume audio narration'
+              : 'Pause audio narration'
+            : 'Listen to spoken narration'
+        }
       >
         {isPlaying ? (
           isPaused ? (
@@ -119,16 +136,28 @@ export const AudioNarrator: React.FC<AudioNarratorProps> = ({ textToRead }) => {
           <Volume2 className="w-3 h-3 text-[#8A8478]" />
         )}
         <span className="uppercase tracking-wider">
-          {isPlaying ? (isPaused ? 'Resume' : 'Narrating') : 'Listen'}
+          {isPlaying ? (isPaused ? 'Resume' : 'Playing') : label}
         </span>
       </button>
 
       {isPlaying && (
         <div className="flex items-center gap-1 pl-1 border-l border-[#E2DDD5]">
           <span className="flex items-end gap-0.5 h-2.5">
-            <span className={`w-0.5 bg-[#C4432B] rounded-full animate-pulse ${isPaused ? 'h-1' : 'h-2.5'}`} />
-            <span className={`w-0.5 bg-[#C4432B] rounded-full animate-pulse delay-75 ${isPaused ? 'h-1' : 'h-1.5'}`} />
-            <span className={`w-0.5 bg-[#C4432B] rounded-full animate-pulse delay-150 ${isPaused ? 'h-1' : 'h-2'}`} />
+            <span
+              className={`w-0.5 bg-[#C4432B] rounded-full animate-pulse ${
+                isPaused ? 'h-1' : 'h-2.5'
+              }`}
+            />
+            <span
+              className={`w-0.5 bg-[#C4432B] rounded-full animate-pulse delay-75 ${
+                isPaused ? 'h-1' : 'h-1.5'
+              }`}
+            />
+            <span
+              className={`w-0.5 bg-[#C4432B] rounded-full animate-pulse delay-150 ${
+                isPaused ? 'h-1' : 'h-2'
+              }`}
+            />
           </span>
           <button
             type="button"
