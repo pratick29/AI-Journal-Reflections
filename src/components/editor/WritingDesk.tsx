@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { Loader2, Mic, MicOff, Maximize2, BookTemplate, Compass, X, Sparkles, MapPin, Image as ImageIcon, Trash2, Lock, Unlock, Radio, GripHorizontal, ScanLine } from 'lucide-react';
+import { Loader2, Mic, MicOff, Maximize2, BookTemplate, Compass, X, Sparkles, MapPin, Image as ImageIcon, Trash2, Lock, Unlock, Radio, GripHorizontal, ScanLine, ChevronDown, ChevronUp } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { ReflectionMode, PhilosophicalPersona, JournalLocation, AudioMemo } from '../../types';
 import { InteractiveButton } from '../common/InteractiveButton';
@@ -40,7 +40,7 @@ interface WritingDeskProps {
   setActiveMode: (mode: ReflectionMode) => void;
   isGenerating: boolean;
   onSubmitInquiry: (e: React.FormEvent) => void;
-  userTurnCount: number;
+  userTurnCount?: number;
   textareaRef?: React.RefObject<HTMLTextAreaElement | null>;
   onOpenZenMode?: () => void;
   selectedPersona?: PhilosophicalPersona;
@@ -108,9 +108,29 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
   const [dismissedDistortionId, setDismissedDistortionId] = useState<string | null>(null);
   const [draftRestored, setDraftRestored] = useState<boolean>(false);
   const [isScanningHandwriting, setIsScanningHandwriting] = useState(false);
+  const [isMinimized, setIsMinimized] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        return localStorage.getItem('mindscribe_composer_minimized') === 'true';
+      } catch (e) {
+        return false;
+      }
+    }
+    return false;
+  });
   const recognitionRef = useRef<ISpeechRecognition | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const notebookInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('mindscribe_composer_minimized', isMinimized ? 'true' : 'false');
+      } catch (e) {
+        // ignore
+      }
+    }
+  }, [isMinimized]);
 
   // Resizable Journal Entry Box Height with LocalStorage Memory
   const [composerHeight, setComposerHeight] = useState<number>(() => {
@@ -512,47 +532,51 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
   return (
     <div
       id="writing-desk"
-      className="bg-[#FFFFFF] dark:bg-[#1C1A18] border border-[#E2DDD5]/90 dark:border-[#332F2A] p-4 sm:p-5 pt-2 sm:pt-2.5 shadow-[0_4px_24px_-4px_rgba(43,42,40,0.06),0_1px_3px_0_rgba(43,42,40,0.03)] dark:shadow-[0_4px_24px_-4px_rgba(0,0,0,0.5)] space-y-3 rounded-2xl relative transition-all duration-200 focus-within:border-[#C4432B]/50 focus-within:shadow-[0_8px_32px_-4px_rgba(196,67,43,0.08),0_1px_3px_0_rgba(43,42,40,0.03)]"
+      className={`bg-[#FFFFFF] dark:bg-[#1C1A18] border border-[#E2DDD5]/90 dark:border-[#332F2A] ${
+        isMinimized ? 'p-3 sm:p-3.5 shadow-xs' : 'p-4 sm:p-5 pt-2 sm:pt-2.5 shadow-[0_4px_24px_-4px_rgba(43,42,40,0.06),0_1px_3px_0_rgba(43,42,40,0.03)] dark:shadow-[0_4px_24px_-4px_rgba(0,0,0,0.5)]'
+      } rounded-2xl relative transition-all duration-200 focus-within:border-[#C4432B]/50 focus-within:shadow-[0_8px_32px_-4px_rgba(196,67,43,0.08),0_1px_3px_0_rgba(43,42,40,0.03)]`}
     >
-      {/* Top Drag-to-Resize Handle for Journal Entry Box */}
-      <div
-        role="separator"
-        aria-orientation="horizontal"
-        title="Drag up or down to resize journal entry box (double-click to reset)"
-        onPointerDown={handleComposerResizeStart}
-        onDoubleClick={() => setComposerHeight(100)}
-        className="w-full flex items-center justify-center py-1.5 -mt-1 cursor-row-resize group select-none transition-colors"
-      >
+      {/* Top Drag-to-Resize Handle for Journal Entry Box (Only when expanded) */}
+      {!isMinimized && (
         <div
-          className={`h-1 rounded-full transition-all group-hover:w-16 group-hover:bg-[#C4432B] ${
-            isResizingComposer
-              ? 'w-20 bg-[#C4432B]'
-              : 'w-10 bg-[#E2DDD5] dark:bg-[#38332D]'
-          }`}
-        />
-      </div>
+          role="separator"
+          aria-orientation="horizontal"
+          title="Drag up or down to resize journal entry box (double-click to reset)"
+          onPointerDown={handleComposerResizeStart}
+          onDoubleClick={() => setComposerHeight(100)}
+          className="w-full flex items-center justify-center py-1.5 -mt-1 cursor-row-resize group select-none transition-colors"
+        >
+          <div
+            className={`h-1 rounded-full transition-all group-hover:w-16 group-hover:bg-[#C4432B] ${
+              isResizingComposer
+                ? 'w-20 bg-[#C4432B]'
+                : 'w-10 bg-[#E2DDD5] dark:bg-[#38332D]'
+            }`}
+          />
+        </div>
+      )}
 
-      {/* Top Header: Understated Status */}
-      <div className="flex items-center justify-between border-b border-[#E2DDD5]/50 dark:border-[#332F2A] pb-2.5 text-[10px] font-sans">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="w-2 h-2 rounded-full bg-[#C4432B] shadow-xs" />
-          <span className="uppercase tracking-[0.2em] font-semibold text-[#2B2A28] dark:text-[#F5F2EB]">
+      {/* Top Header: Understated Status & Controls */}
+      <div className={`flex items-center justify-between ${isMinimized ? '' : 'border-b border-[#E2DDD5]/50 dark:border-[#332F2A] pb-2.5'} text-[10px] font-sans gap-2`}>
+        <div className="flex items-center gap-2 flex-wrap min-w-0">
+          <span className="w-2 h-2 rounded-full bg-[#C4432B] shadow-xs shrink-0" />
+          <span className="uppercase tracking-[0.2em] font-semibold text-[#2B2A28] dark:text-[#F5F2EB] shrink-0">
             Journal Entry
           </span>
-          <span className="tracking-widest text-[#8A8478] dark:text-[#8E877C] bg-[#F7F4EE] dark:bg-[#25221E] px-2 py-0.5 rounded-full font-mono text-[9px] border border-[#E2DDD5]/50 dark:border-[#38332D]">
+          <span className="tracking-widest text-[#8A8478] dark:text-[#8E877C] bg-[#F7F4EE] dark:bg-[#25221E] px-2 py-0.5 rounded-full font-mono text-[9px] border border-[#E2DDD5]/50 dark:border-[#38332D] shrink-0">
             {userTurnCount}/15
           </span>
           {wordCount > 0 && (
-            <span className="text-[#8A8478] dark:text-[#8E877C] tracking-normal font-mono text-[9px] border-l border-[#E2DDD5]/60 dark:border-[#38332D] pl-2">
+            <span className="text-[#8A8478] dark:text-[#8E877C] tracking-normal font-mono text-[9px] border-l border-[#E2DDD5]/60 dark:border-[#38332D] pl-2 hidden sm:inline truncate">
               {wordCount} {wordCount === 1 ? 'word' : 'words'} · ~{readingTimeMinutes}m read
             </span>
           )}
-          {draftRestored && (
+          {draftRestored && !isMinimized && (
             <span className="text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full font-mono text-[8px]">
               Draft restored
             </span>
           )}
-          {selectedMoodObj && (
+          {selectedMoodObj && !isMinimized && (
             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-[#C4432B]/10 dark:bg-[#C4432B]/20 text-[#C4432B] dark:text-[#FF8A73] border border-[#C4432B]/20 dark:border-[#C4432B]/40 rounded-full">
               <span>{selectedMoodObj.icon}</span>
               <span className="font-medium">{selectedMoodObj.label}</span>
@@ -566,7 +590,7 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
               </button>
             </span>
           )}
-          {onOpenLocationPicker && (
+          {onOpenLocationPicker && !isMinimized && (
             location ? (
               <button
                 type="button"
@@ -594,23 +618,57 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
               </button>
             )
           )}
+          {isMinimized && promptInput.trim() && (
+            <span className="text-[#8A8478] dark:text-[#8E877C] font-serif italic truncate max-w-[200px] sm:max-w-[340px] text-xs">
+              "{promptInput.trim()}"
+            </span>
+          )}
         </div>
 
-        <div>
+        <div className="flex items-center gap-2 shrink-0">
           {isListening ? (
             <span className="inline-flex items-center gap-1.5 text-xs text-[#C4432B] font-medium animate-pulse">
               <span className="w-2 h-2 rounded-full bg-[#C4432B]" />
               Listening...
             </span>
           ) : (
-            <span className="font-script text-[#C4432B] text-base font-normal hidden xs:inline">
-              take your time...
-            </span>
+            !isMinimized && (
+              <span className="font-script text-[#C4432B] text-base font-normal hidden xs:inline">
+                take your time...
+              </span>
+            )
           )}
+
+          {/* Minimize / Expand Toggle Button */}
+          <button
+            type="button"
+            onClick={() => {
+              const next = !isMinimized;
+              setIsMinimized(next);
+              if (!next) {
+                setTimeout(() => textareaRef.current?.focus(), 50);
+              }
+            }}
+            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full border border-[#E2DDD5] dark:border-[#38332D] bg-[#F7F4EE]/90 dark:bg-[#25221E] hover:bg-[#EFECE6] hover:dark:bg-[#2C2823] hover:border-[#C4432B] text-[#595652] dark:text-[#C2BCB1] hover:text-[#2B2A28] hover:dark:text-[#F5F2EB] transition-all text-[9px] uppercase tracking-wider shadow-2xs font-medium cursor-pointer"
+            title={isMinimized ? 'Expand writing desk to write' : 'Minimize writing desk to view response'}
+          >
+            {isMinimized ? (
+              <>
+                <ChevronUp className="w-3 h-3 text-[#C4432B]" />
+                <span>Expand Desk</span>
+              </>
+            ) : (
+              <>
+                <ChevronDown className="w-3 h-3 text-[#8A8478] dark:text-[#8E877C]" />
+                <span>Minimize</span>
+              </>
+            )}
+          </button>
         </div>
       </div>
 
-      {/* Main Manuscript Input Form */}
+      {/* Main Manuscript Input Form (Collapsible) */}
+      {!isMinimized && (
       <form onSubmit={handleFormSubmit} className="space-y-2.5">
         <textarea
           id="manuscript-input"
@@ -966,6 +1024,7 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
           </div>
         </div>
       </form>
+      )}
     </div>
   );
 };
