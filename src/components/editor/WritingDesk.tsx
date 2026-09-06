@@ -1058,6 +1058,24 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
               <span className="hidden sm:inline">{attachedImage ? 'Photo Added' : 'Photo'}</span>
             </button>
 
+            {/* Locus / Location Picker Button */}
+            {onOpenLocationPicker && (
+              <button
+                type="button"
+                onClick={onOpenLocationPicker}
+                disabled={isGenerating || isDepthLimitReached}
+                title={location ? `Locus: ${location.name}${location.weather ? ` (${location.weather.tempC}°C, ${location.weather.condition})` : ''}` : 'Inscribe locus with Google Maps & Places API'}
+                className={`p-1.5 sm:px-2.5 sm:py-1.5 rounded-full border transition-all flex items-center gap-1.5 uppercase tracking-wider text-[10px] shadow-2xs cursor-pointer ${
+                  location
+                    ? 'bg-[#C4432B]/15 text-[#C4432B] border-[#C4432B] font-medium'
+                    : 'bg-[#F7F4EE]/80 dark:bg-[#25221E] text-[#595652] dark:text-[#DDD8CE] border-[#E2DDD5] dark:border-[#38332D] hover:border-[#C4432B] hover:text-[#2B2A28] hover:dark:text-[#FFFFFF]'
+                }`}
+              >
+                <MapPin className="w-3 h-3 text-[#C4432B]" />
+                <span className="hidden sm:inline truncate max-w-[90px]">{location ? location.name : 'Locus'}</span>
+              </button>
+            )}
+
             {/* Dictation Button */}
             <button
               type="button"

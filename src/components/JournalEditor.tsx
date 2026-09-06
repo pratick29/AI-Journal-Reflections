@@ -25,6 +25,7 @@ import {
   ShieldCheck,
   ChevronDown,
   Share2,
+  MapPin,
 } from 'lucide-react';
 import {
   Interaction,
@@ -923,6 +924,26 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
             </button>
           </div>
 
+          {/* Locus Pin Button (Google Maps & Places API) */}
+          <button
+            type="button"
+            onClick={() => setIsLocationPickerOpen(true)}
+            className={`px-3 py-1.5 border transition-all flex items-center gap-1.5 text-[10px] font-sans uppercase tracking-wider rounded-full shadow-2xs cursor-pointer ${
+              location
+                ? 'bg-[#C4432B]/10 text-[#C4432B] border-[#C4432B]/50 font-medium'
+                : 'bg-[#FFFFFF] dark:bg-[#25221E] text-[#57534E] dark:text-[#C8C2B5] border-[#E5E0D8] dark:border-[#38332D] hover:border-[#C4432B] hover:text-[#2B2A28] dark:hover:text-[#FFFFFF]'
+            }`}
+            title={location ? `Locus: ${location.name}${location.weather ? ` (${location.weather.tempC}°C, ${location.weather.condition})` : ''}` : 'Inscribe Locus via Google Maps & Places API'}
+          >
+            <MapPin className="w-3 h-3 text-[#C4432B]" />
+            <span className="truncate max-w-[110px]">{location ? location.name : 'Locus'}</span>
+            {location?.weather && (
+              <span className="font-sans text-[9px] text-[#8A8478] dark:text-[#8E877C] hidden sm:inline border-l border-[#E2DDD5] dark:border-[#38332D] pl-1 ml-0.5">
+                {location.weather.tempC}°C
+              </span>
+            )}
+          </button>
+
           {/* Compact Editorial Export Dropdown */}
           <div className="relative" ref={exportMenuRef}>
             <button
@@ -1452,6 +1473,13 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
           onSaveLocation={(loc) => {
             setLocation(loc);
             setSaveStatus('unsaved');
+            if (currentInteraction) {
+              commitToFirestore({
+                ...currentInteraction,
+                location: loc || undefined,
+                updatedAt: new Date().toISOString(),
+              });
+            }
           }}
         />
       )}

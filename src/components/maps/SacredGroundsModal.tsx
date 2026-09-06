@@ -89,7 +89,7 @@ export const SacredGroundsModal: React.FC<SacredGroundsModalProps> = ({
                 gestureHandling="greedy"
                 disableDefaultUI={false}
                 styles={PARCHMENT_MAP_STYLES}
-                internalUsageAttributionIds={['gmp_git_agentskills_v1']}
+                internalUsageAttributionIds={['gmp_mcp_codeassist_v1_aistudio']}
                 className="w-full h-full"
               >
                 {geoInteractions.map((item) => (
@@ -220,7 +220,7 @@ export const SacredGroundsModal: React.FC<SacredGroundsModalProps> = ({
                 </code>
                 <span> to your environment. Subject to </span>
                 <a
-                  href="https://cloud.google.com/maps-platform/terms?utm_campaign=gmp_git_agentskills_v1"
+                  href="https://cloud.google.com/maps-platform/terms?utm_campaign=gmp_mcp_codeassist_v1_aistudio"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[#C4432B] underline hover:text-[#9E3420]"
@@ -238,7 +238,7 @@ export const SacredGroundsModal: React.FC<SacredGroundsModalProps> = ({
             <span>Powered by Google Maps Platform</span>
             <span>•</span>
             <a
-              href="https://cloud.google.com/maps-platform/terms?utm_campaign=gmp_git_agentskills_v1"
+              href="https://cloud.google.com/maps-platform/terms?utm_campaign=gmp_mcp_codeassist_v1_aistudio"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-[#2B2A28] underline"

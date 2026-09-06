@@ -167,3 +167,11 @@ Every process and user interaction that a user can trigger has a corresponding v
    - Confirm server-side and client-side BFS reachability cycle detection prevents any cyclic edges ($A \to B \to C \to A$).
    - Click any node to open the **Passage Inspector**, verifying exact quoted citations and source attributions.
    - Click **Explore in Dialogue** to pivot directly into the composer with contextual inquiry pre-filled.
+9. **TC-09: Google Maps Platform & Places API (New) Locus of Reflection**
+   - Click **Locus** in the Journal Editor header or composer toolbar.
+   - Search for a city, landmark, or sanctuary (e.g., "Walden Pond") using modern Places API Autocomplete suggestions.
+   - Verify session-token bundled Place details resolution (`displayName`, `formattedAddress`, `location`, `viewport`).
+   - Confirm interactive Parchment Google Map pans to the sanctuary, drops an `AdvancedMarker` with a custom terracotta Pin, and automatically fetches live atmospheric weather via Open-Meteo.
+   - Test clicking on the map canvas to dynamically reposition the locus and adjust coordinates.
+   - Click **Inscribe Locus**; verify the assigned locus name and temperature are displayed in the header pill and persisted with the manuscript.
+
