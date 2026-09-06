@@ -10,7 +10,7 @@ import { AmbientCanvas } from './components/common/AmbientCanvas';
 import { SoundscapePlayer } from './components/common/SoundscapePlayer';
 import { Interaction, PhilosophicalPersona, AuthorProfile } from './types';
 import { subscribeUserInteractions } from './firebase/interactions';
-import { Loader2 } from 'lucide-react';
+import { Loader2, GripVertical } from 'lucide-react';
 
 // Dynamic Code-Splitting: Lazy-load heavy modals for instantaneous initial load speeds
 const TestWalkthroughModal = React.lazy(() =>
@@ -156,6 +156,70 @@ function MainApp() {
     return true;
   });
 
+  // Resizable Past Entries Sidebar Width with LocalStorage Memory
+  const [sidebarWidth, setSidebarWidth] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('mindscribe_sidebar_width');
+        if (saved) {
+          const parsed = parseInt(saved, 10);
+          if (!isNaN(parsed) && parsed >= 260 && parsed <= 650) return parsed;
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+    return 340;
+  });
+  const [isResizingSidebar, setIsResizingSidebar] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('mindscribe_sidebar_width', sidebarWidth.toString());
+      } catch (e) {
+        // ignore
+      }
+    }
+  }, [sidebarWidth]);
+
+  useEffect(() => {
+    if (isResizingSidebar) {
+      document.body.style.cursor = 'col-resize';
+      document.body.style.userSelect = 'none';
+    } else {
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    }
+    return () => {
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+  }, [isResizingSidebar]);
+
+  const handleSidebarResizeStart = (e: React.PointerEvent) => {
+    e.preventDefault();
+    setIsResizingSidebar(true);
+    const startX = e.clientX;
+    const startWidth = sidebarWidth;
+
+    const onPointerMove = (moveEvent: PointerEvent) => {
+      const delta = moveEvent.clientX - startX;
+      const maxWidth = Math.max(380, Math.min(650, Math.floor(window.innerWidth * 0.55)));
+      const newWidth = Math.max(260, Math.min(maxWidth, startWidth + delta));
+      setSidebarWidth(newWidth);
+    };
+
+    const onPointerUp = () => {
+      setIsResizingSidebar(false);
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onPointerUp);
+    };
+
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onPointerUp);
+  };
+
   // Subscribe to interactions for analytics & calendar calculation
   useEffect(() => {
     if (!user) return;
@@ -267,11 +331,14 @@ function MainApp() {
       />
 
       <main className="flex-1 flex overflow-hidden relative">
-        {/* Desktop Sidebar (Collapsible in flow) */}
+        {/* Desktop Sidebar (Collapsible in flow & Resizable) */}
         <div
-          className={`hidden lg:block h-full transition-all duration-200 shrink-0 ${
-            isSidebarOpen ? 'w-80 xl:w-96' : 'w-0 overflow-hidden'
-          }`}
+          style={{
+            width: isSidebarOpen ? `${sidebarWidth}px` : 0,
+          }}
+          className={`hidden lg:block h-full shrink-0 ${
+            isResizingSidebar ? '' : 'transition-[width] duration-200'
+          } ${isSidebarOpen ? 'overflow-visible' : 'overflow-hidden'}`}
         >
           {isSidebarOpen && (
             <HistoryList
@@ -281,6 +348,37 @@ function MainApp() {
             />
           )}
         </div>
+
+        {/* Desktop Vertical Resizer Divider */}
+        {isSidebarOpen && (
+          <div
+            role="separator"
+            aria-orientation="vertical"
+            title="Drag to resize past entries (double-click to reset)"
+            onPointerDown={handleSidebarResizeStart}
+            onDoubleClick={() => setSidebarWidth(340)}
+            className={`hidden lg:flex items-center justify-center w-2.5 -ml-1.5 cursor-col-resize z-20 group select-none shrink-0 transition-colors ${
+              isResizingSidebar ? 'bg-[#C4432B]/20' : 'hover:bg-[#C4432B]/10'
+            }`}
+          >
+            <div
+              className={`w-[2px] h-full transition-colors ${
+                isResizingSidebar
+                  ? 'bg-[#C4432B]'
+                  : 'bg-[#E5E0D8] dark:bg-[#2C2824] group-hover:bg-[#C4432B]'
+              }`}
+            />
+            <div
+              className={`absolute p-0.5 rounded bg-[#FFFFFF] dark:bg-[#22201C] border border-[#E2DDD5] dark:border-[#38332D] shadow-xs transition-all pointer-events-none ${
+                isResizingSidebar
+                  ? 'opacity-100 ring-1 ring-[#C4432B] scale-110'
+                  : 'opacity-0 group-hover:opacity-100'
+              }`}
+            >
+              <GripVertical className="w-3 h-3 text-[#8A8478] dark:text-[#8E877C] group-hover:text-[#C4432B]" />
+            </div>
+          </div>
+        )}
 
         {/* Mobile / Tablet Drawer (Slide-over with Backdrop) */}
         {isSidebarOpen && (

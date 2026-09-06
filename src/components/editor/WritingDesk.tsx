@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { Loader2, Mic, MicOff, Maximize2, BookTemplate, Compass, X, Sparkles, MapPin, Image as ImageIcon, Trash2, Lock, Unlock, Radio } from 'lucide-react';
+import { Loader2, Mic, MicOff, Maximize2, BookTemplate, Compass, X, Sparkles, MapPin, Image as ImageIcon, Trash2, Lock, Unlock, Radio, GripHorizontal } from 'lucide-react';
 import { ReflectionMode, PhilosophicalPersona, JournalLocation, AudioMemo } from '../../types';
 import { InteractiveButton } from '../common/InteractiveButton';
 import { InterlocutorSelector } from '../personas/InterlocutorSelector';
@@ -107,6 +107,70 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
   const [draftRestored, setDraftRestored] = useState<boolean>(false);
   const recognitionRef = useRef<ISpeechRecognition | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Resizable Journal Entry Box Height with LocalStorage Memory
+  const [composerHeight, setComposerHeight] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('mindscribe_composer_height');
+        if (saved) {
+          const parsed = parseInt(saved, 10);
+          if (!isNaN(parsed) && parsed >= 70 && parsed <= 500) return parsed;
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+    return 100;
+  });
+  const [isResizingComposer, setIsResizingComposer] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('mindscribe_composer_height', composerHeight.toString());
+      } catch (e) {
+        // ignore
+      }
+    }
+  }, [composerHeight]);
+
+  useEffect(() => {
+    if (isResizingComposer) {
+      document.body.style.cursor = 'row-resize';
+      document.body.style.userSelect = 'none';
+    } else {
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    }
+    return () => {
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+  }, [isResizingComposer]);
+
+  const handleComposerResizeStart = (e: React.PointerEvent) => {
+    e.preventDefault();
+    setIsResizingComposer(true);
+    const startY = e.clientY;
+    const startHeight = composerHeight;
+
+    const onPointerMove = (moveEvent: PointerEvent) => {
+      // Dragging upward increases height, downward decreases height
+      const delta = startY - moveEvent.clientY;
+      const newHeight = Math.max(70, Math.min(500, startHeight + delta));
+      setComposerHeight(newHeight);
+    };
+
+    const onPointerUp = () => {
+      setIsResizingComposer(false);
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onPointerUp);
+    };
+
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onPointerUp);
+  };
 
   // Audio Voice Memo recording state
   const [isRecordingMemo, setIsRecordingMemo] = useState(false);
@@ -387,8 +451,26 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
   return (
     <div
       id="writing-desk"
-      className="bg-[#FFFFFF] dark:bg-[#1C1A18] border border-[#E2DDD5]/90 dark:border-[#332F2A] p-4 sm:p-5 shadow-[0_4px_24px_-4px_rgba(43,42,40,0.06),0_1px_3px_0_rgba(43,42,40,0.03)] dark:shadow-[0_4px_24px_-4px_rgba(0,0,0,0.5)] space-y-3 rounded-2xl relative transition-all duration-200 focus-within:border-[#C4432B]/50 focus-within:shadow-[0_8px_32px_-4px_rgba(196,67,43,0.08),0_1px_3px_0_rgba(43,42,40,0.03)]"
+      className="bg-[#FFFFFF] dark:bg-[#1C1A18] border border-[#E2DDD5]/90 dark:border-[#332F2A] p-4 sm:p-5 pt-2 sm:pt-2.5 shadow-[0_4px_24px_-4px_rgba(43,42,40,0.06),0_1px_3px_0_rgba(43,42,40,0.03)] dark:shadow-[0_4px_24px_-4px_rgba(0,0,0,0.5)] space-y-3 rounded-2xl relative transition-all duration-200 focus-within:border-[#C4432B]/50 focus-within:shadow-[0_8px_32px_-4px_rgba(196,67,43,0.08),0_1px_3px_0_rgba(43,42,40,0.03)]"
     >
+      {/* Top Drag-to-Resize Handle for Journal Entry Box */}
+      <div
+        role="separator"
+        aria-orientation="horizontal"
+        title="Drag up or down to resize journal entry box (double-click to reset)"
+        onPointerDown={handleComposerResizeStart}
+        onDoubleClick={() => setComposerHeight(100)}
+        className="w-full flex items-center justify-center py-1.5 -mt-1 cursor-row-resize group select-none transition-colors"
+      >
+        <div
+          className={`h-1 rounded-full transition-all group-hover:w-16 group-hover:bg-[#C4432B] ${
+            isResizingComposer
+              ? 'w-20 bg-[#C4432B]'
+              : 'w-10 bg-[#E2DDD5] dark:bg-[#38332D]'
+          }`}
+        />
+      </div>
+
       {/* Top Header: Understated Status */}
       <div className="flex items-center justify-between border-b border-[#E2DDD5]/50 dark:border-[#332F2A] pb-2.5 text-[10px] font-sans">
         <div className="flex items-center gap-2 flex-wrap">
@@ -482,8 +564,8 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
               ? `Writing while feeling ${selectedMoodObj.label.toLowerCase()}...`
               : "What's on your mind? Write freely here..."
           }
-          rows={3}
-          className="w-full bg-transparent text-base font-serif text-[#2B2A28] dark:text-[#F5F2EB] placeholder-[#8A8478]/60 dark:placeholder-[#7A746B] focus:outline-none resize-none leading-relaxed"
+          style={{ height: `${composerHeight}px` }}
+          className="w-full bg-transparent text-base font-serif text-[#2B2A28] dark:text-[#F5F2EB] placeholder-[#8A8478]/60 dark:placeholder-[#7A746B] focus:outline-none resize-y min-h-[70px] max-h-[500px] leading-relaxed"
           onKeyDown={(e) => {
             if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
               e.preventDefault();

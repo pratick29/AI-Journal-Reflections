@@ -101,7 +101,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
   return (
     <aside
       id="history-sidebar"
-      className="w-full lg:w-80 xl:w-96 flex flex-col h-full bg-[#EFECE6]/70 dark:bg-[#161513] border-r border-[#E2DDD5] dark:border-[#2C2824] font-serif shrink-0 shadow-lg lg:shadow-none transition-colors"
+      className="w-full flex flex-col h-full bg-[#EFECE6]/70 dark:bg-[#161513] border-r border-[#E2DDD5] dark:border-[#2C2824] font-serif shrink-0 shadow-lg lg:shadow-none transition-colors"
     >
       {/* Sidebar Header */}
       <div className="p-4 sm:p-5 border-b border-[#E2DDD5] dark:border-[#2C2824] space-y-3.5 bg-[#EFECE6] dark:bg-[#181614]">
