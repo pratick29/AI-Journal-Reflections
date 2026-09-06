@@ -6,11 +6,11 @@ import { InterlocutorSelector } from '../personas/InterlocutorSelector';
 import { scanForThoughtDistortions, DistortionMatch } from './thoughtGrammarEngine';
 
 const MOODS = [
-  { id: 'equanimity', label: 'Equanimity', icon: '🌿' },
-  { id: 'creative', label: 'Creative Fire', icon: '⚡' },
-  { id: 'friction', label: 'Inner Friction', icon: '🌪️' },
-  { id: 'curiosity', label: 'Deep Curiosity', icon: '🔍' },
-  { id: 'melancholy', label: 'Melancholy', icon: '🌙' },
+  { id: 'equanimity', label: 'Calm & Peaceful', icon: '🌿' },
+  { id: 'creative', label: 'Inspired & Energetic', icon: '⚡' },
+  { id: 'friction', label: 'Stressed or Anxious', icon: '🌪️' },
+  { id: 'curiosity', label: 'Curious & Exploring', icon: '🔍' },
+  { id: 'melancholy', label: 'Low or Sad', icon: '🌙' },
 ];
 
 interface ISpeechRecognition extends EventTarget {
@@ -53,23 +53,23 @@ interface WritingDeskProps {
 const TEMPLATES = [
   {
     name: 'Evening Reflection',
-    content: `1. What went well today and brought clarity?\n\n2. What caused friction or worry?\n\n3. What is one positive takeaway or reframe from today?`,
+    content: `1. What went well today?\n\n2. What was stressful or challenging?\n\n3. What is one positive thing I learned from today?`,
   },
   {
-    name: 'Thesis & Counter-Perspective',
-    content: `• MY INITIAL VIEW: My current perspective or assumption is...\n\n• COUNTER-PERSPECTIVE: An opposing or alternative point of view is...\n\n• SYNTHESIS: A balanced, deeper understanding reconciling both is...`,
+    name: 'Two Sides of an Issue',
+    content: `• MY VIEW: My current thoughts on this are...\n\n• THE OTHER SIDE: What someone else might see or an alternative view is...\n\n• BALANCED VIEW: Bringing both together, the fairest way to look at this is...`,
   },
   {
-    name: 'Thought Reframe',
-    content: `• AUTOMATIC THOUGHT: What am I telling myself right now?\n\n• REALITY CHECK: Is this an assumption or fact? What evidence supports or contradicts it?\n\n• BALANCED STATEMENT: What is a calmer, more objective statement?`,
+    name: 'Question Negative Thoughts',
+    content: `• WHAT I'M TELLING MYSELF: What negative thought popped into my head?\n\n• REALITY CHECK: Is this 100% true? What proof do I have against it?\n\n• CALMER THOUGHT: What is a kinder, more realistic way to view this?`,
   },
   {
-    name: '5 Whys Root Cause',
-    content: `1. What problem or emotion am I experiencing?\n2. Why is this occurring?\n3. Why does that matter to me?\n4. Why is that important?\n5. At the root, what core value or fear does this touch?`,
+    name: 'Find the Root Cause',
+    content: `1. What is bothering me right now?\n2. Why does this make me feel this way?\n3. Why is that important to me?\n4. What am I really worried about at the root?`,
   },
   {
-    name: 'Daily Gratitude & Intention',
-    content: `• GRATITUDE 1: A subtle detail I noticed and appreciated today...\n\n• GRATITUDE 2: Someone or something I am quietly thankful for...\n\n• TOMORROW'S INTENTION: My single guiding focus for tomorrow...`,
+    name: 'Gratitude & Tomorrow',
+    content: `• GRATITUDE 1: One small thing I appreciated today...\n\n• GRATITUDE 2: A person or moment I am thankful for...\n\n• TOMORROW'S FOCUS: The single most important thing I want to do tomorrow...`,
   },
 ];
 
@@ -364,9 +364,9 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
           disabled={isGenerating || isDepthLimitReached}
           placeholder={
             isDepthLimitReached
-              ? 'Limit of 15 entries reached for this thread. Please distill your reflection using Key Insights or start a new entry.'
+              ? 'Limit of 15 messages reached for this entry. Check your Key Insights or start a new entry.'
               : selectedMoodObj
-              ? `Reflecting through ${selectedMoodObj.label}...`
+              ? `Writing while feeling ${selectedMoodObj.label.toLowerCase()}...`
               : "What's on your mind? Write freely here..."
           }
           rows={3}
@@ -384,12 +384,12 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
           <div className="relative inline-flex items-center gap-2 p-2 pr-3 bg-[#F7F4EE] border border-[#E2DDD5] rounded-xl shadow-xs">
             <img
               src={attachedImage.data}
-              alt="Visual contemplation attachment"
+              alt="Attached photo"
               className="w-12 h-12 object-cover rounded-lg border border-[#E2DDD5]"
             />
             <div className="text-[10px] font-sans">
-              <span className="font-bold text-[#C4432B] uppercase tracking-wider block">Photo Contemplation</span>
-              <span className="text-[#8A8478] truncate max-w-[150px] block">{attachedImage.name || 'Visual specimen attached'}</span>
+              <span className="font-bold text-[#C4432B] uppercase tracking-wider block">Attached Photo</span>
+              <span className="text-[#8A8478] truncate max-w-[150px] block">{attachedImage.name || 'Photo attached'}</span>
             </div>
             {setAttachedImage && (
               <button
@@ -420,7 +420,7 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
               type="button"
               onClick={() => setDismissedDistortionId(activeDistortion.id)}
               className="text-[#8A8478] hover:text-[#2B2A28] text-[9px] font-sans uppercase tracking-wider ml-2 shrink-0 p-1 rounded-full hover:bg-[#F4F0E8]"
-              title="Dismiss thought hint"
+              title="Dismiss hint"
             >
               <X className="w-3 h-3" />
             </button>
@@ -442,7 +442,7 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
               <option value="brainstorm">Brainstorm</option>
             </select>
 
-            {/* Philosophical Interlocutor Selector (The Lyceum) */}
+            {/* AI Guide Selector */}
             {onSelectPersona && (
               <InterlocutorSelector
                 selectedPersona={selectedPersona}
@@ -470,7 +470,7 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
               {showMoodMenu && (
                 <div className="absolute left-0 bottom-full mb-2 z-40 w-48 bg-[#FFFFFF] border border-[#E2DDD5] shadow-xl p-1.5 rounded-xl space-y-0.5 animate-in fade-in duration-100">
                   <span className="text-[9px] font-sans uppercase tracking-widest text-[#8A8478] px-2.5 py-1.5 block font-bold border-b border-[#E2DDD5]/50 mb-1">
-                    Select Headspace
+                    How are you feeling?
                   </span>
                   {MOODS.map((m) => (
                     <button
@@ -494,23 +494,23 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
               )}
             </div>
 
-            {/* Templates Selector */}
+            {/* Prompts Selector */}
             <div className="relative" ref={templateMenuRef}>
               <button
                 type="button"
                 onClick={() => setShowTemplates((prev) => !prev)}
                 className="px-2.5 py-1.5 border border-[#E2DDD5] bg-[#F7F4EE]/80 text-[#595652] hover:border-[#C4432B] hover:text-[#2B2A28] transition-all rounded-full flex items-center gap-1.5 uppercase tracking-wider text-[10px] shadow-2xs"
-                title="Writing Prompts & Templates"
+                title="Writing Prompts & Guides"
               >
                 <BookTemplate className="w-3 h-3 text-[#C4432B]" />
-                <span>Templates</span>
+                <span>Prompts</span>
                 <span className="text-[8px] opacity-60">▾</span>
               </button>
 
               {showTemplates && (
                 <div className="absolute left-0 bottom-full mb-2 z-40 w-60 bg-[#FFFFFF] border border-[#E2DDD5] shadow-xl p-1.5 rounded-xl space-y-0.5 animate-in fade-in duration-100">
                   <span className="text-[9px] font-sans uppercase tracking-widest text-[#8A8478] px-2.5 py-1.5 block font-bold border-b border-[#E2DDD5]/50 mb-1">
-                    Writing Templates
+                    Starter Prompts
                   </span>
                   {TEMPLATES.map((tmpl) => (
                     <button
@@ -598,11 +598,11 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
               {isGenerating ? (
                 <>
                   <Loader2 className="w-3 h-3 animate-spin text-[#F7F4EE]" />
-                  <span>Reflecting…</span>
+                  <span>Thinking…</span>
                 </>
               ) : (
                 <>
-                  <span>Reflect →</span>
+                  <span>Send Entry →</span>
                 </>
               )}
             </InteractiveButton>

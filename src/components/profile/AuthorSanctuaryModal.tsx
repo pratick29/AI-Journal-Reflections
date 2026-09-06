@@ -158,14 +158,14 @@ export const AuthorSanctuaryModal: React.FC<AuthorSanctuaryModalProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-base font-serif font-medium text-[#2B2A28]">
-                  {penName || 'Author Sanctuary'}
+                  {penName || 'Profile & Settings'}
                 </h2>
                 <span className="text-[9px] font-sans uppercase tracking-widest px-2 py-0.5 bg-[#C4432B]/10 text-[#C4432B] border border-[#C4432B]/20 rounded-xs font-bold">
                   {currentSealObj.label}
                 </span>
               </div>
               <p className="text-[10px] font-sans text-[#8A8478] tracking-wide">
-                {user?.email || 'Private Literary Ledger'}
+                {user?.email || 'Private Journal Profile'}
               </p>
             </div>
           </div>
@@ -176,7 +176,7 @@ export const AuthorSanctuaryModal: React.FC<AuthorSanctuaryModalProps> = ({
               className="px-3.5 py-1.5 bg-[#2B2A28] hover:bg-[#C4432B] text-[#F7F4EE] text-[10px] font-sans uppercase tracking-wider font-semibold rounded-xs transition-colors flex items-center gap-1.5"
             >
               {isSavedNotice ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Sparkles className="w-3.5 h-3.5" />}
-              <span>{isSavedNotice ? 'Saved!' : 'Save Sanctuary'}</span>
+              <span>{isSavedNotice ? 'Saved!' : 'Save Settings'}</span>
             </button>
             <button
               onClick={onClose}
@@ -198,7 +198,7 @@ export const AuthorSanctuaryModal: React.FC<AuthorSanctuaryModalProps> = ({
             }`}
           >
             <User className="w-3.5 h-3.5 text-[#C4432B]" />
-            <span>Identity &amp; Creed</span>
+            <span>Profile &amp; Motto</span>
           </button>
 
           <button
@@ -210,7 +210,7 @@ export const AuthorSanctuaryModal: React.FC<AuthorSanctuaryModalProps> = ({
             }`}
           >
             <Award className="w-3.5 h-3.5 text-[#C4432B]" />
-            <span>Ledger &amp; Laurels</span>
+            <span>Stats &amp; Badges</span>
           </button>
 
           <button
@@ -234,7 +234,7 @@ export const AuthorSanctuaryModal: React.FC<AuthorSanctuaryModalProps> = ({
             }`}
           >
             <Heart className="w-3.5 h-3.5 text-rose-500" />
-            <span>Grounding Anchor</span>
+            <span>Calm Breathing</span>
           </button>
         </div>
 
@@ -245,40 +245,40 @@ export const AuthorSanctuaryModal: React.FC<AuthorSanctuaryModalProps> = ({
             <div className="space-y-6 max-w-xl mx-auto">
               <div className="space-y-1">
                 <label className="block text-[10px] font-sans uppercase tracking-widest text-[#8A8478] font-bold">
-                  Author's Pen Name / Moniker
+                  Your Name or Nickname
                 </label>
                 <input
                   type="text"
                   value={penName}
                   onChange={(e) => setPenName(e.target.value)}
-                  placeholder="e.g. Marcus Aurelius, or The Stoic Wanderer"
+                  placeholder="e.g. Alex, or The Mindful Traveler"
                   className="w-full px-3.5 py-2 bg-[#FFFDF9] border border-[#E2DDD5] text-sm font-serif focus:outline-none focus:border-[#C4432B]"
                 />
                 <p className="text-[10px] text-[#8A8478] font-sans">
-                  This name will be inscribed across your transcripts, book-bound memoirs, and exports.
+                  This name will appear on your journal entries and export summaries.
                 </p>
               </div>
 
               <div className="space-y-1">
                 <label className="block text-[10px] font-sans uppercase tracking-widest text-[#8A8478] font-bold">
-                  Personal Guiding Creed / Core Maxim
+                  Personal Motto or Life Goal
                 </label>
                 <textarea
                   rows={2}
                   value={creed}
                   onChange={(e) => setCreed(e.target.value)}
-                  placeholder="e.g. Amor Fati — To love whatever life brings forth; Stillness in action."
+                  placeholder="e.g. Focus on what I can control; Be kind to myself today."
                   className="w-full px-3.5 py-2 bg-[#FFFDF9] border border-[#E2DDD5] text-sm font-serif focus:outline-none focus:border-[#C4432B] resize-none italic leading-relaxed"
                 />
                 <p className="text-[10px] text-[#8A8478] font-sans">
-                  Gemini weaves your creed into its Socratic questions to align reflections with your core values.
+                  The AI uses your motto to tailor its questions to what matters most to you.
                 </p>
               </div>
 
               {/* Wax Seal Selector */}
               <div className="space-y-2">
                 <label className="block text-[10px] font-sans uppercase tracking-widest text-[#8A8478] font-bold">
-                  Personal Wax Seal Monogram
+                  Choose Your Profile Icon
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {WAX_SEALS.map((seal) => (
@@ -305,7 +305,7 @@ export const AuthorSanctuaryModal: React.FC<AuthorSanctuaryModalProps> = ({
               {/* Socratic Voice Calibration */}
               <div className="space-y-2">
                 <label className="block text-[10px] font-sans uppercase tracking-widest text-[#8A8478] font-bold">
-                  Gemini Socratic Voice Calibration
+                  AI Response Tone
                 </label>
                 <div className="space-y-1.5">
                   {SOCRATIC_TONES.map((tone) => (
@@ -335,10 +335,10 @@ export const AuthorSanctuaryModal: React.FC<AuthorSanctuaryModalProps> = ({
               <div className="space-y-3 pt-2 border-t border-[#E2DDD5]">
                 <div>
                   <h4 className="text-[10px] font-sans uppercase tracking-widest text-[#8A8478] font-bold">
-                    Personal Lexicon &amp; Symbol Dictionary
+                    Custom Words &amp; Notes
                   </h4>
                   <p className="text-[10px] text-[#8A8478] font-sans">
-                    Define personal metaphors, code-words, or recurring projects so Gemini understands your private lore.
+                    Add nicknames, project codes, or shorthand you use frequently so the AI understands them.
                   </p>
                 </div>
 
@@ -397,12 +397,12 @@ export const AuthorSanctuaryModal: React.FC<AuthorSanctuaryModalProps> = ({
               {/* Stat Cards */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div className="bg-[#FFFDF9] border border-[#E2DDD5] p-3.5 text-center rounded-xs space-y-1">
-                  <span className="text-[9px] font-sans uppercase tracking-widest text-[#8A8478]">Inquiries</span>
+                  <span className="text-[9px] font-sans uppercase tracking-widest text-[#8A8478]">Entries</span>
                   <div className="text-xl font-serif font-light text-[#2B2A28]">{interactions.length}</div>
                 </div>
 
                 <div className="bg-[#FFFDF9] border border-[#E2DDD5] p-3.5 text-center rounded-xs space-y-1">
-                  <span className="text-[9px] font-sans uppercase tracking-widest text-[#8A8478]">Words Penned</span>
+                  <span className="text-[9px] font-sans uppercase tracking-widest text-[#8A8478]">Words Written</span>
                   <div className="text-xl font-serif font-light text-[#2B2A28]">{totalWords.toLocaleString()}</div>
                 </div>
 
@@ -412,7 +412,7 @@ export const AuthorSanctuaryModal: React.FC<AuthorSanctuaryModalProps> = ({
                 </div>
 
                 <div className="bg-[#FFFDF9] border border-[#E2DDD5] p-3.5 text-center rounded-xs space-y-1">
-                  <span className="text-[9px] font-sans uppercase tracking-widest text-[#8A8478]">Vault Status</span>
+                  <span className="text-[9px] font-sans uppercase tracking-widest text-[#8A8478]">Status</span>
                   <div className="text-xl font-serif font-light text-[#C4432B]">Active</div>
                 </div>
               </div>
@@ -421,17 +421,17 @@ export const AuthorSanctuaryModal: React.FC<AuthorSanctuaryModalProps> = ({
               <div className="bg-[#FFFDF9] border border-[#E2DDD5] p-5 rounded-xs space-y-3">
                 <div className="flex items-center justify-between">
                   <h4 className="text-xs font-serif font-medium text-[#2B2A28]">
-                    Philosophical Alignment Matrix
+                    Your Thinking Style Breakdown
                   </h4>
                   <span className="text-[9px] font-sans uppercase tracking-widest text-[#8A8478]">
-                    Heuristic Resonance
+                    Based on entries
                   </span>
                 </div>
 
                 <div className="space-y-2">
                   <div>
                     <div className="flex justify-between text-[10px] font-sans uppercase tracking-wider text-[#595652] mb-1">
-                      <span>Stoic Equanimity (Aurelius / Seneca)</span>
+                      <span>Calm &amp; Resilient (Stoic)</span>
                       <span>55%</span>
                     </div>
                     <div className="w-full h-1.5 bg-[#EFECE6] rounded-full overflow-hidden">
@@ -441,7 +441,7 @@ export const AuthorSanctuaryModal: React.FC<AuthorSanctuaryModalProps> = ({
 
                   <div>
                     <div className="flex justify-between text-[10px] font-sans uppercase tracking-wider text-[#595652] mb-1">
-                      <span>Existential Agency (de Beauvoir / Sartre)</span>
+                      <span>Free &amp; Action-Oriented (Existential)</span>
                       <span>25%</span>
                     </div>
                     <div className="w-full h-1.5 bg-[#EFECE6] rounded-full overflow-hidden">
@@ -451,7 +451,7 @@ export const AuthorSanctuaryModal: React.FC<AuthorSanctuaryModalProps> = ({
 
                   <div>
                     <div className="flex justify-between text-[10px] font-sans uppercase tracking-wider text-[#595652] mb-1">
-                      <span>Zen Non-Dualism (Alan Watts)</span>
+                      <span>Mindful &amp; Present (Zen)</span>
                       <span>20%</span>
                     </div>
                     <div className="w-full h-1.5 bg-[#EFECE6] rounded-full overflow-hidden">
@@ -461,45 +461,45 @@ export const AuthorSanctuaryModal: React.FC<AuthorSanctuaryModalProps> = ({
                 </div>
 
                 <div className="pt-2 border-t border-[#E2DDD5]/60 text-[11px] font-serif text-[#595652] italic">
-                  "Your reflections closely mirror Seneca’s Letters to Lucilius on discerning internal sovereignty from external storms."
+                  "Your writing emphasizes staying centered and focusing on what is within your control."
                 </div>
               </div>
 
               {/* Socratic Laurels */}
               <div className="space-y-3">
                 <h4 className="text-[10px] font-sans uppercase tracking-widest text-[#8A8478] font-bold">
-                  Socratic Laurels (Mindful Milestones)
+                  Journaling Badges &amp; Milestones
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   <div className={`p-3 border rounded-xs flex items-center gap-2.5 ${hasCompletedDeepDialogue ? 'bg-[#FFFDF9] border-[#C4432B]/50' : 'bg-[#EFECE6]/40 border-[#E2DDD5] opacity-60'}`}>
                     <span className="text-xl">🌿</span>
                     <div>
-                      <div className="text-xs font-serif font-medium text-[#2B2A28]">The Socratic Elenchus</div>
-                      <div className="text-[9px] text-[#8A8478] font-sans">Engaged in profound multi-turn dialogue</div>
+                      <div className="text-xs font-serif font-medium text-[#2B2A28]">Deep Thinker</div>
+                      <div className="text-[9px] text-[#8A8478] font-sans">Explored a conversation in depth</div>
                     </div>
                   </div>
 
                   <div className={`p-3 border rounded-xs flex items-center gap-2.5 ${hasShadowWork ? 'bg-[#FFFDF9] border-[#C4432B]/50' : 'bg-[#EFECE6]/40 border-[#E2DDD5] opacity-60'}`}>
                     <span className="text-xl">🕯️</span>
                     <div>
-                      <div className="text-xs font-serif font-medium text-[#2B2A28]">The Shadow Worker</div>
-                      <div className="text-[9px] text-[#8A8478] font-sans">Confronted inner friction with honesty</div>
+                      <div className="text-xs font-serif font-medium text-[#2B2A28]">Honest Self-Reflector</div>
+                      <div className="text-[9px] text-[#8A8478] font-sans">Explored difficult feelings openly</div>
                     </div>
                   </div>
 
                   <div className={`p-3 border rounded-xs flex items-center gap-2.5 ${hasStoicEquanimity ? 'bg-[#FFFDF9] border-[#C4432B]/50' : 'bg-[#EFECE6]/40 border-[#E2DDD5] opacity-60'}`}>
                     <span className="text-xl">🏛️</span>
                     <div>
-                      <div className="text-xs font-serif font-medium text-[#2B2A28]">The Stoic Fortress</div>
-                      <div className="text-[9px] text-[#8A8478] font-sans">Distinguished control from circumstance</div>
+                      <div className="text-xs font-serif font-medium text-[#2B2A28]">Steady Mind</div>
+                      <div className="text-[9px] text-[#8A8478] font-sans">Focused on what you can control</div>
                     </div>
                   </div>
 
                   <div className={`p-3 border rounded-xs flex items-center gap-2.5 ${hasNightReflection ? 'bg-[#FFFDF9] border-[#C4432B]/50' : 'bg-[#EFECE6]/40 border-[#E2DDD5] opacity-60'}`}>
                     <span className="text-xl">🌙</span>
                     <div>
-                      <div className="text-xs font-serif font-medium text-[#2B2A28]">The Twilight Vigil</div>
-                      <div className="text-[9px] text-[#8A8478] font-sans">Inscribed reflections in the quiet hours</div>
+                      <div className="text-xs font-serif font-medium text-[#2B2A28]">Night Owl</div>
+                      <div className="text-[9px] text-[#8A8478] font-sans">Wrote entries during quiet night hours</div>
                     </div>
                   </div>
                 </div>
@@ -512,51 +512,51 @@ export const AuthorSanctuaryModal: React.FC<AuthorSanctuaryModalProps> = ({
             <div className="space-y-6 max-w-xl mx-auto">
               <div className="space-y-1">
                 <label className="block text-[10px] font-sans uppercase tracking-widest text-[#8A8478] font-bold">
-                  Default Interlocutor (The Lyceum)
+                  Default AI Guide
                 </label>
                 <select
                   value={defaultInterlocutor}
                   onChange={(e) => setDefaultInterlocutor(e.target.value as PhilosophicalPersona)}
                   className="w-full px-3 py-2 bg-[#FFFDF9] border border-[#E2DDD5] text-xs font-serif focus:outline-none focus:border-[#C4432B]"
                 >
-                  <option value="default">The Scribe (Literary Journal Companion)</option>
-                  <option value="marcus_aurelius">Marcus Aurelius (Stoic Master &amp; Emperor)</option>
-                  <option value="carl_jung">Carl Gustav Jung (Depth Psychologist)</option>
-                  <option value="socrates">Socrates (Father of Dialectic)</option>
-                  <option value="simone_de_beauvoir">Simone de Beauvoir (Existentialist Ethicist)</option>
-                  <option value="alan_watts">Alan Watts (Philosopher of Zen &amp; Tao)</option>
+                  <option value="default">The Scribe (Warm, supportive listener)</option>
+                  <option value="marcus_aurelius">Marcus Aurelius (Calm focus on what you can control)</option>
+                  <option value="carl_jung">Carl Jung (Understanding hidden thoughts &amp; dreams)</option>
+                  <option value="socrates">Socrates (Thoughtful questions to find clarity)</option>
+                  <option value="simone_de_beauvoir">Simone de Beauvoir (Taking ownership of your choices)</option>
+                  <option value="alan_watts">Alan Watts (Letting go of overthinking)</option>
                 </select>
                 <p className="text-[10px] text-[#8A8478] font-sans">
-                  The philosophical companion that will automatically stand ready when starting a new session.
+                  The AI guide that will be automatically selected when you start a new entry.
                 </p>
               </div>
 
               <div className="space-y-1">
                 <label className="block text-[10px] font-sans uppercase tracking-widest text-[#8A8478] font-bold">
-                  Default Emotional Headspace
+                  Default Mood
                 </label>
                 <select
                   value={defaultHeadspace}
                   onChange={(e) => setDefaultHeadspace(e.target.value)}
                   className="w-full px-3 py-2 bg-[#FFFDF9] border border-[#E2DDD5] text-xs font-serif focus:outline-none focus:border-[#C4432B]"
                 >
-                  <option value="equanimity">🌿 Equanimity</option>
-                  <option value="creative">⚡ Creative Fire</option>
-                  <option value="friction">🌪️ Inner Friction</option>
-                  <option value="curiosity">🔍 Deep Curiosity</option>
-                  <option value="melancholy">🌙 Melancholy</option>
+                  <option value="equanimity">🌿 Calm &amp; Peaceful</option>
+                  <option value="creative">⚡ Inspired &amp; Energetic</option>
+                  <option value="friction">🌪️ Stressed or Anxious</option>
+                  <option value="curiosity">🔍 Curious &amp; Exploring</option>
+                  <option value="melancholy">🌙 Low or Sad</option>
                 </select>
               </div>
 
               <div className="space-y-1">
                 <label className="block text-[10px] font-sans uppercase tracking-widest text-[#8A8478] font-bold">
-                  Manuscript Typography Profile
+                  Font &amp; Reading Style
                 </label>
                 <div className="grid grid-cols-3 gap-2 text-xs font-serif">
                   {[
-                    { id: 'newsreader', label: 'Newsreader', desc: 'Classic Literary Serif' },
-                    { id: 'roman', label: 'Classical Roman', desc: 'Imperial Monograph' },
-                    { id: 'minimal', label: 'Minimal Sans', desc: 'Modern Clean' },
+                    { id: 'newsreader', label: 'Classic Book', desc: 'Warm literary font' },
+                    { id: 'roman', label: 'Formal Serif', desc: 'Traditional structured' },
+                    { id: 'minimal', label: 'Clean Sans', desc: 'Modern & easy to read' },
                   ].map((style) => (
                     <button
                       key={style.id}
@@ -582,9 +582,9 @@ export const AuthorSanctuaryModal: React.FC<AuthorSanctuaryModalProps> = ({
             <div className="space-y-8 max-w-lg mx-auto text-center py-4">
               <div className="space-y-2">
                 <span className="text-3xl">🕯️</span>
-                <h3 className="text-xl font-serif text-[#2B2A28]">Emergency Grounding Anchor</h3>
+                <h3 className="text-xl font-serif text-[#2B2A28]">Take a Mindful Breath</h3>
                 <p className="text-xs text-[#8A8478] font-serif max-w-sm mx-auto">
-                  When the mind is racing or overwhelmed, set aside writing. Breathe with the rhythm and anchor yourself in what remains steadfast.
+                  When your mind is racing or overwhelmed, take a minute to pause. Follow the circle to breathe and reset.
                 </p>
               </div>
 

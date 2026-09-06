@@ -115,10 +115,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenWalkthrough }) =
           </div>
           <div>
             <span className="text-xl font-serif tracking-tight text-[#2B2A28] font-normal block leading-tight">
-              Personal Gemini Journal
+              AI Journal &amp; Reflections
             </span>
             <span className="text-[9px] font-sans uppercase tracking-[0.2em] text-[#8A8478] hidden sm:block">
-              Reflective Sanctuary &amp; AI Mentors
+              Thoughtful Journaling &amp; AI Guides
             </span>
           </div>
         </div>
@@ -157,7 +157,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenWalkthrough }) =
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
               />
             </svg>
-            <span>{loading ? 'Opening Vault...' : 'Sign In with Google'}</span>
+            <span>{loading ? 'Opening...' : 'Sign In with Google'}</span>
           </button>
         </div>
       </header>
@@ -184,22 +184,22 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenWalkthrough }) =
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#EFECE6] border border-[#E2DDD5] rounded-full">
               <span className="w-1.5 h-1.5 rounded-full bg-[#C4432B] animate-ping" />
               <span className="text-[9px] font-sans uppercase tracking-[0.22em] text-[#C4432B] font-bold">
-                AI-Powered Reflective Journaling
+                Smart Personal Journal
               </span>
             </div>
 
             <div className="space-y-2">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-light tracking-tight leading-[1.08] text-[#2B2A28]">
-                A quieter sanctuary <br />
+                A quiet place <br />
                 <span className="italic font-normal text-[#595652]">to understand yourself.</span>
                 <span className="font-script text-[#C4432B] text-2xl sm:text-3xl block mt-1 font-normal select-none">
-                  where daily thoughts meet timeless clarity...
+                  write what's on your mind and get thoughtful guidance...
                 </span>
               </h1>
             </div>
 
             <p className="text-sm sm:text-base text-[#595652] leading-relaxed max-w-xl font-serif">
-              An unhurried personal notebook that listens without judgment. Tag places with <strong>Google Maps</strong>, consult historical guides like <strong>Marcus Aurelius</strong> and <strong>Carl Jung</strong>, uncover emotional patterns, and turn reflections into vintage <strong>Google Imagen 3</strong> artwork.
+              An easy-to-use personal journal that listens and helps you reflect. Tag places on <strong>Google Maps</strong>, talk with thoughtful historical guides like <strong>Marcus Aurelius</strong> and <strong>Carl Jung</strong>, understand your emotions, and turn your memories into vintage artwork.
             </p>
 
             {/* Primary Action Button */}

@@ -9,13 +9,13 @@ interface JournalCalendarModalProps {
 }
 
 const DAILY_PROMPTS = [
-  "What is an unexamined assumption you held today?",
-  "Where did you feel friction or anxiety, and what does it reveal?",
-  "If today were your entire life in miniature, how well did you live it?",
-  "What truth did you avoid expressing or acknowledging today?",
-  "What detail of beauty or quiet grace did you notice in the ordinary?",
-  "What expectation did you place on someone else that caused disappointment?",
-  "What idea or belief are you currently outgrowing?",
+  "What made you feel grateful or happy today?",
+  "What was on your mind the most today?",
+  "What is one small win from today you're proud of?",
+  "What made you feel stressed, and what can you do about it?",
+  "Who is someone you appreciated talking to recently?",
+  "What is one thing you want to do better tomorrow?",
+  "What is something you learned about yourself this week?",
 ];
 
 export const JournalCalendarModal: React.FC<JournalCalendarModalProps> = ({
@@ -108,12 +108,11 @@ export const JournalCalendarModal: React.FC<JournalCalendarModalProps> = ({
   const dayOfYear = Math.floor((Date.now() - new Date(year, 0, 0).getTime()) / 1000 / 60 / 60 / 24);
   const dailyPrompt = DAILY_PROMPTS[dayOfYear % DAILY_PROMPTS.length];
 
-  // Generate Weekly Sunday Synthesis
+  // Generate Weekly Summary
   const handleGenerateWeeklySynthesis = () => {
     setIsSynthesizing(true);
     setTimeout(() => {
       if (recentInteractions.length > 0) {
-        // Collect titles and excerpt clues
         const topics = Array.from(
           new Set(recentInteractions.map((i) => i.title).filter(Boolean))
         ).slice(0, 3);
@@ -121,24 +120,24 @@ export const JournalCalendarModal: React.FC<JournalCalendarModalProps> = ({
         setWeeklyDigest({
           breakthrough:
             topics.length > 0
-              ? `You dedicated deep inquiry to "${topics.join('", "')}". Across ${recentInteractions.length} reflections (${recentWords.toLocaleString()} words), you shifted from reactive deliberation to structured clarity.`
-              : `Across ${recentInteractions.length} reflections this week, you consistently carved out sanctuary time to question habits, observe internal friction, and clarify your convictions.`,
+              ? `You focused on "${topics.join('", "')}". Across your ${recentInteractions.length} entries (${recentWords.toLocaleString()} words), writing things down helped you clear your head and see what matters most.`
+              : `Across your ${recentInteractions.length} entries this week, taking a few minutes to write helped you organize your thoughts and feel more focused.`,
           emotionalArc:
             activeDaysInLast7 >= 3
-              ? "Steady cadence — moving from mid-week tension and restlessness into weekend calm and sovereign resolve."
-              : "Reflective and contemplative — moments of quiet examination that rekindled intentional focus.",
+              ? "You stayed consistent this week. Even when things felt busy, taking time to write helped you find calm."
+              : "A good start — writing helped you reflect and take a step back from busy days.",
           intention:
-            "What is the single most essential priority that, if approached with stillness, will simplify everything else this coming week?",
-          themes: topics.length > 0 ? topics : ['Inner Stillness', 'Intentional Action', 'Self-Examination'],
+            "What is the one most important thing you want to focus on this week?",
+          themes: topics.length > 0 ? topics : ['Clarity', 'Taking Action', 'Staying Calm'],
         });
       } else {
         setWeeklyDigest({
           breakthrough:
-            "No entries recorded over the past 7 days. Silence can be a sanctuary, but writing is the crucible where fleeting thoughts become lasting wisdom.",
-          emotionalArc: "Resting dormant — waiting for the ink of honest reflection.",
+            "You haven't written any entries in the past 7 days. Even taking 2 minutes to write a couple of sentences can help clear your mind.",
+          emotionalArc: "Ready for a fresh start.",
           intention:
-            "What unsaid truth or quiet intuition has been lingering in your mind this week? Put pen to page today.",
-          themes: ['Fresh Beginning', 'Quiet Presence'],
+            "How are you feeling right now? Write a few sentences today to get started.",
+          themes: ['Fresh Start', 'Peace of Mind'],
         });
       }
       setIsSynthesizing(false);
@@ -147,7 +146,7 @@ export const JournalCalendarModal: React.FC<JournalCalendarModalProps> = ({
 
   const handleCopyDigest = () => {
     if (!weeklyDigest) return;
-    const text = `=== WEEKLY SUNDAY GROWTH SYNTHESIS ===\nCadence: ${activeDaysInLast7}/7 Days Active · ${recentInteractions.length} Entries · ${recentWords} Words\n\nCORE BREAKTHROUGH:\n${weeklyDigest.breakthrough}\n\nEMOTIONAL ARC:\n${weeklyDigest.emotionalArc}\n\nINTENTION FOR THE COMING WEEK:\n"${weeklyDigest.intention}"\n\nArchived with Sanctuary Journal.`;
+    const text = `=== WEEKLY JOURNAL SUMMARY ===\nActive: ${activeDaysInLast7}/7 Days · ${recentInteractions.length} Entries · ${recentWords} Words\n\nMAIN TAKEAWAY:\n${weeklyDigest.breakthrough}\n\nHOW YOU FELT:\n${weeklyDigest.emotionalArc}\n\nFOCUS FOR NEXT WEEK:\n"${weeklyDigest.intention}"\n\nFrom AI Journal & Reflections.`;
     navigator.clipboard.writeText(text);
     setCopiedDigest(true);
     setTimeout(() => setCopiedDigest(false), 2000);
@@ -164,7 +163,7 @@ export const JournalCalendarModal: React.FC<JournalCalendarModalProps> = ({
             </div>
             <div>
               <span className="text-[10px] font-sans uppercase tracking-[0.22em] font-bold text-[#C4432B]">
-                Philosophical Archive
+                Your Journal
               </span>
               <h2 className="text-xl sm:text-2xl font-serif text-[#2B2A28] font-light">
                 Writing Calendar &amp; Streaks
@@ -212,7 +211,7 @@ export const JournalCalendarModal: React.FC<JournalCalendarModalProps> = ({
             <div className="flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-[#C4432B]" />
               <span className="text-[10px] font-sans uppercase tracking-[0.2em] font-bold text-[#2B2A28]">
-                Weekly Growth Digest (7-Day Review)
+                Weekly Summary (Past 7 Days)
               </span>
             </div>
             <span className="text-[10px] font-sans px-2 py-0.5 rounded-full bg-[#EFECE6] text-[#595652] font-medium">
@@ -223,7 +222,7 @@ export const JournalCalendarModal: React.FC<JournalCalendarModalProps> = ({
           {!weeklyDigest ? (
             <div className="space-y-3">
               <p className="text-xs font-serif text-[#595652] leading-relaxed">
-                Review your thoughts from the past 7 days ({recentInteractions.length} reflections, {recentWords.toLocaleString()} words) to reveal your underlying growth trajectory and set your compass for the week ahead.
+                Review your {recentInteractions.length} entries ({recentWords.toLocaleString()} words) from the past 7 days to see what you learned and plan your focus for the week ahead.
               </p>
               <button
                 onClick={handleGenerateWeeklySynthesis}
@@ -231,14 +230,14 @@ export const JournalCalendarModal: React.FC<JournalCalendarModalProps> = ({
                 className="w-full inline-flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-[#2B2A28] text-[#F7F4EE] hover:bg-[#C4432B] text-xs font-sans uppercase tracking-wider font-semibold transition-all"
               >
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>{isSynthesizing ? 'Synthesizing Your Week…' : 'Synthesize My Past 7 Days'}</span>
+                <span>{isSynthesizing ? 'Reading Your Entries…' : 'Summarize My Week'}</span>
               </button>
             </div>
           ) : (
             <div className="space-y-3 pt-1 animate-in fade-in duration-200">
               <div className="bg-[#FFFDF9] border border-[#E2DDD5] rounded-xl p-3.5 space-y-2">
                 <span className="text-[9px] font-sans uppercase tracking-widest text-[#C4432B] font-bold block">
-                  Core Breakthrough &amp; Themes
+                  Main Takeaway This Week
                 </span>
                 <p className="text-xs font-serif text-[#2B2A28] leading-relaxed">
                   {weeklyDigest.breakthrough}
@@ -248,7 +247,7 @@ export const JournalCalendarModal: React.FC<JournalCalendarModalProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                 <div className="bg-[#FFFDF9] border border-[#E2DDD5] rounded-xl p-3 space-y-1">
                   <span className="text-[9px] font-sans uppercase tracking-widest text-[#8A8478] font-bold block">
-                    Emotional Arc
+                    How You Felt
                   </span>
                   <p className="font-serif text-[#2B2A28] text-xs leading-snug">
                     {weeklyDigest.emotionalArc}
@@ -257,7 +256,7 @@ export const JournalCalendarModal: React.FC<JournalCalendarModalProps> = ({
                 <div className="bg-[#FFFDF9] border border-[#E2DDD5] rounded-xl p-3 space-y-1">
                   <span className="text-[9px] font-sans uppercase tracking-widest text-[#8A8478] font-bold block flex items-center gap-1">
                     <Compass className="w-3 h-3 text-[#C4432B]" />
-                    Compass Intention
+                    Focus for Next Week
                   </span>
                   <p className="font-serif italic text-[#2B2A28] text-xs leading-snug">
                     "{weeklyDigest.intention}"
@@ -270,7 +269,7 @@ export const JournalCalendarModal: React.FC<JournalCalendarModalProps> = ({
                   onClick={handleGenerateWeeklySynthesis}
                   className="text-[10px] font-sans uppercase tracking-wider text-[#8A8478] hover:text-[#2B2A28] underline underline-offset-2"
                 >
-                  Regenerate
+                  Refresh
                 </button>
                 <button
                   onClick={handleCopyDigest}
@@ -284,7 +283,7 @@ export const JournalCalendarModal: React.FC<JournalCalendarModalProps> = ({
                   ) : (
                     <>
                       <Copy className="w-3 h-3 text-[#C4432B]" />
-                      <span>Copy Weekly Digest</span>
+                      <span>Copy Summary</span>
                     </>
                   )}
                 </button>
@@ -296,7 +295,7 @@ export const JournalCalendarModal: React.FC<JournalCalendarModalProps> = ({
         {/* Daily Philosophical Meditation Banner */}
         <div className="bg-[#EFECE6]/70 border-l-2 border-l-[#C4432B] p-4 space-y-1 rounded-r-xl">
           <span className="text-[9px] font-sans uppercase tracking-widest text-[#C4432B] font-bold">
-            Today's Philosophical Meditation
+            Today's Question
           </span>
           <p className="text-sm font-serif italic text-[#2B2A28] leading-relaxed">
             "{dailyPrompt}"

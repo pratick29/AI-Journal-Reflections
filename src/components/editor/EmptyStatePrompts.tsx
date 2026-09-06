@@ -8,19 +8,19 @@ interface EmptyStatePromptsProps {
 export const EmptyStatePrompts: React.FC<EmptyStatePromptsProps> = ({ onSelectPrompt }) => {
   const prompts = [
     {
-      category: 'UNPACKING TODAY',
+      category: "TODAY'S THOUGHTS",
       icon: Compass,
       question: 'What is occupying the most space in your mind right now?',
       detail: 'Untangle current thoughts, decisions, or worries without any judgment or pressure.',
     },
     {
-      category: 'GRATITUDE & SMALL WINS',
+      category: 'GRATITUDE & WINS',
       icon: Heart,
       question: 'What is one small thing that brought you comfort or joy today?',
       detail: 'Take a quiet moment to appreciate a person, a brief interaction, or a simple victory.',
     },
     {
-      category: 'LOOKING FORWARD',
+      category: "TOMORROW'S FOCUS",
       icon: Lightbulb,
       question: 'What is the single most important intention for tomorrow?',
       detail: 'Choose one calm focus or mindset you want to carry into the day ahead.',
@@ -31,7 +31,7 @@ export const EmptyStatePrompts: React.FC<EmptyStatePromptsProps> = ({ onSelectPr
     <div className="py-3 space-y-4">
       <div className="text-center max-w-lg mx-auto space-y-1">
         <span className="text-[10px] font-sans uppercase tracking-[0.22em] text-[#C4432B] font-bold">
-          WRITING INSPIRATION
+          NEED AN IDEA?
         </span>
         <h3 className="text-2xl sm:text-3xl font-serif font-light text-[#2B2A28]">
           What's on your mind today?

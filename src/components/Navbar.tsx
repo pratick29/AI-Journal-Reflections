@@ -119,7 +119,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="flex items-center gap-2">
               <Feather className="w-4 h-4 text-[#C4432B]" />
               <h1 className="text-lg sm:text-xl font-serif font-normal tracking-tight leading-none text-[#2B2A28]">
-                Personal Gemini Journal
+                AI Journal &amp; Reflections
               </h1>
               <span className="hidden lg:inline-flex items-center gap-1.5 px-2 py-0.5 border border-[#E2DDD5] text-[9px] font-sans uppercase tracking-[0.18em] bg-[#EFECE6] text-[#595652]">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
@@ -136,7 +136,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             id="new-reflection-nav-btn"
             onClick={onNewReflection}
             className="inline-flex items-center gap-1.5 bg-[#2B2A28] text-[#F7F4EE] hover:bg-[#C4432B] text-[10px] font-sans uppercase tracking-[0.18em] px-3.5 py-1.5 sm:px-4 sm:py-2 transition-all duration-200 active:scale-[0.99] rounded-sm font-medium"
-            title="Start New Entry (⌘N)"
+            title="New Entry (⌘N)"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>New Entry</span>
@@ -147,30 +147,30 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               onClick={onOpenCommandPalette}
               className="inline-flex items-center gap-1.5 text-[10px] font-sans uppercase tracking-[0.15em] border border-[#E2DDD5] hover:border-[#C4432B] px-2.5 py-1.5 sm:px-3 sm:py-2 bg-[#FFFDF9] hover:bg-[#EFECE6] transition-colors text-[#595652] hover:text-[#2B2A28] rounded-sm"
-              title="Search & Command Palette (⌘K)"
+              title="Search (⌘K)"
             >
               <Search className="w-3.5 h-3.5 text-[#8A8478]" />
               <span className="hidden md:inline font-mono text-[9px] text-[#8A8478]">⌘K</span>
             </button>
           )}
 
-          {/* Candlelight / Midnight Sanctuary Theme Switcher */}
+          {/* Light / Dark Mode Theme Switcher */}
           {onToggleTheme && (
             <button
               onClick={onToggleTheme}
               className="inline-flex items-center gap-1.5 text-[10px] font-sans uppercase tracking-[0.15em] border border-[#E2DDD5] hover:border-[#C4432B] px-2.5 py-1.5 sm:px-3 sm:py-2 bg-[#FFFDF9] hover:bg-[#EFECE6] transition-colors text-[#595652] hover:text-[#2B2A28] rounded-sm"
-              title={theme === 'candlelight' ? 'Switch to Daytime Paper Canvas' : 'Enter Candlelight Dark Sanctuary'}
-              aria-label="Toggle Candlelight Dark Mode"
+              title={theme === 'candlelight' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              aria-label="Toggle Dark Mode"
             >
               {theme === 'candlelight' ? (
                 <>
                   <Sun className="w-3.5 h-3.5 text-amber-500" />
-                  <span className="hidden lg:inline text-[9px]">Day</span>
+                  <span className="hidden lg:inline text-[9px]">Light</span>
                 </>
               ) : (
                 <>
                   <Moon className="w-3.5 h-3.5 text-[#C4432B]" />
-                  <span className="hidden lg:inline text-[9px]">Night</span>
+                  <span className="hidden lg:inline text-[9px]">Dark</span>
                 </>
               )}
             </button>
@@ -191,11 +191,11 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             {isToolsOpen && (
               <div className="absolute right-0 top-full mt-1.5 z-50 w-64 bg-[#FFFDF9] border border-[#E2DDD5] border-t-2 border-t-[#C4432B] shadow-xl p-1.5 rounded-xs space-y-2 animate-in fade-in zoom-in-95 duration-100 max-h-[85vh] overflow-y-auto">
-                {/* SECTION 1: Creative Tools */}
+                {/* SECTION 1: Features */}
                 <div className="space-y-0.5">
                   <div className="px-2.5 py-1 border-b border-[#E2DDD5]/60 mb-1">
                     <span className="text-[8px] font-sans uppercase tracking-[0.2em] font-bold text-[#8A8478]">
-                      Creative Tools
+                      Features
                     </span>
                   </div>
 
@@ -209,9 +209,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                     >
                       <div className="flex items-center gap-2">
                         <span className="text-xs">🕯️</span>
-                        <span>Time Capsules</span>
+                        <span>Letter to Future Self</span>
                       </div>
-                      <span className="text-[9px] font-sans uppercase tracking-wider text-[#8A8478]">Future</span>
+                      <span className="text-[9px] font-sans uppercase tracking-wider text-[#8A8478]">Capsule</span>
                     </button>
                   )}
 
@@ -225,7 +225,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     >
                       <div className="flex items-center gap-2">
                         <Sun className="w-3.5 h-3.5 text-amber-600" />
-                        <span>Daily Rituals</span>
+                        <span>Daily Habits</span>
                       </div>
                       <span className="text-[9px] font-sans uppercase tracking-wider text-[#8A8478]">Habits</span>
                     </button>
@@ -241,9 +241,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                     >
                       <div className="flex items-center gap-2">
                         <Compass className="w-3.5 h-3.5 text-[#C4432B]" />
-                        <span>Idea Constellation</span>
+                        <span>Connected Ideas</span>
                       </div>
-                      <span className="text-[9px] font-sans uppercase tracking-wider text-[#8A8478]">Galaxy</span>
+                      <span className="text-[9px] font-sans uppercase tracking-wider text-[#8A8478]">Ideas</span>
                     </button>
                   )}
 
@@ -264,11 +264,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                   )}
                 </div>
 
-                {/* SECTION 2: Places & Insights */}
+                {/* SECTION 2: Places & Stats */}
                 <div className="space-y-0.5 pt-1 border-t border-[#E2DDD5]/60">
                   <div className="px-2.5 py-1 border-b border-[#E2DDD5]/60 mb-1">
                     <span className="text-[8px] font-sans uppercase tracking-[0.2em] font-bold text-[#8A8478]">
-                      Places &amp; Insights
+                      Places &amp; Stats
                     </span>
                   </div>
 
@@ -297,9 +297,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                   >
                     <div className="flex items-center gap-2">
                       <Calendar className="w-3.5 h-3.5 text-[#C4432B]" />
-                      <span>Writing Calendar</span>
+                      <span>Calendar &amp; Streaks</span>
                     </div>
-                    <span className="text-[9px] font-sans uppercase tracking-wider text-[#8A8478]">Streaks</span>
+                    <span className="text-[9px] font-sans uppercase tracking-wider text-[#8A8478]">Calendar</span>
                   </button>
 
                   <button
@@ -311,9 +311,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                   >
                     <div className="flex items-center gap-2">
                       <BarChart2 className="w-3.5 h-3.5 text-[#C4432B]" />
-                      <span>Journal Analytics</span>
+                      <span>Journal Stats</span>
                     </div>
-                    <span className="text-[9px] font-sans uppercase tracking-wider text-[#8A8478]">Trends</span>
+                    <span className="text-[9px] font-sans uppercase tracking-wider text-[#8A8478]">Stats</span>
                   </button>
 
                   <button
@@ -325,17 +325,17 @@ export const Navbar: React.FC<NavbarProps> = ({
                   >
                     <div className="flex items-center gap-2">
                       <Headphones className="w-3.5 h-3.5 text-[#C4432B]" />
-                      <span>Ambient Sounds</span>
+                      <span>Background Sounds</span>
                     </div>
                     <span className="text-[9px] font-sans uppercase tracking-wider text-[#8A8478]">Audio</span>
                   </button>
                 </div>
 
-                {/* SECTION 3: Settings & Security */}
+                {/* SECTION 3: Settings & Privacy */}
                 <div className="space-y-0.5 pt-1 border-t border-[#E2DDD5]/60">
                   <div className="px-2.5 py-1 border-b border-[#E2DDD5]/60 mb-1">
                     <span className="text-[8px] font-sans uppercase tracking-[0.2em] font-bold text-[#8A8478]">
-                      Settings &amp; Security
+                      Settings &amp; Privacy
                     </span>
                   </div>
 
@@ -349,9 +349,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                     >
                       <div className="flex items-center gap-2">
                         <Shield className="w-3.5 h-3.5 text-[#C4432B]" />
-                        <span>Admin Dashboard</span>
+                        <span>Admin Panel</span>
                       </div>
-                      <span className="text-[9px] font-sans uppercase tracking-wider font-semibold text-[#C4432B]">RBAC</span>
+                      <span className="text-[9px] font-sans uppercase tracking-wider font-semibold text-[#C4432B]">Admin</span>
                     </button>
                   )}
 
@@ -365,9 +365,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                     >
                       <div className="flex items-center gap-2">
                         <Bell className="w-3.5 h-3.5 text-[#C4432B]" />
-                        <span>External Notifications</span>
+                        <span>Notifications</span>
                       </div>
-                      <span className="text-[9px] font-sans uppercase tracking-wider font-semibold text-[#C4432B]">Slack/Discord</span>
+                      <span className="text-[9px] font-sans uppercase tracking-wider font-semibold text-[#C4432B]">Alerts</span>
                     </button>
                   )}
 
@@ -382,7 +382,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       <Archive className="w-3.5 h-3.5 text-[#595652]" />
                       <span>Backup &amp; Restore</span>
                     </div>
-                    <span className="text-[9px] font-sans uppercase tracking-wider text-[#8A8478]">JSON</span>
+                    <span className="text-[9px] font-sans uppercase tracking-wider text-[#8A8478]">Save</span>
                   </button>
 
                   <button
@@ -394,9 +394,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                   >
                     <div className="flex items-center gap-2">
                       <Lock className="w-3.5 h-3.5 text-[#2B2A28]" />
-                      <span>Lock Vault</span>
+                      <span>Lock Journal (PIN)</span>
                     </div>
-                    <span className="text-[9px] font-sans uppercase tracking-wider text-[#8A8478]">PIN</span>
+                    <span className="text-[9px] font-sans uppercase tracking-wider text-[#8A8478]">Lock</span>
                   </button>
 
                   {onToggleThoughtGrammar && (
@@ -408,7 +408,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     >
                       <div className="flex items-center gap-2">
                         <PenTool className="w-3.5 h-3.5 text-[#C4432B]" />
-                        <span>Clarity Helper</span>
+                        <span>Writing Assistant</span>
                       </div>
                       <span className="text-[9px] font-sans uppercase tracking-wider font-bold text-[#C4432B]">
                         {thoughtGrammarEnabled ? 'ON' : 'OFF'}
@@ -425,7 +425,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     >
                       <div className="flex items-center gap-2">
                         <Sparkles className="w-3.5 h-3.5 text-[#C4432B]" />
-                        <span>Animated Background</span>
+                        <span>Moving Background</span>
                       </div>
                       <span className="text-[9px] font-sans uppercase tracking-wider font-bold text-[#C4432B]">
                         {isAmbientMotion ? 'ON' : 'OFF'}
@@ -446,7 +446,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                         ) : (
                           <Moon className="w-3.5 h-3.5 text-[#C4432B]" />
                         )}
-                        <span>Candlelight Mode</span>
+                        <span>Dark Mode</span>
                       </div>
                       <span className="text-[9px] font-sans uppercase tracking-wider font-bold text-[#C4432B]">
                         {theme === 'candlelight' ? 'NIGHT' : 'DAY'}
@@ -463,7 +463,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   >
                     <div className="flex items-center gap-2">
                       <ShieldCheck className="w-3.5 h-3.5 text-[#8A8478]" />
-                      <span>App Guide &amp; Tour</span>
+                      <span>Help &amp; Tour</span>
                     </div>
                     <span className="text-[9px] font-sans uppercase tracking-wider text-[#8A8478]">Guide</span>
                   </button>
@@ -478,7 +478,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 onClick={() => setIsProfileCardOpen((prev) => !prev)}
                 className="flex items-center gap-2 sm:gap-2.5 pl-2 sm:pl-3 border-l border-[#E2DDD5] text-left group hover:opacity-90 transition-opacity cursor-pointer"
-                title="Author Profile & Sanctuary Settings"
+                title="Profile & Settings"
               >
                 <div className="text-right hidden md:block font-sans">
                   <div className="flex items-center justify-end gap-1">

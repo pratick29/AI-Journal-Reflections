@@ -52,10 +52,10 @@ export const DialogueStream: React.FC<DialogueStreamProps> = ({
       <div className="sticky top-0 z-20 bg-[#F7F4EE]/95 backdrop-blur-xs py-1.5 px-2 border-b border-[#E2DDD5] flex items-center justify-between text-[9px] font-sans uppercase tracking-[0.2em] text-[#8A8478] rounded-xs">
         <span className="flex items-center gap-1.5">
           <span className="w-1.5 h-1.5 rounded-full bg-[#C4432B]" />
-          <span>Manuscript Flow ({messages.length}/15 turns)</span>
+          <span>Conversation ({messages.length}/15)</span>
         </span>
         <div className="flex items-center gap-2">
-          <span>Depth</span>
+          <span>Progress</span>
           <div className="w-20 h-1 bg-[#E2DDD5] rounded-full overflow-hidden">
             <div
               className="h-full bg-[#C4432B] transition-all duration-300"
@@ -69,7 +69,7 @@ export const DialogueStream: React.FC<DialogueStreamProps> = ({
       {selectionPos && selectedText && onSelectPassageAction && (
         <div
           style={{ left: `${selectionPos.x}px`, top: `${selectionPos.y}px` }}
-          className="fixed z-50 -translate-x-1/2 bg-[#2B2A28] text-[#F7F4EE] shadow-xl px-3 py-1.5 rounded-xs flex items-center gap-2 text-[10px] font-sans uppercase tracking-wider animate-in fade-in zoom-in-95 duration-150 border border-[#C4432B]"
+          className="fixed z-50 -translate-x-1/2 bg-[#2B2A28] text-[#F7F4EE] shadow-xl px-3 py-1.5 rounded-full flex items-center gap-2 text-[10px] font-sans uppercase tracking-wider animate-in fade-in zoom-in-95 duration-150 border border-[#C4432B]"
         >
           <button
             onClick={() => {
@@ -79,7 +79,7 @@ export const DialogueStream: React.FC<DialogueStreamProps> = ({
             className="hover:text-[#C4432B] transition-colors flex items-center gap-1"
           >
             <HelpCircle className="w-3 h-3 text-[#C4432B]" />
-            <span>Challenge</span>
+            <span>Question This</span>
           </button>
           <span className="opacity-30">|</span>
           <button
@@ -90,7 +90,7 @@ export const DialogueStream: React.FC<DialogueStreamProps> = ({
             className="hover:text-[#C4432B] transition-colors flex items-center gap-1"
           >
             <HeartHandshake className="w-3 h-3 text-[#C4432B]" />
-            <span>Unpack</span>
+            <span>Explain More</span>
           </button>
           {onPinQuote && (
             <>
@@ -103,7 +103,7 @@ export const DialogueStream: React.FC<DialogueStreamProps> = ({
                 className="hover:text-[#C4432B] transition-colors flex items-center gap-1"
               >
                 <Quote className="w-3 h-3 text-[#C4432B]" />
-                <span>Quote</span>
+                <span>Quote Card</span>
               </button>
             </>
           )}
@@ -126,7 +126,7 @@ export const DialogueStream: React.FC<DialogueStreamProps> = ({
               <div className="flex items-center gap-2">
                 <span className="font-bold text-[#C4432B]">{turnNumber}</span>
                 <span className="text-[#2B2A28] font-medium">
-                  {isUser ? 'AUTHOR REFLECTION' : 'GEMINI EDITORIAL SYNTHESIS'}
+                  {isUser ? 'YOU' : 'AI GUIDE'}
                 </span>
                 {!isUser && (
                   <span className="font-script text-[#C4432B] text-sm normal-case tracking-normal ml-1">

@@ -328,9 +328,9 @@ function MainApp() {
 
       {/* Editorial System Status Footer */}
       <footer className="h-8 sm:h-9 border-t border-[#E5E0D8] flex items-center px-4 sm:px-6 justify-between text-[9px] sm:text-[10px] font-sans uppercase tracking-[0.18em] text-[#8C857B] bg-[#F4F0E8]/60 shrink-0">
-        <span className="truncate max-w-[200px] sm:max-w-none">Firestore Isolated · us-central1</span>
-        <span className="hidden sm:inline">Engine: Gemini 3.6 Flash</span>
-        <span className="truncate">Encryption: AES-256</span>
+        <span className="truncate max-w-[200px] sm:max-w-none">Private &amp; Secure · Your Data Stays Yours</span>
+        <span className="hidden sm:inline">Powered by Google Gemini</span>
+        <span className="truncate">Auto-Saved</span>
       </footer>
 
       {/* Zen Distraction-Free Writing Studio */}

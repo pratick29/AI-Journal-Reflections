@@ -153,7 +153,7 @@ export const ZenMode: React.FC<ZenModeProps> = ({
             setPromptInput(e.target.value);
             playTypewriterKeySound();
           }}
-          placeholder="Begin writing into the quiet..."
+          placeholder="Write freely here without distractions..."
           className={`w-full h-full bg-transparent border-none focus:outline-none resize-none font-serif text-[#2B2A28] placeholder-[#8A8478]/50 mx-auto ${fontSizeClasses[fontSize]}`}
           onKeyDown={(e) => {
             if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
@@ -182,7 +182,7 @@ export const ZenMode: React.FC<ZenModeProps> = ({
           disabled={isGenerating || !promptInput.trim()}
           className="px-6 py-2.5 bg-[#2B2A28] text-[#F7F4EE] hover:bg-[#C4432B] disabled:opacity-40 font-semibold transition-all rounded-xs"
         >
-          Submit Inquiry (⌘ + Enter) →
+          Send Entry (⌘ + Enter) →
         </button>
       </div>
     </div>
