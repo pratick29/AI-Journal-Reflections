@@ -198,10 +198,27 @@ function MainApp() {
 
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
-      return window.innerWidth >= 1024;
+      try {
+        const saved = localStorage.getItem('mindscribe_sidebar_open');
+        if (saved !== null) {
+          return saved === 'true';
+        }
+      } catch (e) {
+        // ignore
+      }
     }
-    return true;
+    return false; // Default: minimized / closed
   });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('mindscribe_sidebar_open', isSidebarOpen ? 'true' : 'false');
+      } catch (e) {
+        // ignore
+      }
+    }
+  }, [isSidebarOpen]);
 
   // Resizable Past Entries Sidebar Width with LocalStorage Memory
   const [sidebarWidth, setSidebarWidth] = useState<number>(() => {
@@ -392,6 +409,7 @@ function MainApp() {
               selectedId={selectedInteraction?.id || null}
               onSelectInteraction={(item) => setSelectedInteraction(item)}
               onNewSession={() => setSelectedInteraction(null)}
+              onClose={() => setIsSidebarOpen(false)}
             />
           )}
         </div>

@@ -131,9 +131,9 @@ export const HistoryList: React.FC<HistoryListProps> = ({
             {onClose && (
               <button
                 onClick={onClose}
-                className="lg:hidden p-1.5 border border-[#E2DDD5] dark:border-[#38342E] hover:border-[#C4432B] text-[#2B2A28] dark:text-[#EAE6DF] hover:bg-[#C4432B] hover:text-[#F7F4EE] transition-colors rounded-sm"
-                title="Close Entries"
-                aria-label="Close Entries"
+                className="p-1.5 border border-[#E2DDD5] dark:border-[#38342E] hover:border-[#C4432B] text-[#2B2A28] dark:text-[#EAE6DF] hover:bg-[#C4432B] hover:text-[#F7F4EE] transition-colors rounded-sm cursor-pointer"
+                title="Collapse Past Entries (⌘\)"
+                aria-label="Collapse Past Entries"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
