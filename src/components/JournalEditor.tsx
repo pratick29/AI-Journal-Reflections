@@ -23,6 +23,8 @@ import {
   Unlock,
   KeyRound,
   ShieldCheck,
+  ChevronDown,
+  Share2,
 } from 'lucide-react';
 import {
   Interaction,
@@ -115,6 +117,8 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
   const [manualPassphraseInput, setManualPassphraseInput] = useState<string>('');
   const [decryptError, setDecryptError] = useState<string | null>(null);
   const [isDecrypting, setIsDecrypting] = useState<boolean>(false);
+  const [showExportMenu, setShowExportMenu] = useState<boolean>(false);
+  const exportMenuRef = useRef<HTMLDivElement>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -212,6 +216,18 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
       isCancelled = true;
     };
   }, [currentInteraction]);
+
+  // Dismiss Export dropdown on outside click
+  useEffect(() => {
+    if (!showExportMenu) return;
+    const handleClickOutside = (event: MouseEvent) => {
+      if (exportMenuRef.current && !exportMenuRef.current.contains(event.target as Node)) {
+        setShowExportMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showExportMenu]);
 
   const handleManualUnlock = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -907,67 +923,129 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
             </button>
           </div>
 
-          {/* Export & Publication Suite: Always visible with active/disabled styling when empty */}
-          <div className="flex items-center gap-1 bg-[#F4F0E8]/40 dark:bg-[#25221E]/60 border border-[#E5E0D8]/80 dark:border-[#38332D]/80 px-1.5 py-1 rounded-full shadow-2xs">
+          {/* Compact Editorial Export Dropdown */}
+          <div className="relative" ref={exportMenuRef}>
             <button
-              onClick={handleExportText}
-              disabled={messages.length === 0}
-              className={`p-1.5 border border-[#E5E0D8] dark:border-[#38332D] transition-all rounded-full shadow-2xs ${
-                messages.length > 0
-                  ? 'bg-[#FFFFFF] dark:bg-[#25221E] text-[#57534E] dark:text-[#C8C2B5] hover:border-[#1A1918] dark:hover:border-[#C4432B] hover:text-[#1A1918] hover:dark:text-[#F5F2EB] cursor-pointer'
-                  : 'bg-[#F5F2EB]/50 dark:bg-[#1E1C1A] text-[#B0AAA0] dark:text-[#605B54] opacity-50 cursor-not-allowed'
+              type="button"
+              onClick={() => setShowExportMenu((prev) => !prev)}
+              className={`px-3 py-1.5 border transition-all flex items-center gap-1.5 text-[10px] font-sans uppercase tracking-wider rounded-full shadow-2xs cursor-pointer ${
+                showExportMenu
+                  ? 'bg-[#1A1918] text-[#FBF9F5] border-[#1A1918] dark:bg-[#C4432B] dark:text-[#FFFFFF] dark:border-[#C4432B]'
+                  : 'bg-[#FFFFFF] dark:bg-[#25221E] text-[#57534E] dark:text-[#C8C2B5] border-[#E5E0D8] dark:border-[#38332D] hover:border-[#1A1918] hover:text-[#1A1918] dark:hover:border-[#C4432B] dark:hover:text-[#F5F2EB]'
               }`}
-              title={messages.length > 0 ? (copiedExport ? "Entry copied!" : "Copy entry to clipboard") : "Add reflections before copying"}
+              title="Export, download, or share manuscript"
             >
-              {copiedExport ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Download className="w-3.5 h-3.5" />}
+              <Share2 className="w-3 h-3 text-[#A94A38] dark:text-[#FF8A73]" />
+              <span className="font-medium">Export</span>
+              <ChevronDown className={`w-3 h-3 opacity-60 transition-transform duration-150 ${showExportMenu ? 'rotate-180' : ''}`} />
             </button>
-            <button
-              onClick={handleExportMarkdown}
-              disabled={messages.length === 0}
-              className={`px-2.5 py-1 border border-[#E5E0D8] dark:border-[#38332D] transition-all flex items-center gap-1 text-[9px] uppercase tracking-wider rounded-full shadow-2xs ${
-                messages.length > 0
-                  ? 'bg-[#FFFFFF] dark:bg-[#25221E] text-[#57534E] dark:text-[#C8C2B5] hover:border-[#7C3AED] hover:text-[#7C3AED] cursor-pointer'
-                  : 'bg-[#F5F2EB]/50 dark:bg-[#1E1C1A] text-[#B0AAA0] dark:text-[#605B54] opacity-50 cursor-not-allowed'
-              }`}
-              title={messages.length > 0 ? "Download Markdown file (.md) for Obsidian, Notion, or Logseq" : "Add reflections before exporting to Markdown"}
-            >
-              <FileText className={`w-3.5 h-3.5 ${messages.length > 0 ? 'text-[#7C3AED]' : 'text-stone-400'}`} />
-              <span className="font-mono font-medium">.MD</span>
-            </button>
-            <button
-              onClick={handleExportGoogleDocs}
-              disabled={messages.length === 0}
-              className={`px-2.5 py-1 border border-[#E5E0D8] dark:border-[#38332D] transition-all flex items-center gap-1 text-[9px] uppercase tracking-wider rounded-full shadow-2xs ${
-                messages.length > 0
-                  ? 'bg-[#FFFFFF] dark:bg-[#25221E] text-[#57534E] dark:text-[#C8C2B5] hover:border-[#4285F4] hover:text-[#4285F4] cursor-pointer'
-                  : 'bg-[#F5F2EB]/50 dark:bg-[#1E1C1A] text-[#B0AAA0] dark:text-[#605B54] opacity-50 cursor-not-allowed'
-              }`}
-              title={messages.length > 0 ? "1-Click Export to Google Docs (opens document & formats with Ctrl+V)" : "Add reflections before exporting to Google Docs"}
-            >
-              <FileText className={`w-3.5 h-3.5 ${messages.length > 0 ? 'text-[#4285F4]' : 'text-stone-400'}`} />
-              <span className="font-sans font-medium">Docs</span>
-            </button>
-            <button
-              onClick={handlePrintSpecimen}
-              disabled={messages.length === 0}
-              className={`p-1.5 border border-[#E5E0D8] dark:border-[#38332D] transition-all rounded-full shadow-2xs ${
-                messages.length > 0
-                  ? 'bg-[#FFFFFF] dark:bg-[#25221E] text-[#57534E] dark:text-[#C8C2B5] hover:border-[#1A1918] dark:hover:border-[#C4432B] hover:text-[#1A1918] hover:dark:text-[#F5F2EB] cursor-pointer'
-                  : 'bg-[#F5F2EB]/50 dark:bg-[#1E1C1A] text-[#B0AAA0] dark:text-[#605B54] opacity-50 cursor-not-allowed'
-              }`}
-              title={messages.length > 0 ? "Print / Export PDF" : "Add reflections before printing"}
-            >
-              <Printer className="w-3.5 h-3.5" />
-            </button>
-            {onOpenNotifications && (
-              <button
-                onClick={onOpenNotifications}
-                className="px-2.5 py-1 border border-[#E5E0D8] dark:border-[#38332D] hover:border-[#C4432B] hover:text-[#C4432B] bg-[#FFFFFF] dark:bg-[#25221E] text-[#57534E] dark:text-[#C8C2B5] transition-all flex items-center gap-1 text-[9px] uppercase tracking-wider rounded-full shadow-2xs cursor-pointer"
-                title="Send to Slack / Discord / Webhooks"
-              >
-                <Bell className="w-3.5 h-3.5 text-[#C4432B]" />
-                <span className="hidden md:inline">Send</span>
-              </button>
+
+            {/* Dropdown Menu Popover */}
+            {showExportMenu && (
+              <div className="absolute right-0 sm:right-auto sm:left-0 mt-1.5 w-60 bg-[#FFFFFF] dark:bg-[#201D1A] border border-[#E2DDD5] dark:border-[#38332D] rounded-2xl shadow-xl z-50 py-1.5 animate-in fade-in zoom-in-95 duration-150 font-sans">
+                <div className="px-3.5 py-1.5 border-b border-[#E2DDD5]/50 dark:border-[#38332D]/50 text-[9px] uppercase tracking-widest font-semibold text-[#8C857B]">
+                  Export Manuscript
+                </div>
+
+                {/* Google Docs */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleExportGoogleDocs();
+                    setShowExportMenu(false);
+                  }}
+                  disabled={messages.length === 0}
+                  className="w-full px-3.5 py-2 text-left flex items-center gap-2.5 text-xs text-[#2B2A28] dark:text-[#F5F2EB] hover:bg-[#F7F4EE] hover:dark:bg-[#2A2622] transition-colors disabled:opacity-40 disabled:cursor-not-allowed group cursor-pointer"
+                >
+                  <div className="w-7 h-7 rounded-lg bg-[#4285F4]/10 text-[#4285F4] flex items-center justify-center shrink-0">
+                    <FileText className="w-4 h-4" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium flex items-center justify-between">
+                      <span>Google Docs</span>
+                      <span className="text-[9px] text-[#4285F4] font-semibold uppercase tracking-wider">1-Click</span>
+                    </div>
+                    <p className="text-[10px] text-[#8C857B] truncate">Open new doc & auto-format with Ctrl+V</p>
+                  </div>
+                </button>
+
+                {/* Markdown (.MD) */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleExportMarkdown();
+                    setShowExportMenu(false);
+                  }}
+                  disabled={messages.length === 0}
+                  className="w-full px-3.5 py-2 text-left flex items-center gap-2.5 text-xs text-[#2B2A28] dark:text-[#F5F2EB] hover:bg-[#F7F4EE] hover:dark:bg-[#2A2622] transition-colors disabled:opacity-40 disabled:cursor-not-allowed group cursor-pointer"
+                >
+                  <div className="w-7 h-7 rounded-lg bg-[#7C3AED]/10 text-[#7C3AED] flex items-center justify-center shrink-0 font-mono text-xs font-bold">
+                    MD
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium">Markdown (.md)</div>
+                    <p className="text-[10px] text-[#8C857B] truncate">Download for Obsidian, Notion & Logseq</p>
+                  </div>
+                </button>
+
+                {/* Print / PDF */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    handlePrintSpecimen();
+                    setShowExportMenu(false);
+                  }}
+                  disabled={messages.length === 0}
+                  className="w-full px-3.5 py-2 text-left flex items-center gap-2.5 text-xs text-[#2B2A28] dark:text-[#F5F2EB] hover:bg-[#F7F4EE] hover:dark:bg-[#2A2622] transition-colors disabled:opacity-40 disabled:cursor-not-allowed group cursor-pointer"
+                >
+                  <div className="w-7 h-7 rounded-lg bg-[#1A1918]/5 dark:bg-white/5 text-[#57534E] dark:text-[#C8C2B5] flex items-center justify-center shrink-0">
+                    <Printer className="w-4 h-4" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium">Print / Export PDF</div>
+                    <p className="text-[10px] text-[#8C857B] truncate">Typeset specimen layout for physical print</p>
+                  </div>
+                </button>
+
+                {/* Copy Text */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleExportText();
+                    setShowExportMenu(false);
+                  }}
+                  disabled={messages.length === 0}
+                  className="w-full px-3.5 py-2 text-left flex items-center gap-2.5 text-xs text-[#2B2A28] dark:text-[#F5F2EB] hover:bg-[#F7F4EE] hover:dark:bg-[#2A2622] transition-colors disabled:opacity-40 disabled:cursor-not-allowed group cursor-pointer"
+                >
+                  <div className="w-7 h-7 rounded-lg bg-[#1A1918]/5 dark:bg-white/5 text-[#57534E] dark:text-[#C8C2B5] flex items-center justify-center shrink-0">
+                    {copiedExport ? <Check className="w-4 h-4 text-emerald-600" /> : <Download className="w-4 h-4" />}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium">{copiedExport ? 'Copied to Clipboard!' : 'Copy Raw Text'}</div>
+                    <p className="text-[10px] text-[#8C857B] truncate">Copy full dialogue turns to clipboard</p>
+                  </div>
+                </button>
+
+                {/* Webhooks / Slack / Discord */}
+                {onOpenNotifications && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onOpenNotifications();
+                      setShowExportMenu(false);
+                    }}
+                    className="w-full px-3.5 py-2 text-left flex items-center gap-2.5 text-xs text-[#2B2A28] dark:text-[#F5F2EB] hover:bg-[#F7F4EE] hover:dark:bg-[#2A2622] transition-colors border-t border-[#E2DDD5]/50 dark:border-[#38332D]/50 cursor-pointer"
+                  >
+                    <div className="w-7 h-7 rounded-lg bg-[#C4432B]/10 text-[#C4432B] flex items-center justify-center shrink-0">
+                      <Bell className="w-4 h-4" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium">Webhooks & Alerts</div>
+                      <p className="text-[10px] text-[#8C857B] truncate">Send to Discord, Slack or custom endpoint</p>
+                    </div>
+                  </button>
+                )}
+              </div>
             )}
           </div>
 
