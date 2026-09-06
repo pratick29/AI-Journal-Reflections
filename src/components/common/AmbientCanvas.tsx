@@ -52,13 +52,22 @@ export const AmbientCanvas: React.FC<AmbientCanvasProps> = ({ enabled = true }) 
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mouseleave', handleMouseLeave);
 
-    // Color palette: terracotta rust, warm gold/amber, and charcoal dust motes
-    const colors = [
-      'rgba(196, 67, 43, ',   // terracotta rust
-      'rgba(217, 149, 74, ',  // warm gold ember
-      'rgba(138, 132, 120, ', // warm paper taupe
-      'rgba(43, 42, 40, ',    // faint charcoal mote
-    ];
+    const isDark = document.documentElement.classList.contains('dark') || document.documentElement.classList.contains('candlelight');
+
+    // Color palette: terracotta rust, warm gold/amber, and warm starlight embers
+    const colors = isDark
+      ? [
+          'rgba(226, 99, 76, ',   // warm luminous terracotta
+          'rgba(245, 180, 80, ',  // golden candle flame
+          'rgba(245, 230, 200, ', // warm starlight
+          'rgba(217, 149, 74, ',  // amber glow
+        ]
+      : [
+          'rgba(196, 67, 43, ',   // terracotta rust
+          'rgba(217, 149, 74, ',  // warm gold ember
+          'rgba(138, 132, 120, ', // warm paper taupe
+          'rgba(43, 42, 40, ',    // faint charcoal mote
+        ];
 
     const particleCount = Math.min(45, Math.floor((width * height) / 28000));
     const particles: Particle[] = [];

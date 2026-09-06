@@ -148,19 +148,20 @@
    ========================================================================== */
 html.candlelight,
 html.dark {
-  --paper-canvas: #161513;
-  --paper-surface: #1F1E1B;
-  --paper-subtle: #2A2825;
-  --ink-primary: #F2EDE4;
-  --ink-secondary: #C2BCB1;
-  --ink-muted: #8E887E;
+  --paper-canvas: #131211;
+  --paper-surface: #1C1A18;
+  --paper-subtle: #252320;
+  --paper-card: #201E1B;
+  --ink-primary: #F5F2EB;
+  --ink-secondary: #C8C2B5;
+  --ink-muted: #948E82;
   --rust-accent: #E2634C;
   --rust-hover: #F0755F;
   --rust-subtle-bg: rgba(226, 99, 76, 0.16);
-  --paper-rule: #34312B;
-  --paper-rule-dark: #4C4840;
+  --paper-rule: #36332E;
+  --paper-rule-dark: #4D4942;
   --selection-bg: #E2634C;
-  --selection-text: #161513;
+  --selection-text: #131211;
 }
 
 html.candlelight body,
@@ -172,77 +173,188 @@ html.dark body {
 html.candlelight .paper-texture,
 html.dark .paper-texture {
   background-color: var(--paper-canvas);
-  background-image: radial-gradient(rgba(242, 237, 228, 0.04) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(245, 242, 235, 0.035) 1px, transparent 1px);
 }
 
 html.candlelight .box-sanctuary,
 html.dark .box-sanctuary {
   background-color: var(--paper-surface);
-  border-color: rgba(76, 72, 64, 0.55);
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.45), 0 1px 3px 0 rgba(0, 0, 0, 0.25);
+  border-color: var(--paper-rule);
+  box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.55), 0 1px 3px 0 rgba(0, 0, 0, 0.35);
 }
 
 html.candlelight .box-sanctuary-hover:hover,
 html.dark .box-sanctuary-hover:hover {
   border-color: rgba(226, 99, 76, 0.45);
-  box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.65), 0 2px 6px 0 rgba(0, 0, 0, 0.35);
+  box-shadow: 0 8px 32px -4px rgba(0, 0, 0, 0.75), 0 2px 6px 0 rgba(0, 0, 0, 0.45);
 }
 
 html.candlelight #app-navbar,
 html.dark #app-navbar {
-  background-color: rgba(22, 21, 19, 0.94);
+  background-color: rgba(19, 18, 17, 0.95);
   border-bottom-color: var(--paper-rule);
 }
 
-/* Palette Adaptors for Candlelight Midnight Sanctuary */
+/* Base Surfaces & Card Backgrounds */
+html.candlelight .bg-\[\#FFFFFF\],
+html.dark .bg-\[\#FFFFFF\],
 html.candlelight .bg-\[\#FFFDF9\],
-html.dark .bg-\[\#FFFDF9\] {
+html.dark .bg-\[\#FFFDF9\],
+html.candlelight .bg-\[\#FFFDF7\],
+html.dark .bg-\[\#FFFDF7\],
+html.candlelight .bg-\[\#FFFBEB\],
+html.dark .bg-\[\#FFFBEB\],
+html.candlelight .bg-\[\#FDF8EE\],
+html.dark .bg-\[\#FDF8EE\],
+html.candlelight .bg-\[\#FAF7F0\],
+html.dark .bg-\[\#FAF7F0\],
+html.candlelight .bg-\[\#FAF6F0\],
+html.dark .bg-\[\#FAF6F0\],
+html.candlelight .bg-\[\#FBF9F5\],
+html.dark .bg-\[\#FBF9F5\],
+html.candlelight .bg-\[\#FDFBF7\],
+html.dark .bg-\[\#FDFBF7\] {
   background-color: var(--paper-surface) !important;
 }
 
+/* Secondary & Canvas Surfaces */
 html.candlelight .bg-\[\#F7F4EE\],
-html.dark .bg-\[\#F7F4EE\] {
+html.dark .bg-\[\#F7F4EE\],
+html.candlelight .bg-\[\#F4F0E8\],
+html.dark .bg-\[\#F4F0E8\] {
   background-color: var(--paper-canvas) !important;
 }
 
+/* Subtle Hover & Tertiary Surfaces */
 html.candlelight .bg-\[\#EFECE6\],
 html.dark .bg-\[\#EFECE6\] {
   background-color: var(--paper-subtle) !important;
 }
 
+/* Dark Buttons / Accents */
+html.candlelight .bg-\[\#2B2A28\],
+html.dark .bg-\[\#2B2A28\],
+html.candlelight .bg-\[\#1A1918\],
+html.dark .bg-\[\#1A1918\] {
+  background-color: #2E2B27 !important;
+}
+
+html.candlelight .hover\:bg-\[\#2B2A28\]:hover,
+html.dark .hover\:bg-\[\#2B2A28\]:hover {
+  background-color: #3B3833 !important;
+}
+
+/* Primary Ink / Text */
 html.candlelight .text-\[\#2B2A28\],
-html.dark .text-\[\#2B2A28\] {
+html.dark .text-\[\#2B2A28\],
+html.candlelight .text-\[\#1A1918\],
+html.dark .text-\[\#1A1918\],
+html.candlelight .text-\[\#2C2825\],
+html.dark .text-\[\#2C2825\],
+html.candlelight .text-\[\#3D3A36\],
+html.dark .text-\[\#3D3A36\] {
   color: var(--ink-primary) !important;
 }
 
+/* Secondary Ink / Body Text */
 html.candlelight .text-\[\#595652\],
-html.dark .text-\[\#595652\] {
+html.dark .text-\[\#595652\],
+html.candlelight .text-\[\#57534E\],
+html.dark .text-\[\#57534E\],
+html.candlelight .text-\[\#59534B\],
+html.dark .text-\[\#59534B\],
+html.candlelight .text-\[\#6E6A64\],
+html.dark .text-\[\#6E6A64\] {
   color: var(--ink-secondary) !important;
 }
 
+/* Muted / Tertiary Text */
 html.candlelight .text-\[\#8A8478\],
-html.dark .text-\[\#8A8478\] {
+html.dark .text-\[\#8A8478\],
+html.candlelight .text-\[\#8C857B\],
+html.dark .text-\[\#8C857B\] {
   color: var(--ink-muted) !important;
 }
 
+/* Inverted / White Text */
+html.candlelight .text-\[\#F7F4EE\],
+html.dark .text-\[\#F7F4EE\],
+html.candlelight .text-\[\#FBF9F5\],
+html.dark .text-\[\#FBF9F5\] {
+  color: #F5F2EB !important;
+}
+
+/* Border System */
 html.candlelight .border-\[\#E2DDD5\],
-html.dark .border-\[\#E2DDD5\] {
+html.dark .border-\[\#E2DDD5\],
+html.candlelight .border-\[\#E5E0D8\],
+html.dark .border-\[\#E5E0D8\] {
   border-color: var(--paper-rule) !important;
 }
 
 html.candlelight .border-\[\#2B2A28\],
-html.dark .border-\[\#2B2A28\] {
-  border-color: var(--ink-primary) !important;
+html.dark .border-\[\#2B2A28\],
+html.candlelight .border-\[\#1A1918\],
+html.dark .border-\[\#1A1918\] {
+  border-color: var(--paper-rule-dark) !important;
 }
 
-html.candlelight .bg-\[\#2B2A28\],
-html.dark .bg-\[\#2B2A28\] {
-  background-color: #2D2B27 !important;
+/* Focus and input outlines */
+html.candlelight input,
+html.dark input,
+html.candlelight textarea,
+html.dark textarea,
+html.candlelight select,
+html.dark select {
+  color-scheme: dark;
 }
 
-html.candlelight .text-\[\#F7F4EE\],
-html.dark .text-\[\#F7F4EE\] {
-  color: #F2EDE4 !important;
+html.candlelight input::placeholder,
+html.dark input::placeholder,
+html.candlelight textarea::placeholder,
+html.dark textarea::placeholder {
+  color: var(--ink-muted) !important;
+  opacity: 0.7;
+}
+
+/* Prose Markdown in Dark Mode */
+html.candlelight .prose,
+html.dark .prose {
+  color: var(--ink-primary) !important;
+}
+
+html.candlelight .prose p,
+html.dark .prose p,
+html.candlelight .prose li,
+html.dark .prose li,
+html.candlelight .prose blockquote,
+html.dark .prose blockquote {
+  color: var(--ink-secondary) !important;
+}
+
+html.candlelight .prose strong,
+html.dark .prose strong,
+html.candlelight .prose h1,
+html.dark .prose h1,
+html.candlelight .prose h2,
+html.dark .prose h2,
+html.candlelight .prose h3,
+html.dark .prose h3,
+html.candlelight .prose h4,
+html.dark .prose h4 {
+  color: var(--ink-primary) !important;
+}
+
+html.candlelight .prose code,
+html.dark .prose code {
+  color: var(--rust-accent) !important;
+  background-color: var(--paper-subtle) !important;
+}
+
+/* Shadow System Softening for Dark Mode */
+html.candlelight [class*="shadow-"],
+html.dark [class*="shadow-"] {
+  --tw-shadow-color: rgba(0, 0, 0, 0.6) !important;
 }
 
 /* Printable PDF & Paper Editorial Specimen CSS */
