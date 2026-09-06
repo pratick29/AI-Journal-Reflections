@@ -22,6 +22,7 @@ import {
   AuthorProfile,
 } from '../../types';
 import { useAuth } from '../../context/AuthContext';
+import { openGoogleCalendarHabit } from '../../utils/googleCalendar';
 
 interface NotificationSettingsModalProps {
   isOpen: boolean;
@@ -272,6 +273,38 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
           {/* TAB 1: CHANNELS */}
           {activeTab === 'channels' && (
             <div className="space-y-6 max-w-2xl mx-auto">
+              {/* Google Calendar Daily Habit Card */}
+              <div className="p-4 bg-[#FFFDF9] border border-[#4285F4]/40 rounded-xs space-y-3 shadow-xs">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-base">📅</span>
+                    <h3 className="text-sm font-serif font-semibold text-[#2B2A28]">Google Calendar Habit Reminders</h3>
+                  </div>
+                  <span className="text-[9px] font-sans uppercase tracking-widest text-[#4285F4] bg-[#4285F4]/10 px-2 py-0.5 rounded-full font-bold">
+                    1-Click Sync
+                  </span>
+                </div>
+                <p className="text-xs font-serif text-[#595652]">
+                  Add recurring daily calendar blocks for contemplative morning or evening inquiry. Protects your writing streak with zero friction.
+                </p>
+                <div className="flex items-center gap-2 pt-1 flex-wrap">
+                  <button
+                    type="button"
+                    onClick={() => openGoogleCalendarHabit('morning')}
+                    className="px-3.5 py-1.5 border border-[#E2DDD5] bg-[#F7F4EE] hover:border-[#4285F4] hover:text-[#4285F4] text-xs font-sans uppercase tracking-wider font-semibold rounded-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <span>🌅 Morning Primer (8:00 AM)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => openGoogleCalendarHabit('evening')}
+                    className="px-3.5 py-1.5 border border-[#E2DDD5] bg-[#F7F4EE] hover:border-[#4285F4] hover:text-[#4285F4] text-xs font-sans uppercase tracking-wider font-semibold rounded-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <span>🌙 Evening Examen (9:00 PM)</span>
+                  </button>
+                </div>
+              </div>
+
               <div className="p-4 bg-[#FFFDF9] border border-[#E2DDD5] rounded-xs space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">

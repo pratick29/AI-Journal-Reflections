@@ -51,6 +51,7 @@ import {
   getSessionPassphrase,
   setSessionPassphrase,
 } from '../utils/crypto';
+import { exportToGoogleDocs } from '../utils/googleDrive';
 
 interface JournalEditorProps {
   currentInteraction: Interaction | null;
@@ -735,6 +736,23 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
     window.print();
   };
 
+  const handleExportGoogleDocs = async () => {
+    if (!currentInteraction && messages.length === 0) return;
+    const itemToExport: Interaction = currentInteraction || {
+      id: 'temp_doc',
+      userId: user?.uid || 'anonymous_author',
+      title: title.trim() || 'MindScribe Reflection',
+      category,
+      messages,
+      cognitiveAnalysis,
+      thinkingMap,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      location,
+    };
+    await exportToGoogleDocs(itemToExport, authorProfile?.penName);
+  };
+
   const userTurnCount = messages.filter((m) => m.role === 'user').length;
 
   return (
@@ -856,11 +874,19 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
               </button>
               <button
                 onClick={handleExportMarkdown}
-                className="px-2.5 py-1.5 border border-[#E5E0D8] dark:border-[#38332D] hover:border-[#7C3AED] hover:text-[#7C3AED] bg-[#FFFFFF] dark:bg-[#25221E] text-[#57534E] dark:text-[#C8C2B5] transition-all flex items-center gap-1 text-[9px] uppercase tracking-wider rounded-full shadow-2xs"
+                className="px-2.5 py-1.5 border border-[#E5E0D8] dark:border-[#38332D] hover:border-[#7C3AED] hover:text-[#7C3AED] bg-[#FFFFFF] dark:bg-[#25221E] text-[#57534E] dark:text-[#C8C2B5] transition-all flex items-center gap-1 text-[9px] uppercase tracking-wider rounded-full shadow-2xs cursor-pointer"
                 title="Download Markdown file for Obsidian, Notion, or Logseq"
               >
                 <FileText className="w-3.5 h-3.5 text-[#7C3AED]" />
                 <span className="hidden sm:inline font-mono font-medium">.MD</span>
+              </button>
+              <button
+                onClick={handleExportGoogleDocs}
+                className="px-2.5 py-1.5 border border-[#E5E0D8] dark:border-[#38332D] hover:border-[#4285F4] hover:text-[#4285F4] bg-[#FFFFFF] dark:bg-[#25221E] text-[#57534E] dark:text-[#C8C2B5] transition-all flex items-center gap-1 text-[9px] uppercase tracking-wider rounded-full shadow-2xs cursor-pointer"
+                title="Export formatted reflection to Google Docs"
+              >
+                <FileText className="w-3.5 h-3.5 text-[#4285F4]" />
+                <span className="hidden sm:inline font-sans font-medium">Docs</span>
               </button>
               <button
                 onClick={handlePrintSpecimen}

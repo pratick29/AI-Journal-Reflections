@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { X, Sun, Moon, Sparkles, Check, BookmarkPlus } from 'lucide-react';
+import { X, Sun, Moon, Sparkles, Check, BookmarkPlus, Calendar } from 'lucide-react';
 import { Interaction } from '../../types';
+import { openGoogleCalendarHabit } from '../../utils/googleCalendar';
 
 interface DailyRitualModalProps {
   isOpen: boolean;
@@ -249,10 +250,19 @@ export const DailyRitualModal: React.FC<DailyRitualModalProps> = ({
                 />
               </div>
 
-              <div className="pt-2 flex justify-end">
+              <div className="pt-2 flex items-center justify-between gap-2 flex-wrap">
+                <button
+                  type="button"
+                  onClick={() => openGoogleCalendarHabit('morning', morningIntention || undefined)}
+                  className="px-3.5 py-2 border border-[#E2DDD5] bg-[#F7F4EE] hover:border-[#4285F4] hover:text-[#4285F4] text-[#595652] text-xs font-sans uppercase tracking-wider font-semibold flex items-center gap-1.5 rounded-xs transition-colors cursor-pointer"
+                  title="Schedule recurring Morning Primer on Google Calendar (8:00 AM)"
+                >
+                  <Calendar className="w-3.5 h-3.5 text-[#4285F4]" />
+                  <span>Add to Google Calendar</span>
+                </button>
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-[#2B2A28] hover:bg-[#C4432B] text-[#F7F4EE] text-xs font-sans uppercase tracking-wider font-semibold flex items-center gap-1.5 rounded-xs transition-colors"
+                  className="px-6 py-2 bg-[#2B2A28] hover:bg-[#C4432B] text-[#F7F4EE] text-xs font-sans uppercase tracking-wider font-semibold flex items-center gap-1.5 rounded-xs transition-colors cursor-pointer ml-auto"
                 >
                   <BookmarkPlus className="w-3.5 h-3.5" />
                   <span>Inscribe Morning Primer →</span>
@@ -300,10 +310,19 @@ export const DailyRitualModal: React.FC<DailyRitualModalProps> = ({
                 />
               </div>
 
-              <div className="pt-2 flex justify-end">
+              <div className="pt-2 flex items-center justify-between gap-2 flex-wrap">
+                <button
+                  type="button"
+                  onClick={() => openGoogleCalendarHabit('evening', eveningActions || undefined)}
+                  className="px-3.5 py-2 border border-[#E2DDD5] bg-[#F7F4EE] hover:border-[#4285F4] hover:text-[#4285F4] text-[#595652] text-xs font-sans uppercase tracking-wider font-semibold flex items-center gap-1.5 rounded-xs transition-colors cursor-pointer"
+                  title="Schedule recurring Evening Examen on Google Calendar (9:00 PM)"
+                >
+                  <Calendar className="w-3.5 h-3.5 text-[#4285F4]" />
+                  <span>Add to Google Calendar</span>
+                </button>
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-[#2B2A28] hover:bg-[#C4432B] text-[#F7F4EE] text-xs font-sans uppercase tracking-wider font-semibold flex items-center gap-1.5 rounded-xs transition-colors"
+                  className="px-6 py-2 bg-[#2B2A28] hover:bg-[#C4432B] text-[#F7F4EE] text-xs font-sans uppercase tracking-wider font-semibold flex items-center gap-1.5 rounded-xs transition-colors cursor-pointer ml-auto"
                 >
                   <BookmarkPlus className="w-3.5 h-3.5" />
                   <span>Inscribe Evening Examen →</span>

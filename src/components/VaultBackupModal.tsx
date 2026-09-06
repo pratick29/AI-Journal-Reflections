@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Download, Upload, ShieldCheck, AlertCircle, CheckCircle } from 'lucide-react';
+import { X, Download, Upload, ShieldCheck, AlertCircle, CheckCircle, Cloud, ExternalLink } from 'lucide-react';
 import { Interaction } from '../types';
 import { saveInteraction } from '../firebase/interactions';
 import { useAuth } from '../context/AuthContext';
@@ -35,6 +35,12 @@ export const VaultBackupModal: React.FC<VaultBackupModalProps> = ({
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
+  };
+
+  const handleGoogleDriveBackup = () => {
+    handleExportJson();
+    window.open('https://drive.google.com/drive/my-drive', '_blank', 'noopener,noreferrer');
+    setImportStatus('Vault backup downloaded! Drag and drop this file into your Google Drive "MindScribe" folder.');
   };
 
   const handleFileImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -114,14 +120,25 @@ export const VaultBackupModal: React.FC<VaultBackupModalProps> = ({
                 Download all {interactions.length} inquiry entries as a structured JSON archive.
               </p>
             </div>
-            <button
-              onClick={handleExportJson}
-              disabled={interactions.length === 0}
-              className="px-4 py-2.5 bg-[#2B2A28] text-[#F7F4EE] hover:bg-[#C4432B] disabled:opacity-40 text-xs font-sans uppercase tracking-widest font-semibold transition-colors flex items-center gap-2 rounded-xs shrink-0"
-            >
-              <Download className="w-4 h-4" />
-              <span>Export JSON</span>
-            </button>
+            <div className="flex items-center gap-2 flex-wrap shrink-0">
+              <button
+                onClick={handleExportJson}
+                disabled={interactions.length === 0}
+                className="px-4 py-2.5 bg-[#2B2A28] text-[#F7F4EE] hover:bg-[#C4432B] disabled:opacity-40 text-xs font-sans uppercase tracking-widest font-semibold transition-colors flex items-center gap-2 rounded-xs cursor-pointer"
+              >
+                <Download className="w-4 h-4" />
+                <span>Export JSON</span>
+              </button>
+              <button
+                onClick={handleGoogleDriveBackup}
+                disabled={interactions.length === 0}
+                className="px-4 py-2.5 bg-[#4285F4] text-white hover:bg-[#3367D6] disabled:opacity-40 text-xs font-sans uppercase tracking-widest font-semibold transition-colors flex items-center gap-2 rounded-xs cursor-pointer shadow-xs"
+                title="Download backup and open Google Drive"
+              >
+                <Cloud className="w-4 h-4" />
+                <span>Save to Google Drive</span>
+              </button>
+            </div>
           </div>
         </div>
 

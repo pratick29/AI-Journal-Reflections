@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { CognitiveAnalysis } from '../../types';
-import { Sparkles, HelpCircle, AlertTriangle, Compass } from 'lucide-react';
+import { Sparkles, HelpCircle, AlertTriangle, Compass, CheckSquare, Check } from 'lucide-react';
+import { openGoogleTasks } from '../../utils/googleTasks';
 
 interface CognitiveLensPanelProps {
   analysis: CognitiveAnalysis | null;
@@ -13,6 +14,14 @@ export const CognitiveLensPanel: React.FC<CognitiveLensPanelProps> = ({
   onRunAnalysis,
   isGenerating,
 }) => {
+  const [copiedTaskIdx, setCopiedTaskIdx] = useState<number | string | null>(null);
+
+  const handleExportTask = (id: number | string, title: string, note?: string) => {
+    openGoogleTasks(title, note);
+    setCopiedTaskIdx(id);
+    setTimeout(() => setCopiedTaskIdx(null), 3000);
+  };
+
   if (!analysis) {
     return (
       <div className="bg-[#FFFFFF] dark:bg-[#1C1A18] border border-[#E2DDD5]/80 dark:border-[#332F2A] p-8 sm:p-12 text-center space-y-6 my-6 rounded-2xl shadow-[0_4px_24px_-4px_rgba(43,42,40,0.04),0_1px_3px_0_rgba(43,42,40,0.02)] dark:shadow-[0_4px_24px_-4px_rgba(0,0,0,0.5)]">
@@ -67,10 +76,29 @@ export const CognitiveLensPanel: React.FC<CognitiveLensPanelProps> = ({
 
       {/* 1. Core Axiom / Main Takeaway */}
       <div className="space-y-3">
-        <span className="text-[10px] font-sans uppercase tracking-[0.2em] text-[#8A8478] dark:text-[#8E877C] font-bold flex items-center gap-1.5">
-          <Compass className="w-3.5 h-3.5 text-[#C4432B]" />
-          MAIN TAKEAWAY
-        </span>
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] font-sans uppercase tracking-[0.2em] text-[#8A8478] dark:text-[#8E877C] font-bold flex items-center gap-1.5">
+            <Compass className="w-3.5 h-3.5 text-[#C4432B]" />
+            MAIN TAKEAWAY
+          </span>
+          <button
+            onClick={() => handleExportTask('axiom', `Insight: ${analysis.coreAxiom}`, analysis.coreAxiom)}
+            className="inline-flex items-center gap-1.5 text-[10px] font-sans uppercase tracking-wider text-[#706B62] dark:text-[#A8A196] hover:text-[#C4432B] dark:hover:text-[#E05A42] transition-colors px-2 py-1 rounded hover:bg-[#F7F4EE] dark:hover:bg-[#25221E]"
+            title="Copy insight and open Google Tasks"
+          >
+            {copiedTaskIdx === 'axiom' ? (
+              <>
+                <Check className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+                <span className="text-emerald-600 dark:text-emerald-400 font-medium">Copied &amp; Opened Tasks!</span>
+              </>
+            ) : (
+              <>
+                <CheckSquare className="w-3 h-3" />
+                <span>Add to Google Tasks</span>
+              </>
+            )}
+          </button>
+        </div>
         <div className="bg-[#F7F4EE]/80 dark:bg-[#25221E] border-l-3 border-[#C4432B] p-5 rounded-xl border-y border-r border-[#E2DDD5]/50 dark:border-[#38332D]">
           <p className="text-lg font-serif italic text-[#2B2A28] dark:text-[#F5F2EB] leading-relaxed">
             "{analysis.coreAxiom}"
@@ -106,8 +134,28 @@ export const CognitiveLensPanel: React.FC<CognitiveLensPanelProps> = ({
           </span>
           <div className="space-y-3">
             {analysis.cognitiveBlindspots.map((blindspot, idx) => (
-              <div key={idx} className="p-4 border border-[#E2DDD5]/70 dark:border-[#38332D] bg-[#F7F4EE]/70 dark:bg-[#25221E] text-sm font-serif text-[#595652] dark:text-[#C2BCB1] leading-relaxed rounded-xl shadow-2xs">
-                {blindspot}
+              <div
+                key={idx}
+                className="group relative p-4 border border-[#E2DDD5]/70 dark:border-[#38332D] bg-[#F7F4EE]/70 dark:bg-[#25221E] text-sm font-serif text-[#595652] dark:text-[#C2BCB1] leading-relaxed rounded-xl shadow-2xs flex flex-col sm:flex-row sm:items-start justify-between gap-3"
+              >
+                <div className="flex-1">{blindspot}</div>
+                <button
+                  onClick={() => handleExportTask(idx, `Action Reframe: ${blindspot.slice(0, 80)}...`, blindspot)}
+                  className="shrink-0 self-end sm:self-start opacity-70 group-hover:opacity-100 transition-opacity inline-flex items-center gap-1 text-[10px] font-sans uppercase tracking-wider text-[#706B62] dark:text-[#A8A196] hover:text-[#C4432B] dark:hover:text-[#E05A42] bg-[#FFFFFF] dark:bg-[#1C1A18] border border-[#E2DDD5] dark:border-[#38332D] px-2.5 py-1 rounded-md shadow-2xs"
+                  title="Export this reframe to Google Tasks"
+                >
+                  {copiedTaskIdx === idx ? (
+                    <>
+                      <Check className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+                      <span className="text-emerald-600 dark:text-emerald-400">Added!</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckSquare className="w-3 h-3" />
+                      <span>To Task</span>
+                    </>
+                  )}
+                </button>
               </div>
             ))}
           </div>

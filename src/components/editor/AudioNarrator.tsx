@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Volume2, VolumeX, Pause, Play } from 'lucide-react';
+import { Volume2, VolumeX, Pause, Play, Sparkles } from 'lucide-react';
+import { synthesizeGoogleSpeech } from '../../utils/googleTts';
 
 interface AudioNarratorProps {
   textToRead: string;
@@ -11,6 +12,7 @@ export const AudioNarrator: React.FC<AudioNarratorProps> = ({ textToRead, label 
   const [isPaused, setIsPaused] = useState(false);
   const [isSupported, setIsSupported] = useState(true);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const audioElementRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
@@ -19,6 +21,9 @@ export const AudioNarrator: React.FC<AudioNarratorProps> = ({ textToRead, label 
     }
 
     return () => {
+      if (audioElementRef.current) {
+        audioElementRef.current.pause();
+      }
       if (window.speechSynthesis) {
         window.speechSynthesis.cancel();
       }
@@ -39,7 +44,47 @@ export const AudioNarrator: React.FC<AudioNarratorProps> = ({ textToRead, label 
       .trim();
   };
 
-  const handleTogglePlay = () => {
+  const handleTogglePlay = async () => {
+    const spokenText = cleanSpokenText(textToRead);
+    if (!spokenText) return;
+
+    // Handle ongoing Google Cloud audio element toggle
+    if (audioElementRef.current) {
+      if (isPlaying) {
+        if (isPaused) {
+          audioElementRef.current.play();
+          setIsPaused(false);
+        } else {
+          audioElementRef.current.pause();
+          setIsPaused(true);
+        }
+        return;
+      }
+    }
+
+    const googleTtsKey = typeof window !== 'undefined' ? localStorage.getItem('journal_google_tts_key') : null;
+    const googleTtsVoice = typeof window !== 'undefined' ? localStorage.getItem('journal_google_tts_voice') || 'en-US-Journey-F' : 'en-US-Journey-F';
+
+    if (googleTtsKey) {
+      try {
+        const audio = await synthesizeGoogleSpeech(spokenText, googleTtsKey, { voiceName: googleTtsVoice });
+        audioElementRef.current = audio;
+        audio.onended = () => {
+          setIsPlaying(false);
+          setIsPaused(false);
+        };
+        audio.onerror = () => {
+          setIsPlaying(false);
+          setIsPaused(false);
+        };
+        await audio.play();
+        setIsPlaying(true);
+        setIsPaused(false);
+        return;
+      } catch (err) {
+        console.warn('Google Cloud TTS failed, falling back to browser synthesis:', err);
+      }
+    }
     if (!window.speechSynthesis) return;
 
     if (isPlaying) {
@@ -55,8 +100,6 @@ export const AudioNarrator: React.FC<AudioNarratorProps> = ({ textToRead, label 
 
     window.speechSynthesis.cancel();
 
-    const spokenText = cleanSpokenText(textToRead);
-    if (!spokenText) return;
 
     const utterance = new SpeechSynthesisUtterance(spokenText);
     utterance.rate = 0.94; // Calm, meditative pacing
@@ -105,11 +148,15 @@ export const AudioNarrator: React.FC<AudioNarratorProps> = ({ textToRead, label 
 
   const handleStop = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (audioElementRef.current) {
+      audioElementRef.current.pause();
+      audioElementRef.current.currentTime = 0;
+    }
     if (window.speechSynthesis) {
       window.speechSynthesis.cancel();
-      setIsPlaying(false);
-      setIsPaused(false);
     }
+    setIsPlaying(false);
+    setIsPaused(false);
   };
 
   return (

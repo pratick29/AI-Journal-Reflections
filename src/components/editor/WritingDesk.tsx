@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { Loader2, Mic, MicOff, Maximize2, BookTemplate, Compass, X, Sparkles, MapPin, Image as ImageIcon, Trash2, Lock, Unlock, Radio, GripHorizontal } from 'lucide-react';
+import { Loader2, Mic, MicOff, Maximize2, BookTemplate, Compass, X, Sparkles, MapPin, Image as ImageIcon, Trash2, Lock, Unlock, Radio, GripHorizontal, ScanLine } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 import { ReflectionMode, PhilosophicalPersona, JournalLocation, AudioMemo } from '../../types';
 import { InteractiveButton } from '../common/InteractiveButton';
 import { InterlocutorSelector } from '../personas/InterlocutorSelector';
@@ -101,12 +102,15 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
   onToggleEncryption,
 }) => {
   const isDepthLimitReached = activeMode !== 'cognitive_lens' && userTurnCount >= 15;
+  const { user } = useAuth();
   const [isListening, setIsListening] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
   const [dismissedDistortionId, setDismissedDistortionId] = useState<string | null>(null);
   const [draftRestored, setDraftRestored] = useState<boolean>(false);
+  const [isScanningHandwriting, setIsScanningHandwriting] = useState(false);
   const recognitionRef = useRef<ISpeechRecognition | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const notebookInputRef = useRef<HTMLInputElement>(null);
 
   // Resizable Journal Entry Box Height with LocalStorage Memory
   const [composerHeight, setComposerHeight] = useState<number>(() => {
@@ -405,6 +409,63 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
     reader.readAsDataURL(file);
   };
 
+  const handleNotebookScan = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file (JPEG, PNG, WebP) of your physical notebook page.');
+      return;
+    }
+
+    if (file.size > 15 * 1024 * 1024) {
+      alert('Image size exceeds 15MB limit. Please upload a smaller photo.');
+      return;
+    }
+
+    setIsScanningHandwriting(true);
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      try {
+        const base64Data = ev.target?.result as string;
+        const idToken = user ? await user.getIdToken() : '';
+
+        const response = await fetch('/api/transcribe-handwriting', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${idToken}`,
+          },
+          body: JSON.stringify({
+            imageBase64: base64Data,
+            mimeType: file.type,
+          }),
+        });
+
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          throw new Error(errData.error || `Server responded with status ${response.status}`);
+        }
+
+        const result = await response.json();
+        if (result.transcription) {
+          setPromptInput(promptInput.trim() ? `${promptInput}\n\n${result.transcription}` : result.transcription);
+        } else {
+          alert('No legible handwriting could be transcribed from the image. Please try a clearer, well-lit photo.');
+        }
+      } catch (err: any) {
+        console.error('Handwriting transcription failed:', err);
+        alert(err.message || 'Error processing handwritten journal page.');
+      } finally {
+        setIsScanningHandwriting(false);
+        if (notebookInputRef.current) {
+          notebookInputRef.current.value = '';
+        }
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
 
   const handleFormSubmit = (e: React.FormEvent) => {
@@ -573,6 +634,14 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
             }
           }}
         />
+
+        {/* Real-time Handwriting Scanner Banner */}
+        {isScanningHandwriting && (
+          <div className="bg-amber-500/10 dark:bg-amber-950/30 border border-amber-500/30 px-3.5 py-2.5 rounded-xl flex items-center gap-2.5 text-xs text-amber-800 dark:text-amber-200 animate-pulse font-sans">
+            <Loader2 className="w-4 h-4 animate-spin text-amber-600 dark:text-amber-400 shrink-0" />
+            <span>Transcribing handwriting from physical notebook via Google Gemini Vision...</span>
+          </div>
+        )}
 
         {/* Attached Photo Preview */}
         {attachedImage && (
@@ -757,6 +826,33 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
 
           {/* Right Side: Media, Privacy, Shortcuts & Submit */}
           <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap ml-auto">
+            {/* Scan Handwritten Notebook Button */}
+            <input
+              type="file"
+              ref={notebookInputRef}
+              onChange={handleNotebookScan}
+              accept="image/jpeg,image/png,image/webp"
+              className="hidden"
+            />
+            <button
+              type="button"
+              onClick={() => notebookInputRef.current?.click()}
+              disabled={isGenerating || isScanningHandwriting || isDepthLimitReached}
+              className={`p-1.5 sm:px-2.5 sm:py-1.5 rounded-full border transition-all flex items-center gap-1.5 uppercase tracking-wider text-[10px] shadow-2xs cursor-pointer ${
+                isScanningHandwriting
+                  ? 'bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500 font-medium animate-pulse'
+                  : 'bg-[#F7F4EE]/80 dark:bg-[#25221E] text-[#595652] dark:text-[#DDD8CE] border-[#E2DDD5] dark:border-[#38332D] hover:border-[#C4432B] hover:text-[#2B2A28] hover:dark:text-[#FFFFFF]'
+              }`}
+              title="Scan handwritten notes from a physical notebook"
+            >
+              {isScanningHandwriting ? (
+                <Loader2 className="w-3 h-3 animate-spin text-amber-600" />
+              ) : (
+                <ScanLine className="w-3 h-3 text-[#C4432B]" />
+              )}
+              <span className="hidden sm:inline">{isScanningHandwriting ? 'Scanning…' : 'Scan Notes'}</span>
+            </button>
+
             {/* Photo / Visual Attachment Button */}
             <input
               type="file"

@@ -11,8 +11,8 @@ const app = express();
 const PORT = 3000;
 
 // Standard Directive: Top-Level Request Deserialization (Ordering Guarantee)
-app.use(express.json({ limit: '1mb' }));
-app.use(express.urlencoded({ extended: true, limit: '1mb' }));
+app.use(express.json({ limit: '15mb' }));
+app.use(express.urlencoded({ extended: true, limit: '15mb' }));
 
 // Lazy initialization of Gemini Client
 let geminiClient: GoogleGenAI | null = null;
@@ -874,6 +874,75 @@ MANDATORY RULES:
     if (verifiedUser?.uid) {
       inFlightRequests.delete(verifiedUser.uid);
     }
+  }
+});
+
+// =========================================================
+// API: Handwritten Journal OCR Transcription (Google Gemini Vision)
+// =========================================================
+app.post('/api/transcribe-handwriting', async (req, res) => {
+  let verifiedUser: VerifiedUser | null = null;
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      res.status(401).json({ error: 'Unauthorized: Missing or malformed Authorization header.' });
+      return;
+    }
+
+    const idToken = authHeader.split(' ')[1];
+    verifiedUser = await verifyFirebaseToken(idToken);
+    if (!verifiedUser) {
+      res.status(401).json({ error: 'Unauthorized: Token verification failed.' });
+      return;
+    }
+
+    const { imageBase64, mimeType = 'image/jpeg' } = req.body;
+    if (!imageBase64) {
+      res.status(400).json({ error: 'Missing image data for handwriting transcription.' });
+      return;
+    }
+
+    const ai = getGemini();
+    const cleanBase64 = imageBase64.replace(/^data:[^;]+;base64,/, '');
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            {
+              inlineData: {
+                mimeType,
+                data: cleanBase64,
+              },
+            },
+            {
+              text: `You are an expert paleographer and archival transcriptionist for a private philosophical journal app. 
+Carefully read and transcribe the handwritten text from this physical notebook or journal page verbatim into clean Markdown.
+
+Formatting Instructions:
+1. Faithfully preserve the author's original line breaks, bullet points, numbered lists, and paragraph indentations.
+2. If handwritten words are struck through (crossed out), represent them with ~~strikethrough~~.
+3. If an ink word is genuinely illegible or smudged, denote it with [illegible].
+4. Output ONLY the raw transcribed text. Do NOT include any intro ("Here is the text..."), markdown backticks wrap (\`\`\`markdown), or closing commentary.
+5. If there are margin doodles or drawings, optionally note them briefly in brackets like *[margin sketch]* or similar.`,
+            },
+          ],
+        },
+      ],
+    });
+
+    const transcription = response.text?.trim() || '';
+    res.json({
+      transcription,
+      modelUsed: 'gemini-2.5-flash',
+    });
+  } catch (err: any) {
+    console.error('Error in /api/transcribe-handwriting:', err?.message || err);
+    res.status(500).json({
+      error: err instanceof Error ? err.message : 'Failed to transcribe handwritten journal.',
+    });
   }
 });
 

@@ -57,6 +57,20 @@ export const AuthorSanctuaryModal: React.FC<AuthorSanctuaryModalProps> = ({
   const [newMeaning, setNewMeaning] = useState('');
   const [isSavedNotice, setIsSavedNotice] = useState(false);
 
+  // Google Cloud TTS Voice State
+  const [googleTtsVoice, setGoogleTtsVoice] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('journal_google_tts_voice') || 'en-US-Journey-F';
+    }
+    return 'en-US-Journey-F';
+  });
+  const [googleTtsKey, setGoogleTtsKey] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('journal_google_tts_key') || '';
+    }
+    return '';
+  });
+
   // Grounding breath pacer state
   const [breathPhase, setBreathPhase] = useState<'Inhale' | 'Hold' | 'Exhale'>('Inhale');
   const [breathCount, setBreathCount] = useState<number>(4);
@@ -577,6 +591,48 @@ export const AuthorSanctuaryModal: React.FC<AuthorSanctuaryModalProps> = ({
                       <div className="text-[9px] text-[#8A8478] font-sans">{style.desc}</div>
                     </button>
                   ))}
+                </div>
+              </div>
+
+              {/* Google Cloud Text-to-Speech Settings */}
+              <div className="space-y-3 pt-3 border-t border-[#E2DDD5]/60">
+                <div className="flex items-center justify-between">
+                  <label className="block text-[10px] font-sans uppercase tracking-widest text-[#8A8478] font-bold">
+                    🎙️ Voice Narration Engine (Google Cloud TTS)
+                  </label>
+                  <span className="text-[9px] font-sans text-[#4285F4] bg-[#4285F4]/10 px-2 py-0.5 rounded-full font-bold">
+                    Studio Neural
+                  </span>
+                </div>
+                <div className="space-y-2">
+                  <select
+                    value={googleTtsVoice}
+                    onChange={(e) => {
+                      setGoogleTtsVoice(e.target.value);
+                      localStorage.setItem('journal_google_tts_voice', e.target.value);
+                    }}
+                    className="w-full px-3 py-2 bg-[#FFFDF9] border border-[#E2DDD5] text-xs font-serif focus:outline-none focus:border-[#C4432B]"
+                  >
+                    <option value="en-US-Journey-F">Google Journey F (Warm, Contemplative &amp; Meditative)</option>
+                    <option value="en-US-Journey-D">Google Journey D (Deep, Thoughtful &amp; Measured)</option>
+                    <option value="en-GB-Neural2-B">Google Neural2 British B (Philosophical &amp; Distinguished)</option>
+                    <option value="en-US-Neural2-F">Google Neural2 F (Clear, Empathetic &amp; Reflective)</option>
+                  </select>
+                  <div className="space-y-1">
+                    <label className="block text-[9px] font-sans text-[#8A8478]">
+                      Optional Google Cloud TTS API Key (Uses studio voices; leave blank to use browser neural voices):
+                    </label>
+                    <input
+                      type="password"
+                      value={googleTtsKey}
+                      onChange={(e) => {
+                        setGoogleTtsKey(e.target.value);
+                        localStorage.setItem('journal_google_tts_key', e.target.value);
+                      }}
+                      placeholder="AIzaSy..."
+                      className="w-full px-3 py-1.5 bg-[#FFFDF9] border border-[#E2DDD5] text-xs font-mono focus:outline-none focus:border-[#C4432B]"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
