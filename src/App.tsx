@@ -10,7 +10,7 @@ import { AmbientCanvas } from './components/common/AmbientCanvas';
 import { SoundscapePlayer } from './components/common/SoundscapePlayer';
 import { Interaction, PhilosophicalPersona, AuthorProfile } from './types';
 import { subscribeUserInteractions, saveInteraction } from './firebase/interactions';
-import { Loader2, GripVertical, Wifi, WifiOff, RefreshCw } from 'lucide-react';
+import { Loader2, GripVertical, WifiOff, RefreshCw } from 'lucide-react';
 import { getPendingSyncCount, flushOfflineQueue } from './utils/offlineSync';
 
 // Dynamic Code-Splitting: Lazy-load heavy modals for instantaneous initial load speeds
