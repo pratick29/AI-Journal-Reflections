@@ -351,10 +351,61 @@ html.dark .prose code {
   background-color: var(--paper-subtle) !important;
 }
 
-/* Shadow System Softening for Dark Mode */
-html.candlelight [class*="shadow-"],
-html.dark [class*="shadow-"] {
-  --tw-shadow-color: rgba(0, 0, 0, 0.6) !important;
+/* Scrollbars in Dark Mode */
+html.candlelight ::-webkit-scrollbar-thumb,
+html.dark ::-webkit-scrollbar-thumb {
+  background: rgba(148, 142, 130, 0.35);
+}
+
+html.candlelight ::-webkit-scrollbar-thumb:hover,
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--rust-accent);
+}
+
+/* Modals & Backdrop Blur in Dark Mode */
+html.candlelight .bg-\[\#1A1918\]\/70,
+html.dark .bg-\[\#1A1918\]\/70,
+html.candlelight .bg-\[\#1A1918\]\/60,
+html.dark .bg-\[\#1A1918\]\/60,
+html.candlelight .bg-\[\#1A1918\]\/45,
+html.dark .bg-\[\#1A1918\]\/45,
+html.candlelight .bg-\[\#2B2A28\]\/60,
+html.dark .bg-\[\#2B2A28\]\/60 {
+  background-color: rgba(10, 9, 8, 0.85) !important;
+}
+
+/* On This Day Gold/Amber Card Dark Mode Adaptor */
+html.candlelight .from-\[\#FFFDF7\],
+html.dark .from-\[\#FFFDF7\],
+html.candlelight .via-\[\#FFFBEB\],
+html.dark .via-\[\#FFFBEB\],
+html.candlelight .to-\[\#FDF8EE\],
+html.dark .to-\[\#FDF8EE\] {
+  --tw-gradient-from: #262118 !important;
+  --tw-gradient-via: #2A241B !important;
+  --tw-gradient-to: #221D15 !important;
+}
+
+html.candlelight .text-\[\#B45309\],
+html.dark .text-\[\#B45309\] {
+  color: #F59E0B !important;
+}
+
+html.candlelight .text-\[\#92400E\],
+html.dark .text-\[\#92400E\] {
+  color: #FBBF24 !important;
+}
+
+/* Active tab buttons & dark pills */
+html.candlelight .bg-\[\#1A1918\],
+html.dark .bg-\[\#1A1918\] {
+  background-color: #2D2A26 !important;
+}
+
+/* Interactive Button Secondary Variant in Dark Mode */
+html.candlelight .hover\:border-\[\#1A1918\]:hover,
+html.dark .hover\:border-\[\#1A1918\]:hover {
+  border-color: var(--paper-rule-dark) !important;
 }
 
 /* Printable PDF & Paper Editorial Specimen CSS */
