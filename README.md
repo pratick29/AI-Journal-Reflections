@@ -20,13 +20,19 @@ Built for the **Google AI Studio Ideathon — Personal Gemini Journal Challenge*
   - Enforces strict bounds: **6–12 nodes**, **5–16 edges**, maximum 2 passage citations per node, maximum 300 characters per citation, maximum 8 words per label.
   - **Full DAG Cycle Validation**: Both server-side and client-side BFS reachability cycle detection algorithms reject any cyclic graphs ($A \to B \to C \to A$) before rendering or persisting.
   - **Passage Inspector & Explore in Dialogue**: Interactive drawer displaying verbatim cited passages alongside their epistemic source attribution (`Author's Stated Thought` vs. `Gemini Synthesis`), with a 1-click pivot to continue the dialogue in the composer.
+- **The Idea Constellation (Cosmic Topology)**: Full-screen interactive galactic canvas mapping all reflections across time and themes. Decoupled 60fps render loop with click-and-drag pan, mouse-wheel zoom, reset center controls, HiDPI Retina scaling, deterministic golden-angle positioning, interactive category filters, and detailed star inspection cards.
+- **Real-Time Streaming Speech-to-Text & Audio Memos**: In-browser speech dictation leveraging native Web Speech API (`webkitSpeechRecognition` / `SpeechRecognition`) with seamless real-time interim transcript streaming directly into the composer, pulsating live waveform visualization, recording timer, and integrated playback audio memo persistence.
+- **Admin Security Dashboard & Curatorial RBAC**: Multi-tier Role-Based Access Control (`author`, `curator`, `admin`) with real-time telemetry (inquiries, active UIDs, latencies, rate limit hits, deflected probes, server uptime), Gemini model fallback ladder monitoring, reviewer passkey elevation (`curator-philosopher-2026`), operational rate limit resets, simulated injection barrier testing, and 1-click JSON security audit log export.
+- **Google Maps Platform & Places API (New) Locus**: Anchor personal reflections to physical geographic sanctuaries. Features modern session-token Places Autocomplete, custom Parchment Google Maps, `AdvancedMarker` terracotta pins, dynamic atmospheric weather fetching via Open-Meteo, and the Sacred Grounds global map view.
+- **Compact Export Suite & Google Docs Integration**: Tidy, compact `Export ▾` dropdown popover supporting 1-click export to Google Docs, formatted Markdown file download (`.md`), print/PDF layout, clipboard copying, and authenticated webhook dispatches (Slack Block Kit & Discord Rich Embeds).
+- **Zero-Knowledge Vault Encryption (AES-GCM 256-bit)**: Client-side cryptographic vault enabling authors to lock sensitive reflections behind a custom PIN. Payloads are encrypted and decrypted locally using Web Crypto PBKDF2/AES-GCM; ciphertexts stored in Firestore cannot be decrypted without the author's PIN.
+- **Author Sanctuary & Habit Rituals**: Customizable author identity with pen name, personal creed, wax seal heraldry, Socratic interlocutor tone presets, sealed Time Capsules (letters to future self), and Morning/Evening habit rituals.
 - **Secret Management**: `GEMINI_API_KEY` stored exclusively server-side via Google Cloud Secret Manager and injected at container runtime by Cloud Run (`--set-secrets GEMINI_API_KEY=GEMINI_API_KEY:latest`). Zero client exposure, zero hardcoded tokens.
 - **OWASP LLM01 Mitigation**: Enclosed prompt boundaries with XML tag demarcation (`<journal_entry>`) and explicit instruction sanitization.
 - **Markdown Security**: Strict URL scheme sanitization policy on ReactMarkdown, permitting only safe schemes (`https:`, `http:`, `mailto:`, `tel:`, `#`, relative) and blocking dangerous pseudo-protocols (`javascript:`, `data:`, `vbscript:`).
 - **Dialogue Depth Enforcement**: Dual server-side and client-side hard limit capping multi-turn dialogues at 15 user inquiries to prevent document bloat and token runaway while maintaining full viewing, Cognitive Lens distillation, Thinking Map synthesis, and manuscript export functionality.
 - **Rate Limiting & Concurrency Guard**: Sliding-window rate limiter (25 req/min per verified user UID) and concurrent in-flight inquiry lock. Configured as a fast, in-memory per-container protection within Cloud Run (note: operates per container instance without external Redis/Memorystore overhead). Supported by HTTP 429 `Retry-After` headers and client cooldown locking.
 - **Transaction Verification & Retry Save**: Guaranteed state preservation where user input is never cleared upon database write failure; displays an accessible error banner with an interactive **Retry Save** action.
-- **Publication-Ready Manuscript Export**: 1-click Markdown compilation formatting transcripts, axioms, cognitive reframings, and reasoning topologies into publication-ready manuscripts.
 
 ---
 
@@ -174,4 +180,32 @@ Every process and user interaction that a user can trigger has a corresponding v
    - Confirm interactive Parchment Google Map pans to the sanctuary, drops an `AdvancedMarker` with a custom terracotta Pin, and automatically fetches live atmospheric weather via Open-Meteo.
    - Test clicking on the map canvas to dynamically reposition the locus and adjust coordinates.
    - Click **Inscribe Locus**; verify the assigned locus name and temperature are displayed in the header pill and persisted with the manuscript.
+10. **TC-10: The Idea Constellation (Cosmic Topology Navigation)**
+    - Open **Tools ▾ → Connected Ideas** or press <kbd>Cmd/Ctrl+K</kbd> → select **Idea Constellation Map**.
+    - Verify all reflections are plotted as glowing celestial stars in a deterministic spiral galaxy.
+    - Drag canvas to pan; scroll mouse wheel or use floating controls (`+`, `-`, `Reset`) to zoom.
+    - Click category pills (`reflection`, `brainstorm`, `mindfulness`, `gratitude`, `goals`) to isolate matching nodes and filament connections.
+    - Hover over any star to inspect its title pill; click a star to open the inspection drawer and jump directly into that inquiry.
+11. **TC-11: Real-Time Streaming Speech-to-Text & Audio Dictation**
+    - In the manuscript composer, click the microphone icon.
+    - Speak into your microphone; verify live speech is transcribed directly into the textarea in real time with interim word streaming.
+    - Observe the pulsating waveform indicator and recording timer.
+    - Click stop; verify recorded audio memo is attached and playable alongside the synchronized text.
+12. **TC-12: Admin Security Dashboard, Passkey Elevation & Probe Simulation**
+    - Open **Tools ▾ → Admin Panel** or press <kbd>Cmd/Ctrl+K</kbd> → **Admin**.
+    - In the passkey input, enter `curator-philosopher-2026` and click **Verify**.
+    - Confirm status elevates to `Role: admin` with full administrative scope.
+    - View live telemetry (Inquiries Inscribed, Active Authors, Average Model Latency, Server Uptime).
+    - Under **Operational Controls**, click **Simulate Security Barrier Probe** to test the prompt injection defense barrier; confirm probe counter increments and a timestamped warning is recorded in the Security Logs tab.
+    - Click **Export JSON** to download the complete security audit trail to disk.
+13. **TC-13: Compact Export Suite & Google Docs Integration**
+    - In the Journal Editor header, click the **Export ▾** dropdown popover.
+    - Test **Open in Google Docs**: verify formatted markdown document opens seamlessly.
+    - Test **Download Markdown (.MD)**: verify file downloads with complete metadata, transcripts, and axioms.
+    - Test **Print / Save as PDF**: verify editorial print layout without UI chrome.
+    - Test **Copy to Clipboard** and **Webhook Dispatch** (Slack / Discord).
+14. **TC-14: Zero-Knowledge Vault Encryption (AES-GCM 256-bit)**
+    - In the editor header, click the Lock icon or choose **Lock Journal (PIN)**.
+    - Set a 4-digit PIN; verify entries are locally encrypted before sending to Firestore.
+    - Confirm locked entries appear with the 🔒 badge in the archives and require the PIN to decrypt and display.
 
