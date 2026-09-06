@@ -246,6 +246,24 @@ html.dark .hover\:bg-\[\#2B2A28\]:hover {
   background-color: #3B3833 !important;
 }
 
+html.candlelight .hover\:bg-\[\#F7F4EE\]:hover,
+html.dark .hover\:bg-\[\#F7F4EE\]:hover,
+html.candlelight .hover\:bg-\[\#FFFDF9\]:hover,
+html.dark .hover\:bg-\[\#FFFDF9\]:hover,
+html.candlelight .hover\:bg-\[\#EFECE6\]:hover,
+html.dark .hover\:bg-\[\#EFECE6\]:hover,
+html.candlelight .hover\:bg-\[\#F4F0E8\]:hover,
+html.dark .hover\:bg-\[\#F4F0E8\]:hover {
+  background-color: #2E2B27 !important;
+}
+
+html.candlelight .hover\:border-\[\#E2DDD5\]:hover,
+html.dark .hover\:border-\[\#E2DDD5\]:hover,
+html.candlelight .hover\:border-\[\#E5E0D8\]:hover,
+html.dark .hover\:border-\[\#E5E0D8\]:hover {
+  border-color: #4D4942 !important;
+}
+
 /* Primary Ink / Text */
 html.candlelight [class*="text-[#2B2A28]"],
 html.dark [class*="text-[#2B2A28]"],
