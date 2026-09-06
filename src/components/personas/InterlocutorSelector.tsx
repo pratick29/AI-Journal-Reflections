@@ -90,8 +90,8 @@ export const InterlocutorSelector: React.FC<InterlocutorSelectorProps> = ({
         onClick={() => setIsOpen((prev) => !prev)}
         className={`px-2.5 py-1.5 rounded-full border transition-all flex items-center gap-1.5 text-[10px] font-sans uppercase tracking-wider shadow-2xs ${
           selectedPersona !== 'default'
-            ? 'bg-[#C4432B]/10 text-[#C4432B] border-[#C4432B]/40 font-semibold'
-            : 'bg-[#F7F4EE]/80 text-[#595652] border-[#E2DDD5] hover:border-[#C4432B] hover:text-[#2B2A28]'
+            ? 'bg-[#C4432B]/10 dark:bg-[#C4432B]/20 text-[#C4432B] dark:text-[#FF8A73] border-[#C4432B]/40 font-semibold'
+            : 'bg-[#F7F4EE]/80 dark:bg-[#25221E] text-[#595652] dark:text-[#DDD8CE] border-[#E2DDD5] dark:border-[#38332D] hover:border-[#C4432B] hover:text-[#2B2A28] hover:dark:text-[#FFFFFF]'
         }`}
         title="Select a Writing Guide or Reflection Mentor"
       >
@@ -103,18 +103,18 @@ export const InterlocutorSelector: React.FC<InterlocutorSelectorProps> = ({
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 bottom-full mb-2 z-50 w-72 sm:w-80 bg-[#FFFFFF] border border-[#E2DDD5] shadow-2xl p-2.5 rounded-2xl space-y-1.5 animate-in fade-in duration-150">
-          <div className="flex items-center justify-between pb-2 border-b border-[#E2DDD5]/60 px-1">
+        <div className="absolute left-0 bottom-full mb-2 z-50 w-72 sm:w-80 bg-[#FFFFFF] dark:bg-[#1C1A18] border border-[#E2DDD5] dark:border-[#332F2A] shadow-2xl p-2.5 rounded-2xl space-y-1.5 animate-in fade-in duration-150">
+          <div className="flex items-center justify-between pb-2 border-b border-[#E2DDD5]/60 dark:border-[#332F2A] px-1">
             <div className="flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-[#C4432B]" />
-              <span className="text-[9px] font-sans uppercase tracking-[0.2em] font-bold text-[#2B2A28]">
+              <span className="text-[9px] font-sans uppercase tracking-[0.2em] font-bold text-[#2B2A28] dark:text-[#F5F2EB]">
                 Choose Writing Guide
               </span>
             </div>
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="text-[#8A8478] hover:text-[#2B2A28] p-1 rounded-full hover:bg-[#F4F0E8]"
+              className="text-[#8A8478] dark:text-[#8E877C] hover:text-[#2B2A28] dark:hover:text-[#F5F2EB] p-1 rounded-full hover:bg-[#F4F0E8] dark:hover:bg-[#26231F]"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -133,26 +133,26 @@ export const InterlocutorSelector: React.FC<InterlocutorSelectorProps> = ({
                   }}
                   className={`w-full text-left p-2.5 rounded-xl border transition-all flex items-start gap-2.5 ${
                     isSelected
-                      ? 'bg-[#C4432B]/10 border-[#C4432B]/40 text-[#2B2A28] shadow-xs'
-                      : 'border-transparent hover:border-[#E2DDD5] hover:bg-[#F7F4EE] text-[#595652]'
+                      ? 'bg-[#C4432B]/10 dark:bg-[#C4432B]/20 border-[#C4432B]/40 text-[#2B2A28] dark:text-[#F5F2EB] shadow-xs'
+                      : 'border-transparent hover:border-[#E2DDD5] dark:hover:border-[#38332D] hover:bg-[#F7F4EE] dark:hover:bg-[#26231F] text-[#595652] dark:text-[#DDD8CE]'
                   }`}
                 >
-                  <span className="text-lg p-1.5 bg-[#F4F0E8] border border-[#E2DDD5]/60 rounded-lg shrink-0">
+                  <span className="text-lg p-1.5 bg-[#F4F0E8] dark:bg-[#26231F] border border-[#E2DDD5]/60 dark:border-[#38332D] rounded-lg shrink-0">
                     {persona.avatar}
                   </span>
                   <div className="flex-1 min-w-0 space-y-0.5">
                     <div className="flex items-center justify-between">
-                      <span className="font-serif font-medium text-xs text-[#2B2A28]">
+                      <span className="font-serif font-medium text-xs text-[#2B2A28] dark:text-[#F5F2EB]">
                         {persona.name}
                       </span>
-                      <span className="text-[8px] font-mono text-[#8A8478]">
+                      <span className="text-[8px] font-mono text-[#8A8478] dark:text-[#8E877C]">
                         {persona.era}
                       </span>
                     </div>
-                    <p className="text-[10px] text-[#C4432B] font-serif italic line-clamp-1">
+                    <p className="text-[10px] text-[#C4432B] dark:text-[#FF8A73] font-serif italic line-clamp-1">
                       "{persona.mantra}"
                     </p>
-                    <p className="text-[10px] text-[#6E6A64] font-sans leading-tight line-clamp-2">
+                    <p className="text-[10px] text-[#6E6A64] dark:text-[#ABA497] font-sans leading-tight line-clamp-2">
                       {persona.description}
                     </p>
                   </div>

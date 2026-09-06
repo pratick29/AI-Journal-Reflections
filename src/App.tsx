@@ -327,7 +327,7 @@ function MainApp() {
       </main>
 
       {/* Editorial System Status Footer */}
-      <footer className="h-8 sm:h-9 border-t border-[#E5E0D8] flex items-center px-4 sm:px-6 justify-between text-[9px] sm:text-[10px] font-sans uppercase tracking-[0.18em] text-[#8C857B] bg-[#F4F0E8]/60 shrink-0">
+      <footer className="h-8 sm:h-9 border-t border-[#E5E0D8] dark:border-[#2C2824] flex items-center px-4 sm:px-6 justify-between text-[9px] sm:text-[10px] font-sans uppercase tracking-[0.18em] text-[#8C857B] dark:text-[#8E877C] bg-[#F4F0E8]/60 dark:bg-[#141312] shrink-0">
         <span className="truncate max-w-[200px] sm:max-w-none">Private &amp; Secure · Your Data Stays Yours</span>
         <span className="hidden sm:inline">Powered by Google Gemini</span>
         <span className="truncate">Auto-Saved</span>

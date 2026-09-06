@@ -33,7 +33,7 @@ export const EmptyStatePrompts: React.FC<EmptyStatePromptsProps> = ({ onSelectPr
         <span className="text-[10px] font-sans uppercase tracking-[0.22em] text-[#C4432B] font-bold">
           NEED AN IDEA?
         </span>
-        <h3 className="text-2xl sm:text-3xl font-serif font-light text-[#2B2A28]">
+        <h3 className="text-2xl sm:text-3xl font-serif font-light text-[#2B2A28] dark:text-[#F5F2EB]">
           What's on your mind today?
           <span className="font-script text-[#C4432B] text-xl block mt-0.5 font-normal">
             pick a prompt or simply start typing below...
@@ -48,27 +48,27 @@ export const EmptyStatePrompts: React.FC<EmptyStatePromptsProps> = ({ onSelectPr
             <div
               key={idx}
               onClick={() => onSelectPrompt(p.question)}
-              className="group cursor-pointer bg-[#FFFFFF] border border-[#E2DDD5]/80 hover:border-[#C4432B]/60 p-5 transition-all duration-200 space-y-3 flex flex-col justify-between shadow-[0_4px_20px_-2px_rgba(43,42,40,0.03),0_1px_3px_0_rgba(43,42,40,0.02)] hover:shadow-[0_8px_30px_-4px_rgba(196,67,43,0.09)] hover:-translate-y-0.5 rounded-2xl"
+              className="group cursor-pointer bg-[#FFFFFF] dark:bg-[#1C1A18] border border-[#E2DDD5]/80 dark:border-[#332F2A] hover:border-[#C4432B]/60 hover:dark:border-[#C4432B]/60 p-5 transition-all duration-200 space-y-3 flex flex-col justify-between shadow-[0_4px_20px_-2px_rgba(43,42,40,0.03),0_1px_3px_0_rgba(43,42,40,0.02)] dark:shadow-[0_4px_20px_-2px_rgba(0,0,0,0.4)] hover:shadow-[0_8px_30px_-4px_rgba(196,67,43,0.09)] hover:-translate-y-0.5 rounded-2xl"
             >
               <div className="space-y-2.5">
-                <div className="flex items-center justify-between border-b border-[#E2DDD5]/50 pb-2">
+                <div className="flex items-center justify-between border-b border-[#E2DDD5]/50 dark:border-[#2C2824] pb-2">
                   <span className="text-[9px] font-sans uppercase tracking-[0.2em] text-[#C4432B] font-semibold">
                     {p.category}
                   </span>
-                  <div className="w-6 h-6 rounded-full bg-[#F7F4EE] flex items-center justify-center group-hover:bg-[#C4432B]/10 transition-colors">
+                  <div className="w-6 h-6 rounded-full bg-[#F7F4EE] dark:bg-[#25221E] flex items-center justify-center group-hover:bg-[#C4432B]/10 transition-colors">
                     <Icon className="w-3.5 h-3.5 text-[#C4432B]" />
                   </div>
                 </div>
-                <h4 className="text-sm font-serif italic text-[#2B2A28] group-hover:text-[#C4432B] transition-colors leading-snug">
+                <h4 className="text-sm font-serif italic text-[#2B2A28] dark:text-[#F5F2EB] group-hover:text-[#C4432B] transition-colors leading-snug">
                   "{p.question}"
                 </h4>
-                <p className="text-xs font-serif text-[#595652] leading-relaxed">
+                <p className="text-xs font-serif text-[#595652] dark:text-[#C2BCB1] leading-relaxed">
                   {p.detail}
                 </p>
               </div>
 
               <div className="pt-2 text-right">
-                <span className="text-[9px] font-sans uppercase tracking-widest text-[#8A8478] group-hover:text-[#C4432B] transition-colors font-medium inline-flex items-center gap-1">
+                <span className="text-[9px] font-sans uppercase tracking-widest text-[#8A8478] dark:text-[#8E877C] group-hover:text-[#C4432B] transition-colors font-medium inline-flex items-center gap-1">
                   <span>Start Writing</span>
                   <span>→</span>
                 </span>

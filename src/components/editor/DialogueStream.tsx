@@ -49,14 +49,14 @@ export const DialogueStream: React.FC<DialogueStreamProps> = ({
   return (
     <div className="space-y-8 py-2 relative" onMouseUp={handleTextSelection}>
       {/* Dialogue Depth Indicator Bar */}
-      <div className="sticky top-0 z-20 bg-[#F7F4EE]/95 backdrop-blur-xs py-1.5 px-2 border-b border-[#E2DDD5] flex items-center justify-between text-[9px] font-sans uppercase tracking-[0.2em] text-[#8A8478] rounded-xs">
+      <div className="sticky top-0 z-20 bg-[#F7F4EE]/95 dark:bg-[#161513]/95 backdrop-blur-xs py-1.5 px-2 border-b border-[#E2DDD5] dark:border-[#2C2824] flex items-center justify-between text-[9px] font-sans uppercase tracking-[0.2em] text-[#8A8478] dark:text-[#8E877C] rounded-xs">
         <span className="flex items-center gap-1.5">
           <span className="w-1.5 h-1.5 rounded-full bg-[#C4432B]" />
           <span>Conversation ({messages.length}/15)</span>
         </span>
         <div className="flex items-center gap-2">
           <span>Progress</span>
-          <div className="w-20 h-1 bg-[#E2DDD5] rounded-full overflow-hidden">
+          <div className="w-20 h-1 bg-[#E2DDD5] dark:bg-[#2C2824] rounded-full overflow-hidden">
             <div
               className="h-full bg-[#C4432B] transition-all duration-300"
               style={{ width: `${Math.min(100, (messages.length / 15) * 100)}%` }}
@@ -69,7 +69,7 @@ export const DialogueStream: React.FC<DialogueStreamProps> = ({
       {selectionPos && selectedText && onSelectPassageAction && (
         <div
           style={{ left: `${selectionPos.x}px`, top: `${selectionPos.y}px` }}
-          className="fixed z-50 -translate-x-1/2 bg-[#2B2A28] text-[#F7F4EE] shadow-xl px-3 py-1.5 rounded-full flex items-center gap-2 text-[10px] font-sans uppercase tracking-wider animate-in fade-in zoom-in-95 duration-150 border border-[#C4432B]"
+          className="fixed z-50 -translate-x-1/2 bg-[#2B2A28] dark:bg-[#1C1A18] text-[#F7F4EE] shadow-xl px-3 py-1.5 rounded-full flex items-center gap-2 text-[10px] font-sans uppercase tracking-wider animate-in fade-in zoom-in-95 duration-150 border border-[#C4432B]"
         >
           <button
             onClick={() => {
@@ -122,10 +122,10 @@ export const DialogueStream: React.FC<DialogueStreamProps> = ({
             }`}
           >
             {/* Header Metadata Rule */}
-            <div className="flex items-center justify-between border-b border-[#E2DDD5] pb-1.5 text-[10px] font-sans uppercase tracking-[0.2em] text-[#8A8478]">
+            <div className="flex items-center justify-between border-b border-[#E2DDD5] dark:border-[#2C2824] pb-1.5 text-[10px] font-sans uppercase tracking-[0.2em] text-[#8A8478] dark:text-[#8E877C]">
               <div className="flex items-center gap-2">
                 <span className="font-bold text-[#C4432B]">{turnNumber}</span>
-                <span className="text-[#2B2A28] font-medium">
+                <span className="text-[#2B2A28] dark:text-[#F5F2EB] font-medium">
                   {isUser ? 'YOU' : 'AI GUIDE'}
                 </span>
                 {!isUser && (
@@ -134,7 +134,7 @@ export const DialogueStream: React.FC<DialogueStreamProps> = ({
                   </span>
                 )}
                 {msg.modelUsed && (
-                  <span className="hidden sm:inline-block px-1.5 py-0.5 border border-[#E2DDD5] bg-[#EFECE6] text-[9px] text-[#595652]">
+                  <span className="hidden sm:inline-block px-1.5 py-0.5 border border-[#E2DDD5] dark:border-[#38332D] bg-[#EFECE6] dark:bg-[#25221E] text-[9px] text-[#595652] dark:text-[#C8C2B5]">
                     {msg.modelUsed}
                   </span>
                 )}
@@ -176,17 +176,17 @@ export const DialogueStream: React.FC<DialogueStreamProps> = ({
                     <img
                       src={msg.imageUrl}
                       alt="Attached reflection specimen"
-                      className="max-h-60 max-w-sm rounded-xl border border-[#E2DDD5] shadow-xs object-cover"
+                      className="max-h-60 max-w-sm rounded-xl border border-[#E2DDD5] dark:border-[#38332D] shadow-xs object-cover"
                     />
                   </div>
                 )}
-                <p className="text-base sm:text-lg font-serif text-[#2B2A28] leading-relaxed whitespace-pre-wrap">
+                <p className="text-base sm:text-lg font-serif text-[#2B2A28] dark:text-[#F5F2EB] leading-relaxed whitespace-pre-wrap">
                   {msg.content}
                 </p>
               </div>
             ) : (
-              <div className="bg-[#FFFFFF] border border-[#E2DDD5]/80 p-5 sm:p-7 space-y-4 shadow-[0_4px_20px_-2px_rgba(43,42,40,0.04),0_1px_3px_0_rgba(43,42,40,0.02)] rounded-2xl transition-all duration-200 hover:shadow-[0_8px_30px_-4px_rgba(43,42,40,0.07)]">
-                <div className="prose prose-stone max-w-none text-base font-serif text-[#2B2A28] leading-relaxed editorial-drop-cap">
+              <div className="bg-[#FFFFFF] dark:bg-[#1C1A18] border border-[#E2DDD5]/80 dark:border-[#332F2A] p-5 sm:p-7 space-y-4 shadow-[0_4px_20px_-2px_rgba(43,42,40,0.04),0_1px_3px_0_rgba(43,42,40,0.02)] dark:shadow-[0_4px_20px_-2px_rgba(0,0,0,0.4)] rounded-2xl transition-all duration-200 hover:shadow-[0_8px_30px_-4px_rgba(43,42,40,0.07)] hover:dark:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.6)]">
+                <div className="prose prose-stone max-w-none text-base font-serif text-[#2B2A28] dark:text-[#F5F2EB] leading-relaxed editorial-drop-cap">
                   <ReactMarkdown>{msg.content}</ReactMarkdown>
                 </div>
               </div>
@@ -197,7 +197,7 @@ export const DialogueStream: React.FC<DialogueStreamProps> = ({
 
       {/* Streaming / Generating Indicator */}
       {isGenerating && (
-        <div className="border-b border-[#E2DDD5] pb-1.5 flex items-center justify-between text-[10px] font-sans uppercase tracking-[0.2em] text-[#C4432B] animate-pulse">
+        <div className="border-b border-[#E2DDD5] dark:border-[#2C2824] pb-1.5 flex items-center justify-between text-[10px] font-sans uppercase tracking-[0.2em] text-[#C4432B] animate-pulse">
           <div className="flex items-center gap-2">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Formulating Editorial Response...</span>

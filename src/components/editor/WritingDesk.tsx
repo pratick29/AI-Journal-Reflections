@@ -274,20 +274,20 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
   return (
     <div
       id="writing-desk"
-      className="bg-[#FFFFFF] border border-[#E2DDD5]/90 p-4 sm:p-5 shadow-[0_4px_24px_-4px_rgba(43,42,40,0.06),0_1px_3px_0_rgba(43,42,40,0.03)] space-y-3 rounded-2xl relative transition-all duration-200 focus-within:border-[#C4432B]/50 focus-within:shadow-[0_8px_32px_-4px_rgba(196,67,43,0.08),0_1px_3px_0_rgba(43,42,40,0.03)]"
+      className="bg-[#FFFFFF] dark:bg-[#1C1A18] border border-[#E2DDD5]/90 dark:border-[#332F2A] p-4 sm:p-5 shadow-[0_4px_24px_-4px_rgba(43,42,40,0.06),0_1px_3px_0_rgba(43,42,40,0.03)] dark:shadow-[0_4px_24px_-4px_rgba(0,0,0,0.5)] space-y-3 rounded-2xl relative transition-all duration-200 focus-within:border-[#C4432B]/50 focus-within:shadow-[0_8px_32px_-4px_rgba(196,67,43,0.08),0_1px_3px_0_rgba(43,42,40,0.03)]"
     >
       {/* Top Header: Understated Status */}
-      <div className="flex items-center justify-between border-b border-[#E2DDD5]/50 pb-2.5 text-[10px] font-sans">
+      <div className="flex items-center justify-between border-b border-[#E2DDD5]/50 dark:border-[#332F2A] pb-2.5 text-[10px] font-sans">
         <div className="flex items-center gap-2 flex-wrap">
           <span className="w-2 h-2 rounded-full bg-[#C4432B] shadow-xs" />
-          <span className="uppercase tracking-[0.2em] font-semibold text-[#2B2A28]">
+          <span className="uppercase tracking-[0.2em] font-semibold text-[#2B2A28] dark:text-[#F5F2EB]">
             Journal Entry
           </span>
-          <span className="tracking-widest text-[#8A8478] bg-[#F7F4EE] px-2 py-0.5 rounded-full font-mono text-[9px] border border-[#E2DDD5]/50">
+          <span className="tracking-widest text-[#8A8478] dark:text-[#8E877C] bg-[#F7F4EE] dark:bg-[#25221E] px-2 py-0.5 rounded-full font-mono text-[9px] border border-[#E2DDD5]/50 dark:border-[#38332D]">
             {userTurnCount}/15
           </span>
           {wordCount > 0 && (
-            <span className="text-[#8A8478] tracking-normal font-mono text-[9px] border-l border-[#E2DDD5]/60 pl-2">
+            <span className="text-[#8A8478] dark:text-[#8E877C] tracking-normal font-mono text-[9px] border-l border-[#E2DDD5]/60 dark:border-[#38332D] pl-2">
               {wordCount} {wordCount === 1 ? 'word' : 'words'} · ~{readingTimeMinutes}m read
             </span>
           )}
@@ -297,7 +297,7 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
             </span>
           )}
           {selectedMoodObj && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-[#C4432B]/10 text-[#C4432B] border border-[#C4432B]/20 rounded-full">
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-[#C4432B]/10 dark:bg-[#C4432B]/20 text-[#C4432B] dark:text-[#FF8A73] border border-[#C4432B]/20 dark:border-[#C4432B]/40 rounded-full">
               <span>{selectedMoodObj.icon}</span>
               <span className="font-medium">{selectedMoodObj.label}</span>
               <button
@@ -315,13 +315,13 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
               <button
                 type="button"
                 onClick={onOpenLocationPicker}
-                className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#F7F4EE] hover:bg-[#EFECE6] border border-[#E2DDD5] text-[#595652] hover:text-[#2B2A28] rounded-full transition-colors"
+                className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#F7F4EE] dark:bg-[#25221E] hover:bg-[#EFECE6] hover:dark:bg-[#2D2823] border border-[#E2DDD5] dark:border-[#38332D] text-[#595652] dark:text-[#C2BCB1] hover:text-[#2B2A28] hover:dark:text-[#F5F2EB] rounded-full transition-colors"
                 title={`Location: ${location.name}${location.weather ? ` (${location.weather.tempC}°C, ${location.weather.condition})` : ''}`}
               >
                 <MapPin className="w-2.5 h-2.5 text-[#C4432B]" />
                 <span className="font-serif italic truncate max-w-[120px]">{location.name}</span>
                 {location.weather && (
-                  <span className="font-sans text-[8px] text-[#8A8478] border-l border-[#E2DDD5] pl-1 ml-0.5">
+                  <span className="font-sans text-[8px] text-[#8A8478] dark:text-[#8E877C] border-l border-[#E2DDD5] dark:border-[#38332D] pl-1 ml-0.5">
                     {location.weather.icon} {location.weather.tempC}°C
                   </span>
                 )}
@@ -330,10 +330,10 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
               <button
                 type="button"
                 onClick={onOpenLocationPicker}
-                className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider text-[#8A8478] hover:text-[#C4432B] transition-colors border border-transparent hover:border-[#E2DDD5] px-2 py-0.5 rounded-full"
+                className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider text-[#8A8478] dark:text-[#8E877C] hover:text-[#C4432B] transition-colors border border-transparent hover:border-[#E2DDD5] dark:hover:border-[#38332D] px-2 py-0.5 rounded-full"
                 title="Add location to this entry"
               >
-                <MapPin className="w-2.5 h-2.5 text-[#8A8478]" />
+                <MapPin className="w-2.5 h-2.5 text-[#8A8478] dark:text-[#8E877C]" />
                 <span>Add Location</span>
               </button>
             )
@@ -370,7 +370,7 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
               : "What's on your mind? Write freely here..."
           }
           rows={3}
-          className="w-full bg-transparent text-base font-serif text-[#2B2A28] placeholder-[#8A8478]/60 focus:outline-none resize-none leading-relaxed"
+          className="w-full bg-transparent text-base font-serif text-[#2B2A28] dark:text-[#F5F2EB] placeholder-[#8A8478]/60 dark:placeholder-[#7A746B] focus:outline-none resize-none leading-relaxed"
           onKeyDown={(e) => {
             if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
               e.preventDefault();
@@ -381,21 +381,21 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
 
         {/* Attached Photo Preview */}
         {attachedImage && (
-          <div className="relative inline-flex items-center gap-2 p-2 pr-3 bg-[#F7F4EE] border border-[#E2DDD5] rounded-xl shadow-xs">
+          <div className="relative inline-flex items-center gap-2 p-2 pr-3 bg-[#F7F4EE] dark:bg-[#25221E] border border-[#E2DDD5] dark:border-[#38332D] rounded-xl shadow-xs">
             <img
               src={attachedImage.data}
               alt="Attached photo"
-              className="w-12 h-12 object-cover rounded-lg border border-[#E2DDD5]"
+              className="w-12 h-12 object-cover rounded-lg border border-[#E2DDD5] dark:border-[#38332D]"
             />
             <div className="text-[10px] font-sans">
               <span className="font-bold text-[#C4432B] uppercase tracking-wider block">Attached Photo</span>
-              <span className="text-[#8A8478] truncate max-w-[150px] block">{attachedImage.name || 'Photo attached'}</span>
+              <span className="text-[#8A8478] dark:text-[#8E877C] truncate max-w-[150px] block">{attachedImage.name || 'Photo attached'}</span>
             </div>
             {setAttachedImage && (
               <button
                 type="button"
                 onClick={() => setAttachedImage(null)}
-                className="p-1 hover:bg-[#EFECE6] text-[#8A8478] hover:text-[#C4432B] rounded-full ml-1 transition-colors"
+                className="p-1 hover:bg-[#EFECE6] hover:dark:bg-[#2D2823] text-[#8A8478] dark:text-[#8E877C] hover:text-[#C4432B] rounded-full ml-1 transition-colors"
                 title="Remove photo"
               >
                 <X className="w-3.5 h-3.5" />
@@ -406,7 +406,7 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
 
         {/* Real-time Thought Grammar Hint Banner */}
         {activeDistortion && (
-          <div className="bg-[#FFFDF9] border border-[#E2DDD5] border-l-3 border-l-[#C4432B] px-3.5 py-2 rounded-xl flex items-center justify-between text-[11px] font-serif text-[#595652] shadow-xs animate-in fade-in duration-150">
+          <div className="bg-[#FFFDF9] dark:bg-[#22201C] border border-[#E2DDD5] dark:border-[#38332D] border-l-3 border-l-[#C4432B] px-3.5 py-2 rounded-xl flex items-center justify-between text-[11px] font-serif text-[#595652] dark:text-[#C8C2B5] shadow-xs animate-in fade-in duration-150">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-xs">💡</span>
               <span className="font-sans text-[9px] uppercase tracking-wider font-bold text-[#C4432B]">
@@ -419,7 +419,7 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
             <button
               type="button"
               onClick={() => setDismissedDistortionId(activeDistortion.id)}
-              className="text-[#8A8478] hover:text-[#2B2A28] text-[9px] font-sans uppercase tracking-wider ml-2 shrink-0 p-1 rounded-full hover:bg-[#F4F0E8]"
+              className="text-[#8A8478] dark:text-[#8E877C] hover:text-[#2B2A28] dark:hover:text-[#F5F2EB] text-[9px] font-sans uppercase tracking-wider ml-2 shrink-0 p-1 rounded-full hover:bg-[#F4F0E8] dark:hover:bg-[#2A2621]"
               title="Dismiss hint"
             >
               <X className="w-3 h-3" />
@@ -428,18 +428,18 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
         )}
 
         {/* Consolidated Bottom Toolbar */}
-        <div className="flex flex-wrap items-center justify-between gap-2 pt-2.5 border-t border-[#E2DDD5]/50 text-[10px] font-sans">
+        <div className="flex flex-wrap items-center justify-between gap-2 pt-2.5 border-t border-[#E2DDD5]/50 dark:border-[#332F2A] text-[10px] font-sans">
           {/* Left Instrument Controls */}
           <div className="flex items-center gap-1.5 flex-wrap">
             {/* Mode Selector */}
             <select
               value={activeMode}
               onChange={(e) => setActiveMode(e.target.value as ReflectionMode)}
-              className="px-2.5 py-1.5 bg-[#F7F4EE]/80 border border-[#E2DDD5] hover:border-[#C4432B]/40 text-[#2B2A28] uppercase tracking-wider text-[10px] rounded-full focus:outline-none focus:border-[#C4432B] cursor-pointer transition-colors shadow-2xs"
+              className="px-2.5 py-1.5 bg-[#F7F4EE]/80 dark:bg-[#25221E] border border-[#E2DDD5] dark:border-[#38332D] hover:border-[#C4432B]/40 text-[#2B2A28] dark:text-[#DDD8CE] uppercase tracking-wider text-[10px] rounded-full focus:outline-none focus:border-[#C4432B] cursor-pointer transition-colors shadow-2xs"
             >
-              <option value="reflection">Reflect</option>
-              <option value="summary">Summarize</option>
-              <option value="brainstorm">Brainstorm</option>
+              <option value="reflection" className="dark:bg-[#1C1A18] dark:text-[#F5F2EB]">Reflect</option>
+              <option value="summary" className="dark:bg-[#1C1A18] dark:text-[#F5F2EB]">Summarize</option>
+              <option value="brainstorm" className="dark:bg-[#1C1A18] dark:text-[#F5F2EB]">Brainstorm</option>
             </select>
 
             {/* AI Guide Selector */}
@@ -458,7 +458,7 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
                 className={`px-2.5 py-1.5 border rounded-full transition-all flex items-center gap-1.5 uppercase tracking-wider text-[10px] shadow-2xs ${
                   selectedMood
                     ? 'bg-[#C4432B] text-[#F7F4EE] border-[#C4432B] font-medium'
-                    : 'bg-[#F7F4EE]/80 text-[#595652] border-[#E2DDD5] hover:border-[#C4432B] hover:text-[#2B2A28]'
+                    : 'bg-[#F7F4EE]/80 dark:bg-[#25221E] text-[#595652] dark:text-[#DDD8CE] border-[#E2DDD5] dark:border-[#38332D] hover:border-[#C4432B] hover:text-[#2B2A28] hover:dark:text-[#FFFFFF]'
                 }`}
                 title="Select Mood"
               >
@@ -468,8 +468,8 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
               </button>
 
               {showMoodMenu && (
-                <div className="absolute left-0 bottom-full mb-2 z-40 w-48 bg-[#FFFFFF] border border-[#E2DDD5] shadow-xl p-1.5 rounded-xl space-y-0.5 animate-in fade-in duration-100">
-                  <span className="text-[9px] font-sans uppercase tracking-widest text-[#8A8478] px-2.5 py-1.5 block font-bold border-b border-[#E2DDD5]/50 mb-1">
+                <div className="absolute left-0 bottom-full mb-2 z-40 w-48 bg-[#FFFFFF] dark:bg-[#1C1A18] border border-[#E2DDD5] dark:border-[#332F2A] shadow-xl p-1.5 rounded-xl space-y-0.5 animate-in fade-in duration-100">
+                  <span className="text-[9px] font-sans uppercase tracking-widest text-[#8A8478] dark:text-[#8E877C] px-2.5 py-1.5 block font-bold border-b border-[#E2DDD5]/50 dark:border-[#332F2A] mb-1">
                     How are you feeling?
                   </span>
                   {MOODS.map((m) => (
@@ -481,7 +481,9 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
                         setShowMoodMenu(false);
                       }}
                       className={`w-full text-left px-2.5 py-2 text-xs font-serif flex items-center justify-between rounded-lg transition-colors ${
-                        selectedMood === m.id ? 'bg-[#C4432B]/10 text-[#C4432B] font-semibold' : 'hover:bg-[#F7F4EE] text-[#2B2A28]'
+                        selectedMood === m.id
+                          ? 'bg-[#C4432B]/10 dark:bg-[#C4432B]/20 text-[#C4432B] dark:text-[#FF8A73] font-semibold'
+                          : 'hover:bg-[#F7F4EE] hover:dark:bg-[#26231F] text-[#2B2A28] dark:text-[#DDD8CE]'
                       }`}
                     >
                       <span className="flex items-center gap-2">
@@ -499,7 +501,7 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
               <button
                 type="button"
                 onClick={() => setShowTemplates((prev) => !prev)}
-                className="px-2.5 py-1.5 border border-[#E2DDD5] bg-[#F7F4EE]/80 text-[#595652] hover:border-[#C4432B] hover:text-[#2B2A28] transition-all rounded-full flex items-center gap-1.5 uppercase tracking-wider text-[10px] shadow-2xs"
+                className="px-2.5 py-1.5 border border-[#E2DDD5] dark:border-[#38332D] bg-[#F7F4EE]/80 dark:bg-[#25221E] text-[#595652] dark:text-[#DDD8CE] hover:border-[#C4432B] hover:text-[#2B2A28] hover:dark:text-[#FFFFFF] transition-all rounded-full flex items-center gap-1.5 uppercase tracking-wider text-[10px] shadow-2xs"
                 title="Writing Prompts & Guides"
               >
                 <BookTemplate className="w-3 h-3 text-[#C4432B]" />
@@ -508,8 +510,8 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
               </button>
 
               {showTemplates && (
-                <div className="absolute left-0 bottom-full mb-2 z-40 w-60 bg-[#FFFFFF] border border-[#E2DDD5] shadow-xl p-1.5 rounded-xl space-y-0.5 animate-in fade-in duration-100">
-                  <span className="text-[9px] font-sans uppercase tracking-widest text-[#8A8478] px-2.5 py-1.5 block font-bold border-b border-[#E2DDD5]/50 mb-1">
+                <div className="absolute left-0 bottom-full mb-2 z-40 w-60 bg-[#FFFFFF] dark:bg-[#1C1A18] border border-[#E2DDD5] dark:border-[#332F2A] shadow-xl p-1.5 rounded-xl space-y-0.5 animate-in fade-in duration-100">
+                  <span className="text-[9px] font-sans uppercase tracking-widest text-[#8A8478] dark:text-[#8E877C] px-2.5 py-1.5 block font-bold border-b border-[#E2DDD5]/50 dark:border-[#332F2A] mb-1">
                     Starter Prompts
                   </span>
                   {TEMPLATES.map((tmpl) => (
@@ -521,7 +523,7 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
                         setShowTemplates(false);
                         setTimeout(() => textareaRef?.current?.focus(), 50);
                       }}
-                      className="w-full text-left text-xs font-serif p-2 hover:bg-[#F7F4EE] text-[#2B2A28] transition-colors rounded-lg border-l-2 border-l-transparent hover:border-l-[#C4432B]"
+                      className="w-full text-left text-xs font-serif p-2 hover:bg-[#F7F4EE] hover:dark:bg-[#26231F] text-[#2B2A28] dark:text-[#DDD8CE] transition-colors rounded-lg border-l-2 border-l-transparent hover:border-l-[#C4432B]"
                     >
                       {tmpl.name}
                     </button>
@@ -545,7 +547,7 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
               className={`p-1.5 sm:px-2.5 sm:py-1.5 rounded-full border transition-all flex items-center gap-1.5 uppercase tracking-wider text-[10px] shadow-2xs ${
                 attachedImage
                   ? 'bg-[#C4432B]/15 text-[#C4432B] border-[#C4432B] font-medium'
-                  : 'bg-[#F7F4EE]/80 text-[#595652] border-[#E2DDD5] hover:border-[#C4432B] hover:text-[#2B2A28]'
+                  : 'bg-[#F7F4EE]/80 dark:bg-[#25221E] text-[#595652] dark:text-[#DDD8CE] border-[#E2DDD5] dark:border-[#38332D] hover:border-[#C4432B] hover:text-[#2B2A28] hover:dark:text-[#FFFFFF]'
               }`}
               title="Attach a photo to your entry"
             >
@@ -562,7 +564,7 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
               className={`p-1.5 sm:px-2.5 sm:py-1.5 rounded-full border transition-all flex items-center gap-1.5 uppercase tracking-wider text-[10px] shadow-2xs ${
                 isListening
                   ? 'bg-[#C4432B] text-[#F7F4EE] border-[#C4432B] font-medium animate-pulse'
-                  : 'bg-[#F7F4EE]/80 text-[#595652] border-[#E2DDD5] hover:border-[#C4432B] hover:text-[#2B2A28]'
+                  : 'bg-[#F7F4EE]/80 dark:bg-[#25221E] text-[#595652] dark:text-[#DDD8CE] border-[#E2DDD5] dark:border-[#38332D] hover:border-[#C4432B] hover:text-[#2B2A28] hover:dark:text-[#FFFFFF]'
               }`}
             >
               {isListening ? <MicOff className="w-3 h-3" /> : <Mic className="w-3 h-3" />}
@@ -574,7 +576,7 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
               <button
                 type="button"
                 onClick={onOpenZenMode}
-                className="px-2.5 py-1.5 border border-[#E2DDD5] bg-[#F7F4EE]/80 text-[#595652] hover:border-[#C4432B] hover:text-[#2B2A28] transition-all rounded-full flex items-center gap-1.5 uppercase tracking-wider text-[10px] shadow-2xs"
+                className="px-2.5 py-1.5 border border-[#E2DDD5] dark:border-[#38332D] bg-[#F7F4EE]/80 dark:bg-[#25221E] text-[#595652] dark:text-[#DDD8CE] hover:border-[#C4432B] hover:text-[#2B2A28] hover:dark:text-[#FFFFFF] transition-all rounded-full flex items-center gap-1.5 uppercase tracking-wider text-[10px] shadow-2xs"
                 title="Distraction-Free Zen Mode"
               >
                 <Maximize2 className="w-3 h-3" />

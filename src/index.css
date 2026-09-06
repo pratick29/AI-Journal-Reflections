@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   :root {
     --paper-canvas: #F7F4EE;
@@ -195,39 +197,39 @@ html.dark #app-navbar {
   border-bottom-color: var(--paper-rule);
 }
 
-/* Base Surfaces & Card Backgrounds */
-html.candlelight .bg-\[\#FFFFFF\],
-html.dark .bg-\[\#FFFFFF\],
-html.candlelight .bg-\[\#FFFDF9\],
-html.dark .bg-\[\#FFFDF9\],
-html.candlelight .bg-\[\#FFFDF7\],
-html.dark .bg-\[\#FFFDF7\],
-html.candlelight .bg-\[\#FFFBEB\],
-html.dark .bg-\[\#FFFBEB\],
-html.candlelight .bg-\[\#FDF8EE\],
-html.dark .bg-\[\#FDF8EE\],
-html.candlelight .bg-\[\#FAF7F0\],
-html.dark .bg-\[\#FAF7F0\],
-html.candlelight .bg-\[\#FAF6F0\],
-html.dark .bg-\[\#FAF6F0\],
-html.candlelight .bg-\[\#FBF9F5\],
-html.dark .bg-\[\#FBF9F5\],
-html.candlelight .bg-\[\#FDFBF7\],
-html.dark .bg-\[\#FDFBF7\] {
+/* Base Surfaces & Card Backgrounds (matches both exact and opacity variants like bg-[#FFFFFF]/90) */
+html.candlelight [class*="bg-[#FFFFFF]"],
+html.dark [class*="bg-[#FFFFFF]"],
+html.candlelight [class*="bg-[#FFFDF9]"],
+html.dark [class*="bg-[#FFFDF9]"],
+html.candlelight [class*="bg-[#FFFDF7]"],
+html.dark [class*="bg-[#FFFDF7]"],
+html.candlelight [class*="bg-[#FFFBEB]"],
+html.dark [class*="bg-[#FFFBEB]"],
+html.candlelight [class*="bg-[#FDF8EE]"],
+html.dark [class*="bg-[#FDF8EE]"],
+html.candlelight [class*="bg-[#FAF7F0]"],
+html.dark [class*="bg-[#FAF7F0]"],
+html.candlelight [class*="bg-[#FAF6F0]"],
+html.dark [class*="bg-[#FAF6F0]"],
+html.candlelight [class*="bg-[#FBF9F5]"],
+html.dark [class*="bg-[#FBF9F5]"],
+html.candlelight [class*="bg-[#FDFBF7]"],
+html.dark [class*="bg-[#FDFBF7]"] {
   background-color: var(--paper-surface) !important;
 }
 
-/* Secondary & Canvas Surfaces */
-html.candlelight .bg-\[\#F7F4EE\],
-html.dark .bg-\[\#F7F4EE\],
-html.candlelight .bg-\[\#F4F0E8\],
-html.dark .bg-\[\#F4F0E8\] {
-  background-color: var(--paper-canvas) !important;
+/* Secondary & Canvas Surfaces (pill buttons, badges, subtle strips) */
+html.candlelight [class*="bg-[#F7F4EE]"],
+html.dark [class*="bg-[#F7F4EE]"],
+html.candlelight [class*="bg-[#F4F0E8]"],
+html.dark [class*="bg-[#F4F0E8]"] {
+  background-color: var(--paper-subtle) !important;
 }
 
 /* Subtle Hover & Tertiary Surfaces */
-html.candlelight .bg-\[\#EFECE6\],
-html.dark .bg-\[\#EFECE6\] {
+html.candlelight [class*="bg-[#EFECE6]"],
+html.dark [class*="bg-[#EFECE6]"] {
   background-color: var(--paper-subtle) !important;
 }
 
@@ -245,34 +247,34 @@ html.dark .hover\:bg-\[\#2B2A28\]:hover {
 }
 
 /* Primary Ink / Text */
-html.candlelight .text-\[\#2B2A28\],
-html.dark .text-\[\#2B2A28\],
-html.candlelight .text-\[\#1A1918\],
-html.dark .text-\[\#1A1918\],
-html.candlelight .text-\[\#2C2825\],
-html.dark .text-\[\#2C2825\],
-html.candlelight .text-\[\#3D3A36\],
-html.dark .text-\[\#3D3A36\] {
+html.candlelight [class*="text-[#2B2A28]"],
+html.dark [class*="text-[#2B2A28]"],
+html.candlelight [class*="text-[#1A1918]"],
+html.dark [class*="text-[#1A1918]"],
+html.candlelight [class*="text-[#2C2825]"],
+html.dark [class*="text-[#2C2825]"],
+html.candlelight [class*="text-[#3D3A36]"],
+html.dark [class*="text-[#3D3A36]"] {
   color: var(--ink-primary) !important;
 }
 
 /* Secondary Ink / Body Text */
-html.candlelight .text-\[\#595652\],
-html.dark .text-\[\#595652\],
-html.candlelight .text-\[\#57534E\],
-html.dark .text-\[\#57534E\],
-html.candlelight .text-\[\#59534B\],
-html.dark .text-\[\#59534B\],
-html.candlelight .text-\[\#6E6A64\],
-html.dark .text-\[\#6E6A64\] {
+html.candlelight [class*="text-[#595652]"],
+html.dark [class*="text-[#595652]"],
+html.candlelight [class*="text-[#57534E]"],
+html.dark [class*="text-[#57534E]"],
+html.candlelight [class*="text-[#59534B]"],
+html.dark [class*="text-[#59534B]"],
+html.candlelight [class*="text-[#6E6A64]"],
+html.dark [class*="text-[#6E6A64]"] {
   color: var(--ink-secondary) !important;
 }
 
 /* Muted / Tertiary Text */
-html.candlelight .text-\[\#8A8478\],
-html.dark .text-\[\#8A8478\],
-html.candlelight .text-\[\#8C857B\],
-html.dark .text-\[\#8C857B\] {
+html.candlelight [class*="text-[#8A8478]"],
+html.dark [class*="text-[#8A8478]"],
+html.candlelight [class*="text-[#8C857B]"],
+html.dark [class*="text-[#8C857B]"] {
   color: var(--ink-muted) !important;
 }
 
@@ -284,11 +286,11 @@ html.dark .text-\[\#FBF9F5\] {
   color: #F5F2EB !important;
 }
 
-/* Border System */
-html.candlelight .border-\[\#E2DDD5\],
-html.dark .border-\[\#E2DDD5\],
-html.candlelight .border-\[\#E5E0D8\],
-html.dark .border-\[\#E5E0D8\] {
+/* Border System (matches both exact and opacity variants like border-[#E2DDD5]/80) */
+html.candlelight [class*="border-[#E2DDD5]"],
+html.dark [class*="border-[#E2DDD5]"],
+html.candlelight [class*="border-[#E5E0D8]"],
+html.dark [class*="border-[#E5E0D8]"] {
   border-color: var(--paper-rule) !important;
 }
 

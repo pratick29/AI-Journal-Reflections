@@ -99,16 +99,16 @@ export const HistoryList: React.FC<HistoryListProps> = ({
   return (
     <aside
       id="history-sidebar"
-      className="w-full lg:w-80 xl:w-96 flex flex-col h-full bg-[#EFECE6]/70 border-r border-[#E2DDD5] font-serif shrink-0 shadow-lg lg:shadow-none transition-colors"
+      className="w-full lg:w-80 xl:w-96 flex flex-col h-full bg-[#EFECE6]/70 dark:bg-[#161513] border-r border-[#E2DDD5] dark:border-[#2C2824] font-serif shrink-0 shadow-lg lg:shadow-none transition-colors"
     >
       {/* Sidebar Header */}
-      <div className="p-4 sm:p-5 border-b border-[#E2DDD5] space-y-3.5 bg-[#EFECE6]">
+      <div className="p-4 sm:p-5 border-b border-[#E2DDD5] dark:border-[#2C2824] space-y-3.5 bg-[#EFECE6] dark:bg-[#181614]">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h2 className="text-[11px] font-sans font-bold uppercase tracking-[0.22em] text-[#2B2A28]">
+            <h2 className="text-[11px] font-sans font-bold uppercase tracking-[0.22em] text-[#2B2A28] dark:text-[#F5F2EB]">
               Past Entries
             </h2>
-            <span className="text-[10px] font-sans text-[#595652] px-1.5 py-0.2 border border-[#E2DDD5] bg-[#FFFDF9] font-medium">
+            <span className="text-[10px] font-sans text-[#595652] dark:text-[#C2BCB1] px-1.5 py-0.2 border border-[#E2DDD5] dark:border-[#38342E] bg-[#FFFDF9] dark:bg-[#22201C] font-medium">
               {filteredInteractions.length}
             </span>
           </div>
@@ -120,7 +120,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                 onNewSession();
                 if (onClose) onClose();
               }}
-              className="p-1.5 border border-[#E2DDD5] hover:border-[#C4432B] text-[#2B2A28] hover:bg-[#C4432B] hover:text-[#F7F4EE] transition-colors rounded-sm"
+              className="p-1.5 border border-[#E2DDD5] dark:border-[#38342E] hover:border-[#C4432B] text-[#2B2A28] dark:text-[#EAE6DF] hover:bg-[#C4432B] hover:text-[#F7F4EE] transition-colors rounded-sm"
               title="Create New Entry (⌘N)"
               aria-label="Create New Entry"
             >
@@ -129,7 +129,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
             {onClose && (
               <button
                 onClick={onClose}
-                className="lg:hidden p-1.5 border border-[#E2DDD5] hover:border-[#C4432B] text-[#2B2A28] hover:bg-[#C4432B] hover:text-[#F7F4EE] transition-colors rounded-sm"
+                className="lg:hidden p-1.5 border border-[#E2DDD5] dark:border-[#38342E] hover:border-[#C4432B] text-[#2B2A28] dark:text-[#EAE6DF] hover:bg-[#C4432B] hover:text-[#F7F4EE] transition-colors rounded-sm"
                 title="Close Entries"
                 aria-label="Close Entries"
               >
@@ -141,19 +141,19 @@ export const HistoryList: React.FC<HistoryListProps> = ({
 
         {/* Search input */}
         <div className="relative">
-          <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#8A8478]" />
+          <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#8A8478] dark:text-[#7A746B]" />
           <input
             id="history-search-input"
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search past entries..."
-            className="w-full pl-8 pr-8 py-1.5 text-xs font-sans bg-[#FFFDF9] border border-[#E2DDD5] focus:outline-none focus:border-[#C4432B] text-[#2B2A28] transition-colors placeholder:text-[#8A8478] rounded-xs"
+            className="w-full pl-8 pr-8 py-1.5 text-xs font-sans bg-[#FFFDF9] dark:bg-[#201E1B] border border-[#E2DDD5] dark:border-[#332F2A] focus:outline-none focus:border-[#C4432B] text-[#2B2A28] dark:text-[#F5F2EB] transition-colors placeholder:text-[#8A8478] dark:placeholder:text-[#7A746B] rounded-xs"
           />
           {searchTerm && (
             <button
               onClick={() => setSearchTerm('')}
-              className="absolute right-2.5 top-2.5 text-[#8A8478] hover:text-[#C4432B]"
+              className="absolute right-2.5 top-2.5 text-[#8A8478] dark:text-[#7A746B] hover:text-[#C4432B]"
               aria-label="Clear search"
             >
               <X className="w-3.5 h-3.5" />
@@ -169,8 +169,8 @@ export const HistoryList: React.FC<HistoryListProps> = ({
               onClick={() => setCategoryFilter(cat)}
               className={`px-2 py-0.5 border whitespace-nowrap transition-colors rounded-xs ${
                 categoryFilter === cat
-                  ? 'bg-[#2B2A28] text-[#F7F4EE] border-[#2B2A28] font-semibold'
-                  : 'bg-[#FFFDF9] text-[#595652] border-[#E2DDD5] hover:border-[#C4432B]'
+                  ? 'bg-[#2B2A28] text-[#F7F4EE] border-[#2B2A28] font-semibold dark:bg-[#C4432B] dark:text-[#FFFFFF] dark:border-[#C4432B]'
+                  : 'bg-[#FFFDF9] text-[#595652] border-[#E2DDD5] hover:border-[#C4432B] dark:bg-[#201E1B] dark:text-[#C2BCB1] dark:border-[#332F2A] hover:dark:border-[#C4432B]'
               }`}
             >
               {cat}
@@ -235,8 +235,8 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                 aria-pressed={isSelected}
                 className={`group cursor-pointer p-4 border transition-all text-left focus:outline-none rounded-xl ${
                   isSelected
-                    ? 'bg-[#FFFFFF] border-2 border-[#C4432B] shadow-[0_4px_20px_-2px_rgba(196,67,43,0.12)]'
-                    : 'bg-[#FFFFFF]/90 border-[#E2DDD5]/80 hover:border-[#C4432B]/50 hover:bg-[#FFFFFF] hover:shadow-sm'
+                    ? 'bg-[#FFFFFF] dark:bg-[#25221E] border-2 border-[#C4432B] shadow-[0_4px_20px_-2px_rgba(196,67,43,0.12)]'
+                    : 'bg-[#FFFFFF]/90 dark:bg-[#1C1A18] border-[#E2DDD5]/80 dark:border-[#332F2A] hover:border-[#C4432B]/50 hover:bg-[#FFFFFF] hover:dark:bg-[#23201C] hover:shadow-sm'
                 }`}
               >
                 <div className="flex items-center justify-between gap-2 mb-2">
@@ -244,7 +244,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                     <span className="text-[10px] font-sans font-bold text-[#C4432B] bg-[#C4432B]/10 px-1.5 py-0.5 rounded-full">
                       {itemNumber}
                     </span>
-                    <span className="text-[10px] font-sans text-[#8A8478] tracking-wider">
+                    <span className="text-[10px] font-sans text-[#8A8478] dark:text-[#8E877C] tracking-wider">
                       {formattedDate} · {formattedTime}
                     </span>
                   </div>
@@ -253,7 +253,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                     {item.cognitiveAnalysis && (
                       <span
                         title="Key Insights"
-                        className="inline-flex items-center gap-1 text-[8px] font-sans uppercase tracking-wider px-2 py-0.5 bg-[#F7F4EE] text-[#C4432B] border border-[#E2DDD5]/70 rounded-full font-medium"
+                        className="inline-flex items-center gap-1 text-[8px] font-sans uppercase tracking-wider px-2 py-0.5 bg-[#F7F4EE] dark:bg-[#26231F] text-[#C4432B] border border-[#E2DDD5]/70 dark:border-[#38332D] rounded-full font-medium"
                       >
                         <Sparkles className="w-2.5 h-2.5 text-[#C4432B]" />
                         <span>Insights</span>
@@ -262,27 +262,27 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                     {item.thinkingMap && (
                       <span
                         title="Idea Map"
-                        className="inline-flex items-center gap-1 text-[8px] font-sans uppercase tracking-wider px-2 py-0.5 bg-[#F7F4EE] text-[#2B2A28] border border-[#E2DDD5]/70 rounded-full font-medium"
+                        className="inline-flex items-center gap-1 text-[8px] font-sans uppercase tracking-wider px-2 py-0.5 bg-[#F7F4EE] dark:bg-[#26231F] text-[#2B2A28] dark:text-[#DDD8CE] border border-[#E2DDD5]/70 dark:border-[#38332D] rounded-full font-medium"
                       >
                         <Compass className="w-2.5 h-2.5 text-[#C4432B]" />
                         <span>Map</span>
                       </span>
                     )}
-                    <span className="text-[8px] font-sans uppercase tracking-wider px-2 py-0.5 border border-[#E2DDD5]/70 text-[#595652] bg-[#F7F4EE] rounded-full">
+                    <span className="text-[8px] font-sans uppercase tracking-wider px-2 py-0.5 border border-[#E2DDD5]/70 dark:border-[#38332D] text-[#595652] dark:text-[#C2BCB1] bg-[#F7F4EE] dark:bg-[#26231F] rounded-full">
                       {item.category}
                     </span>
                   </div>
                 </div>
 
-                <h3 className="text-base font-serif leading-snug text-[#2B2A28] line-clamp-1 mb-1.5 font-normal group-hover:text-[#C4432B] transition-colors">
+                <h3 className="text-base font-serif leading-snug text-[#2B2A28] dark:text-[#F5F2EB] line-clamp-1 mb-1.5 font-normal group-hover:text-[#C4432B] transition-colors">
                   {item.title}
                 </h3>
 
-                <p className="text-xs font-serif text-[#595652] line-clamp-2 leading-relaxed italic">
+                <p className="text-xs font-serif text-[#595652] dark:text-[#C2BCB1] line-clamp-2 leading-relaxed italic">
                   {previewSnippet}
                 </p>
 
-                <div className="flex items-center justify-between text-[10px] font-sans border-t border-[#E2DDD5]/60 mt-3 pt-2 text-[#8A8478]">
+                <div className="flex items-center justify-between text-[10px] font-sans border-t border-[#E2DDD5]/60 dark:border-[#332F2A] mt-3 pt-2 text-[#8A8478] dark:text-[#8E877C]">
                   <span className="tracking-wider uppercase text-[9px]">
                     {item.messages.length} {item.messages.length === 1 ? 'exchange' : 'exchanges'}
                   </span>
@@ -300,7 +300,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                           e.stopPropagation();
                           setDeleteConfirmId(null);
                         }}
-                        className="text-[#8A8478] hover:text-[#2B2A28] uppercase tracking-widest text-[9px]"
+                        className="text-[#8A8478] dark:text-[#8E877C] hover:text-[#2B2A28] dark:hover:text-[#F5F2EB] uppercase tracking-widest text-[9px]"
                       >
                         Cancel
                       </button>
@@ -311,7 +311,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                         e.stopPropagation();
                         setDeleteConfirmId(item.id);
                       }}
-                      className="opacity-40 group-hover:opacity-100 p-1 text-[#8A8478] hover:text-[#C4432B] transition-opacity"
+                      className="opacity-40 group-hover:opacity-100 p-1 text-[#8A8478] dark:text-[#8E877C] hover:text-[#C4432B] transition-opacity"
                       title="Delete Entry"
                       aria-label="Delete entry"
                     >
@@ -326,7 +326,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
       </div>
 
       {/* Sidebar Footer */}
-      <div className="p-3.5 sm:p-4 border-t border-[#E2DDD5] bg-[#EFECE6] flex items-center justify-between text-[10px] font-sans uppercase tracking-[0.18em] text-[#8A8478]">
+      <div className="p-3.5 sm:p-4 border-t border-[#E2DDD5] dark:border-[#2C2824] bg-[#EFECE6] dark:bg-[#181614] flex items-center justify-between text-[10px] font-sans uppercase tracking-[0.18em] text-[#8A8478] dark:text-[#8E877C]">
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-[#C4432B]"></div>
           <span>Cloud Sync Active</span>
