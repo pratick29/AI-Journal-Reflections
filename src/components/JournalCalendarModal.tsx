@@ -150,7 +150,7 @@ export const JournalCalendarModal: React.FC<JournalCalendarModalProps> = ({
 
   const handleCopyDigest = () => {
     if (!weeklyDigest) return;
-    const text = `=== WEEKLY JOURNAL SUMMARY ===\nActive: ${activeDaysInLast7}/7 Days · ${recentInteractions.length} Entries · ${recentWords} Words\n\nMAIN TAKEAWAY:\n${weeklyDigest.breakthrough}\n\nHOW YOU FELT:\n${weeklyDigest.emotionalArc}\n\nFOCUS FOR NEXT WEEK:\n"${weeklyDigest.intention}"\n\nFrom AI Journal & Reflections.`;
+    const text = `=== WEEKLY JOURNAL SUMMARY ===\nActive: ${activeDaysInLast7}/7 Days · ${recentInteractions.length} Entries · ${recentWords} Words\n\nMAIN TAKEAWAY:\n${weeklyDigest.breakthrough}\n\nHOW YOU FELT:\n${weeklyDigest.emotionalArc}\n\nFOCUS FOR NEXT WEEK:\n"${weeklyDigest.intention}"\n\nFrom MindScribe.`;
     navigator.clipboard.writeText(text);
     setCopiedDigest(true);
     setTimeout(() => setCopiedDigest(false), 2000);

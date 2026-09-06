@@ -1,7 +1,7 @@
 {
-  "short_name": "Sanctuary",
-  "name": "Sanctuary — AI Philosophical Journal & Reflections",
-  "description": "A private, philosophical journaling sanctuary powered by Gemini AI and Cloud Firestore.",
+  "short_name": "MindScribe",
+  "name": "MindScribe — Socratic Journal & Reflections",
+  "description": "A private, philosophical journaling sanctuary with voice memos, Socratic inquiry, and Zero-Knowledge encryption.",
   "icons": [
     {
       "src": "/icon.svg",

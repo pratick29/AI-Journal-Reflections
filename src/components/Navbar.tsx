@@ -118,8 +118,8 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="border-l border-[#E2DDD5] pl-3 sm:pl-4">
             <div className="flex items-center gap-2">
               <Feather className="w-4 h-4 text-[#C4432B]" />
-              <h1 className="text-lg sm:text-xl font-serif font-normal tracking-tight leading-none text-[#2B2A28]">
-                AI Journal &amp; Reflections
+              <h1 className="text-lg sm:text-xl font-serif font-medium tracking-tight leading-none text-[#2B2A28]">
+                MindScribe
               </h1>
               <span className="hidden lg:inline-flex items-center gap-1.5 px-2 py-0.5 border border-[#E2DDD5] text-[9px] font-sans uppercase tracking-[0.18em] bg-[#EFECE6] text-[#595652]">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>

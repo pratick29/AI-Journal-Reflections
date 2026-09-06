@@ -1,4 +1,4 @@
-# Security Specification: AI Journal & Reflections
+# Security Specification: MindScribe (Socratic Journal & Reflections)
 
 ## 1. Data Invariants
 - An interaction can ONLY exist under `/users/{userId}/interactions/{interactionId}` where `request.auth.uid == userId`.

@@ -114,11 +114,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenWalkthrough }) =
             <Feather className="w-4 h-4" />
           </div>
           <div>
-            <span className="text-xl font-serif tracking-tight text-[#2B2A28] font-normal block leading-tight">
-              AI Journal &amp; Reflections
+            <span className="text-xl font-serif tracking-tight text-[#2B2A28] font-medium block leading-tight">
+              MindScribe
             </span>
             <span className="text-[9px] font-sans uppercase tracking-[0.2em] text-[#8A8478] hidden sm:block">
-              Thoughtful Journaling &amp; AI Guides
+              Socratic Journaling &amp; Audio Sanctuary
             </span>
           </div>
         </div>
@@ -801,7 +801,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenWalkthrough }) =
       <footer className="border-t border-[#E2DDD5] px-6 py-5 sm:px-12 bg-[#EFECE6]/70 text-[10px] font-sans uppercase tracking-[0.18em] text-[#8A8478] flex flex-col sm:flex-row justify-between items-center gap-4 relative z-10">
         <div className="flex items-center gap-2">
           <Feather className="w-3.5 h-3.5 text-[#C4432B]" />
-          <span>Personal Gemini Journal · Private &amp; Isolated</span>
+          <span>MindScribe · Private Socratic Sanctuary</span>
         </div>
         <div className="flex items-center gap-4">
           <button

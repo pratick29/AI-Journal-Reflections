@@ -1,5 +1,5 @@
 /**
- * Core type definitions for Personal Gemini Journal
+ * Core type definitions for MindScribe (Socratic Journal & Reflections)
  */
 
 export type ReflectionMode = 'reflection' | 'summary' | 'brainstorm' | 'cognitive_lens' | 'thinking_map';
