@@ -19,6 +19,10 @@ import {
   Calendar,
   History,
   FileText,
+  Lock,
+  Unlock,
+  KeyRound,
+  ShieldCheck,
 } from 'lucide-react';
 import {
   Interaction,
@@ -29,6 +33,7 @@ import {
   PhilosophicalPersona,
   AuthorProfile,
   JournalLocation,
+  AudioMemo,
 } from '../types';
 import { saveInteraction } from '../firebase/interactions';
 import { useAuth } from '../context/AuthContext';
@@ -38,6 +43,14 @@ import { DialogueStream } from './editor/DialogueStream';
 import { CognitiveLensPanel } from './editor/CognitiveLensPanel';
 import { EmptyStatePrompts } from './editor/EmptyStatePrompts';
 import { JournalLocationPicker } from './maps/JournalLocationPicker';
+import { AudioMemoPlayer } from './editor/AudioMemoPlayer';
+import { PassphraseModal } from './security/PassphraseModal';
+import {
+  encryptPayload,
+  decryptPayload,
+  getSessionPassphrase,
+  setSessionPassphrase,
+} from '../utils/crypto';
 
 interface JournalEditorProps {
   currentInteraction: Interaction | null;
@@ -91,6 +104,16 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
   const [illuminatedArtUrl, setIlluminatedArtUrl] = useState<string | null>(null);
   const [isGeneratingArt, setIsGeneratingArt] = useState<boolean>(false);
 
+  // End-to-End Encryption & Audio Voice Memo states
+  const [isEncrypted, setIsEncrypted] = useState<boolean>(false);
+  const [isDecryptedUnlocked, setIsDecryptedUnlocked] = useState<boolean>(true);
+  const [audioMemo, setAudioMemo] = useState<AudioMemo | null>(null);
+  const [showPassphraseModal, setShowPassphraseModal] = useState<boolean>(false);
+  const [passphraseModalMode, setPassphraseModalMode] = useState<'setup' | 'unlock'>('setup');
+  const [manualPassphraseInput, setManualPassphraseInput] = useState<string>('');
+  const [decryptError, setDecryptError] = useState<string | null>(null);
+  const [isDecrypting, setIsDecrypting] = useState<boolean>(false);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -105,37 +128,127 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
 
   // Sync with current selected interaction
   useEffect(() => {
-    if (currentInteraction) {
-      setTitle(currentInteraction.title);
-      setCategory(currentInteraction.category);
-      setMessages(currentInteraction.messages || []);
-      setCognitiveAnalysis(currentInteraction.cognitiveAnalysis || null);
-      setThinkingMap(currentInteraction.thinkingMap || null);
-      setLocation(currentInteraction.location || null);
-      setIlluminatedArtUrl(currentInteraction.illuminatedArtUrl || null);
-      setSaveStatus('saved');
-      setErrorMessage(null);
-      setPendingUnsavedInteraction(null);
-      setActiveTab('dialogue');
-    } else {
-      const now = new Date();
-      setTitle(`Inquiry • ${now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`);
-      setCategory('reflection');
-      setMessages([]);
-      if (authorProfile?.defaultInterlocutor) {
-        setSelectedPersona(authorProfile.defaultInterlocutor);
+    let isCancelled = false;
+
+    const syncInteraction = async () => {
+      if (currentInteraction) {
+        setTitle(currentInteraction.title);
+        setCategory(currentInteraction.category);
+        setLocation(currentInteraction.location || null);
+        setIlluminatedArtUrl(currentInteraction.illuminatedArtUrl || null);
+        setSaveStatus('saved');
+        setErrorMessage(null);
+        setPendingUnsavedInteraction(null);
+        setActiveTab('dialogue');
+
+        if (currentInteraction.isEncrypted && currentInteraction.encryptedPayload) {
+          setIsEncrypted(true);
+          const cachedPass = getSessionPassphrase();
+          if (cachedPass) {
+            try {
+              const decrypted = await decryptPayload<any>(currentInteraction.encryptedPayload, cachedPass);
+              if (!isCancelled) {
+                setMessages(decrypted.messages || []);
+                setCognitiveAnalysis(decrypted.cognitiveAnalysis || null);
+                setThinkingMap(decrypted.thinkingMap || null);
+                setAudioMemo(decrypted.audioMemo || null);
+                setIsDecryptedUnlocked(true);
+                setDecryptError(null);
+              }
+            } catch {
+              if (!isCancelled) {
+                setMessages([]);
+                setCognitiveAnalysis(null);
+                setThinkingMap(null);
+                setAudioMemo(null);
+                setIsDecryptedUnlocked(false);
+              }
+            }
+          } else {
+            if (!isCancelled) {
+              setMessages([]);
+              setCognitiveAnalysis(null);
+              setThinkingMap(null);
+              setAudioMemo(null);
+              setIsDecryptedUnlocked(false);
+            }
+          }
+        } else {
+          setIsEncrypted(false);
+          setIsDecryptedUnlocked(true);
+          setMessages(currentInteraction.messages || []);
+          setCognitiveAnalysis(currentInteraction.cognitiveAnalysis || null);
+          setThinkingMap(currentInteraction.thinkingMap || null);
+          setAudioMemo(currentInteraction.audioMemo || null);
+        }
+      } else {
+        const now = new Date();
+        setTitle(`Inquiry • ${now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`);
+        setCategory('reflection');
+        setMessages([]);
+        if (authorProfile?.defaultInterlocutor) {
+          setSelectedPersona(authorProfile.defaultInterlocutor);
+        }
+        setCognitiveAnalysis(null);
+        setThinkingMap(null);
+        setLocation(null);
+        setAttachedImage(null);
+        setIlluminatedArtUrl(null);
+        setAudioMemo(null);
+        setIsEncrypted(false);
+        setIsDecryptedUnlocked(true);
+        setSaveStatus('unsaved');
+        setErrorMessage(null);
+        setPendingUnsavedInteraction(null);
+        setActiveTab('dialogue');
       }
-      setCognitiveAnalysis(null);
-      setThinkingMap(null);
-      setLocation(null);
-      setAttachedImage(null);
-      setIlluminatedArtUrl(null);
-      setSaveStatus('unsaved');
-      setErrorMessage(null);
-      setPendingUnsavedInteraction(null);
-      setActiveTab('dialogue');
-    }
+    };
+
+    syncInteraction();
+
+    return () => {
+      isCancelled = true;
+    };
   }, [currentInteraction]);
+
+  const handleManualUnlock = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!manualPassphraseInput.trim() || !currentInteraction?.encryptedPayload) return;
+
+    setIsDecrypting(true);
+    setDecryptError(null);
+    try {
+      const decrypted = await decryptPayload<any>(
+        currentInteraction.encryptedPayload,
+        manualPassphraseInput.trim()
+      );
+      setSessionPassphrase(manualPassphraseInput.trim());
+      setMessages(decrypted.messages || []);
+      setCognitiveAnalysis(decrypted.cognitiveAnalysis || null);
+      setThinkingMap(decrypted.thinkingMap || null);
+      setAudioMemo(decrypted.audioMemo || null);
+      setIsDecryptedUnlocked(true);
+      setManualPassphraseInput('');
+    } catch (err: any) {
+      setDecryptError(err?.message || 'Incorrect passphrase. Please verify and try again.');
+    } finally {
+      setIsDecrypting(false);
+    }
+  };
+
+  const handleToggleEncryption = () => {
+    if (isEncrypted) {
+      setIsEncrypted(false);
+    } else {
+      const cached = getSessionPassphrase();
+      if (cached) {
+        setIsEncrypted(true);
+      } else {
+        setPassphraseModalMode('setup');
+        setShowPassphraseModal(true);
+      }
+    }
+  };
 
   // Scroll to bottom when messages update
   useEffect(() => {
@@ -209,7 +322,39 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
     setIsSaving(true);
     setSaveStatus('saving');
     try {
-      await saveInteraction(user.uid, updatedInteraction);
+      let interactionToSave = { ...updatedInteraction };
+
+      if (isEncrypted) {
+        const pass = getSessionPassphrase();
+        if (!pass) {
+          setPendingUnsavedInteraction(updatedInteraction);
+          setPassphraseModalMode('setup');
+          setShowPassphraseModal(true);
+          setIsSaving(false);
+          setSaveStatus('unsaved');
+          return false;
+        }
+
+        const sensitivePayload = {
+          messages: updatedInteraction.messages,
+          cognitiveAnalysis: updatedInteraction.cognitiveAnalysis,
+          thinkingMap: updatedInteraction.thinkingMap,
+          audioMemo: updatedInteraction.audioMemo,
+        };
+
+        const encryptedPayload = await encryptPayload(sensitivePayload, pass);
+        interactionToSave = {
+          ...updatedInteraction,
+          isEncrypted: true,
+          encryptedPayload,
+          messages: [], // Zero-Knowledge: no plaintext messages stored on Firestore
+          cognitiveAnalysis: undefined,
+          thinkingMap: undefined,
+          audioMemo: undefined,
+        };
+      }
+
+      await saveInteraction(user.uid, interactionToSave);
       setSaveStatus('saved');
       setErrorMessage(null);
       setPendingUnsavedInteraction(null);
@@ -510,6 +655,8 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
         thinkingMap: updatedThinkingMap || undefined,
         location: location || undefined,
         illuminatedArtUrl: illuminatedArtUrl || undefined,
+        audioMemo: audioMemo || undefined,
+        isEncrypted: isEncrypted || undefined,
         createdAt: currentInteraction?.createdAt || nowIso,
         updatedAt: new Date().toISOString(),
       };
@@ -773,119 +920,173 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
           <div className="flex-1 flex flex-col min-h-0 justify-between gap-3">
             {/* Scrollable Upper Area for Prompts / Dialogue Messages */}
             <div className="flex-1 overflow-y-auto min-h-0 pr-1 space-y-4">
-              {messages.length === 0 ? (
-                <div className="space-y-6">
-                  {pastMemory && (
-                    <div className="p-5 rounded-2xl border border-[#D97706]/35 bg-gradient-to-br from-[#FFFDF7] via-[#FFFBEB] to-[#FDF8EE] shadow-[0_4px_24px_-4px_rgba(217,119,6,0.08),0_1px_3px_0_rgba(43,42,40,0.02)] relative overflow-hidden transition-all hover:border-[#D97706]/60 hover:shadow-[0_8px_30px_-4px_rgba(217,119,6,0.12)]">
-                      <div className="flex items-center justify-between gap-3 mb-2.5">
-                        <div className="flex items-center gap-2 text-xs font-sans font-semibold tracking-wider uppercase text-[#B45309]">
-                          <div className="w-6 h-6 rounded-full bg-[#D97706]/10 flex items-center justify-center">
-                            <History className="w-3.5 h-3.5 text-[#D97706]" />
-                          </div>
-                          <span>On This Day · {timeAgoText}</span>
-                        </div>
-                        <span className="text-[11px] font-sans text-[#8C857B] bg-[#FFFFFF]/80 px-2.5 py-0.5 rounded-full border border-[#D97706]/20">
-                          {new Date(pastMemory.createdAt).toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric',
-                          })}
-                        </span>
-                      </div>
+              {isEncrypted && !isDecryptedUnlocked ? (
+                <div className="max-w-md mx-auto my-auto py-12 px-6 bg-[#FFFFFF] dark:bg-[#201D1A] border border-[#E2DDD5] dark:border-[#38332D] rounded-2xl shadow-xl text-center space-y-4">
+                  <div className="w-14 h-14 mx-auto rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                    <Lock className="w-7 h-7" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-serif font-medium text-[#2B2A28] dark:text-[#F5F2EB]">
+                      Sanctuary Vault Locked
+                    </h3>
+                    <p className="text-xs text-[#8A8478] dark:text-[#8E877C] mt-1 max-w-xs mx-auto leading-relaxed">
+                      This reflection is secured with Zero-Knowledge AES-GCM 256-bit encryption. Enter your passphrase to decrypt and read.
+                    </p>
+                  </div>
 
-                      <h4 className="font-serif text-base font-medium text-[#2C2825] mb-2 line-clamp-1">
-                        "{pastMemory.title}"
-                      </h4>
-
-                      {pastSnippet && (
-                        <p className="font-serif italic text-xs sm:text-sm text-[#59534B] line-clamp-2 mb-3.5 leading-relaxed bg-[#FFFFFF]/50 p-3 rounded-xl border border-[#D97706]/15">
-                          "{pastSnippet}"
-                        </p>
-                      )}
-
-                      <div className="flex items-center gap-2 pt-2 border-t border-[#D97706]/20">
-                        {onSelectInteraction && (
-                          <button
-                            type="button"
-                            onClick={() => onSelectInteraction(pastMemory)}
-                            className="text-[11px] font-sans font-medium text-[#B45309] hover:text-[#92400E] px-3 py-1 bg-[#D97706]/10 hover:bg-[#D97706]/20 rounded-full flex items-center gap-1.5 transition-colors"
-                          >
-                            <BookOpen className="w-3 h-3" />
-                            <span>Read Full Entry</span>
-                          </button>
-                        )}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setPromptInput(
-                              `Reflecting on my words from ${timeAgoText} ("${pastSnippet.slice(0, 120)}..."): How has my perspective matured since then, and what does this show about my trajectory?`
-                            );
-                            setTimeout(() => {
-                              textareaRef.current?.focus();
-                            }, 50);
-                          }}
-                          className="text-[11px] font-sans font-semibold text-[#2C2825] hover:text-[#B45309] px-3.5 py-1 bg-[#FFFFFF] border border-[#D97706]/30 hover:border-[#D97706]/60 rounded-full flex items-center gap-1.5 transition-all shadow-2xs ml-auto"
-                        >
-                          <span>Reflect on Growth</span>
-                          <ArrowRight className="w-3 h-3" />
-                        </button>
-                      </div>
+                  {decryptError && (
+                    <div className="p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 rounded-xl text-xs text-red-600 dark:text-red-300">
+                      {decryptError}
                     </div>
                   )}
 
-                  <EmptyStatePrompts
-                    onSelectPrompt={(question) => {
-                      setPromptInput(question);
-                      setTimeout(() => {
-                        textareaRef.current?.focus();
-                      }, 50);
-                    }}
-                  />
+                  <form onSubmit={handleManualUnlock} className="space-y-3 pt-2">
+                    <input
+                      type="password"
+                      value={manualPassphraseInput}
+                      onChange={(e) => setManualPassphraseInput(e.target.value)}
+                      placeholder="Enter passphrase..."
+                      className="w-full px-3.5 py-2.5 bg-[#FFFDF9] dark:bg-[#181614] border border-[#E2DDD5] dark:border-[#38332D] rounded-xl text-sm text-[#2B2A28] dark:text-[#F5F2EB] placeholder-stone-400 focus:outline-none focus:border-[#C4432B] text-center"
+                      autoFocus
+                    />
+                    <button
+                      type="submit"
+                      disabled={isDecrypting || !manualPassphraseInput.trim()}
+                      className="w-full py-2.5 px-4 bg-[#C4432B] hover:bg-[#A93822] text-white text-sm font-medium rounded-xl shadow-xs transition-all disabled:opacity-50 cursor-pointer"
+                    >
+                      {isDecrypting ? 'Decrypting...' : 'Unlock Sanctuary Entry'}
+                    </button>
+                  </form>
                 </div>
               ) : (
-                <DialogueStream
-                  messages={messages}
-                  isGenerating={isGenerating}
-                  onPinQuote={onPinQuote}
-                  onSelectPassageAction={(action, text) => {
-                    if (action === 'challenge') {
-                      setPromptInput(`Explore and challenge the underlying assumption in this passage: "${text}"`);
-                    } else if (action === 'unpack') {
-                      setPromptInput(`Unpack the emotional nuance and philosophical premise behind: "${text}"`);
-                    } else if (action === 'marginalia') {
-                      setPromptInput(`Add a dialectical perspective to: "${text}"`);
-                    }
-                    setTimeout(() => textareaRef.current?.focus(), 50);
-                  }}
-                />
+                <>
+                  {audioMemo && (
+                    <div className="max-w-2xl mx-auto mb-3">
+                      <AudioMemoPlayer
+                        audioMemo={audioMemo}
+                        onDelete={() => {
+                          setAudioMemo(null);
+                          if (currentInteraction) {
+                            commitToFirestore({
+                              ...currentInteraction,
+                              audioMemo: undefined,
+                              updatedAt: new Date().toISOString(),
+                            });
+                          }
+                        }}
+                      />
+                    </div>
+                  )}
+
+                  {messages.length === 0 ? (
+                    <div className="space-y-6">
+                      {pastMemory && (
+                        <div className="p-5 rounded-2xl border border-[#D97706]/35 bg-gradient-to-br from-[#FFFDF7] via-[#FFFBEB] to-[#FDF8EE] shadow-[0_4px_24px_-4px_rgba(217,119,6,0.08),0_1px_3px_0_rgba(43,42,40,0.02)] relative overflow-hidden transition-all hover:border-[#D97706]/60 hover:shadow-[0_8px_30px_-4px_rgba(217,119,6,0.12)]">
+                          <div className="flex items-center justify-between gap-3 mb-2.5">
+                            <div className="flex items-center gap-2 text-xs font-sans font-semibold tracking-wider uppercase text-[#B45309]">
+                              <div className="w-6 h-6 rounded-full bg-[#D97706]/10 flex items-center justify-center">
+                                <History className="w-3.5 h-3.5 text-[#D97706]" />
+                              </div>
+                              <span>On This Day · {timeAgoText}</span>
+                            </div>
+                            <span className="text-[11px] font-sans text-[#8C857B] bg-[#FFFFFF]/80 px-2.5 py-0.5 rounded-full border border-[#D97706]/20">
+                              {new Date(pastMemory.createdAt).toLocaleDateString('en-US', {
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric',
+                              })}
+                            </span>
+                          </div>
+
+                          <h4 className="font-serif text-base font-medium text-[#2C2825] mb-2 line-clamp-1">
+                            "{pastMemory.title}"
+                          </h4>
+
+                          {pastSnippet && (
+                            <p className="font-serif italic text-xs sm:text-sm text-[#59534B] line-clamp-2 mb-3.5 leading-relaxed bg-[#FFFFFF]/50 p-3 rounded-xl border border-[#D97706]/15">
+                              "{pastSnippet}"
+                            </p>
+                          )}
+
+                          <div className="flex items-center justify-between text-[11px] font-sans border-t border-[#D97706]/15 pt-3">
+                            <span className="text-[#8C857B]">{pastMemory.messages?.length || 0} reflections recorded</span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (onSelectInteraction) {
+                                  onSelectInteraction(pastMemory);
+                                }
+                              }}
+                              className="text-[#D97706] hover:text-[#B45309] font-medium flex items-center gap-1.5 transition-colors group cursor-pointer"
+                            >
+                              <span>Revisit Entry</span>
+                              <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      <EmptyStatePrompts
+                        onSelectPrompt={(question) => {
+                          setPromptInput(question);
+                          setTimeout(() => {
+                            textareaRef.current?.focus();
+                          }, 50);
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <DialogueStream
+                      messages={messages}
+                      isGenerating={isGenerating}
+                      onPinQuote={onPinQuote}
+                      onSelectPassageAction={(action, text) => {
+                        if (action === 'challenge') {
+                          setPromptInput(`Explore and challenge the underlying assumption in this passage: "${text}"`);
+                        } else if (action === 'unpack') {
+                          setPromptInput(`Unpack the emotional nuance and philosophical premise behind: "${text}"`);
+                        } else if (action === 'marginalia') {
+                          setPromptInput(`Add a dialectical perspective to: "${text}"`);
+                        }
+                        setTimeout(() => textareaRef.current?.focus(), 50);
+                      }}
+                    />
+                  )}
+                </>
               )}
               <div ref={messagesEndRef} />
             </div>
 
             {/* Docked Writing Desk Composer at Bottom */}
-            <div className="shrink-0 pt-1 pb-1">
-              <WritingDesk
-                promptInput={promptInput}
-                setPromptInput={setPromptInput}
-                activeMode={activeMode}
-                setActiveMode={setActiveMode}
-                isGenerating={isGenerating}
-                onSubmitInquiry={(e) => {
-                  e.preventDefault();
-                  handleSubmitPrompt();
-                }}
-                userTurnCount={userTurnCount}
-                textareaRef={textareaRef}
-                onOpenZenMode={onOpenZenMode}
-                selectedPersona={selectedPersona}
-                onSelectPersona={setSelectedPersona}
-                thoughtGrammarEnabled={thoughtGrammarEnabled}
-                location={location}
-                onOpenLocationPicker={() => setIsLocationPickerOpen(true)}
-                attachedImage={attachedImage}
-                setAttachedImage={setAttachedImage}
-              />
-            </div>
+            {(!isEncrypted || isDecryptedUnlocked) && (
+              <div className="shrink-0 pt-1 pb-1">
+                <WritingDesk
+                  promptInput={promptInput}
+                  setPromptInput={setPromptInput}
+                  activeMode={activeMode}
+                  setActiveMode={setActiveMode}
+                  isGenerating={isGenerating}
+                  onSubmitInquiry={(e) => {
+                    e.preventDefault();
+                    handleSubmitPrompt();
+                  }}
+                  userTurnCount={userTurnCount}
+                  textareaRef={textareaRef}
+                  onOpenZenMode={onOpenZenMode}
+                  selectedPersona={selectedPersona}
+                  onSelectPersona={setSelectedPersona}
+                  thoughtGrammarEnabled={thoughtGrammarEnabled}
+                  location={location}
+                  onOpenLocationPicker={() => setIsLocationPickerOpen(true)}
+                  attachedImage={attachedImage}
+                  setAttachedImage={setAttachedImage}
+                  audioMemo={audioMemo}
+                  onSaveAudioMemo={(memo) => setAudioMemo(memo)}
+                  isEncrypted={isEncrypted}
+                  onToggleEncryption={handleToggleEncryption}
+                />
+              </div>
+            )}
           </div>
         )}
 
@@ -1085,6 +1286,23 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
           }}
         />
       )}
+
+      {/* Zero-Knowledge End-to-End Encryption Passphrase Modal */}
+      <PassphraseModal
+        isOpen={showPassphraseModal}
+        mode={passphraseModalMode}
+        onConfirm={async (pass) => {
+          setSessionPassphrase(pass);
+          setIsEncrypted(true);
+          setShowPassphraseModal(false);
+          if (pendingUnsavedInteraction) {
+            await commitToFirestore(pendingUnsavedInteraction);
+          }
+        }}
+        onClose={() => {
+          setShowPassphraseModal(false);
+        }}
+      />
     </div>
   );
 };

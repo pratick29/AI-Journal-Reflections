@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { X, Calendar as CalendarIcon, Flame, BookOpen, Sparkles, ChevronLeft, ChevronRight, Compass, Copy, Check, TrendingUp, Feather } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { X, Calendar as CalendarIcon, Flame, BookOpen, Sparkles, ChevronLeft, ChevronRight, Compass, Copy, Check, TrendingUp, Feather, Award } from 'lucide-react';
 import { Interaction } from '../types';
+import { calculateHabitStats } from '../utils/badges';
 
 interface JournalCalendarModalProps {
   isOpen: boolean;
@@ -32,6 +33,9 @@ export const JournalCalendarModal: React.FC<JournalCalendarModalProps> = ({
     themes: string[];
   } | null>(null);
   const [copiedDigest, setCopiedDigest] = useState(false);
+
+  // Compute commemorative badges and streaks
+  const habitStats = useMemo(() => calculateHabitStats(interactions), [interactions]);
 
   if (!isOpen) return null;
 
@@ -185,7 +189,10 @@ export const JournalCalendarModal: React.FC<JournalCalendarModalProps> = ({
               <Flame className="w-3.5 h-3.5 text-[#C4432B]" />
               <span>Streak</span>
             </div>
-            <p className="text-2xl font-serif font-semibold text-[#2B2A28]">{streak} Days</p>
+            <p className="text-2xl font-serif font-semibold text-[#2B2A28]">{habitStats.currentStreak} Days</p>
+            {habitStats.longestStreak > 0 && (
+              <span className="text-[9px] text-[#8A8478] font-sans block">Best: {habitStats.longestStreak} days</span>
+            )}
           </div>
 
           <div className="bg-[#F7F4EE] border border-[#E2DDD5] p-3.5 space-y-1 text-center rounded-xl">
@@ -366,6 +373,61 @@ export const JournalCalendarModal: React.FC<JournalCalendarModalProps> = ({
                 </div>
               );
             })}
+          </div>
+        </div>
+
+        {/* Habit & Streak Badges Section */}
+        <div className="space-y-3 border-t border-[#E2DDD5] pt-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-base">🎖️</span>
+              <h4 className="text-xs font-serif font-semibold text-[#2B2A28]">
+                Habit &amp; Solitude Badges
+              </h4>
+            </div>
+            <span className="text-[10px] font-sans text-[#8A8478] uppercase tracking-wider">
+              {habitStats.badges.filter((b) => b.isUnlocked).length} of {habitStats.badges.length} Unlocked
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-52 overflow-y-auto pr-1">
+            {habitStats.badges.map((badge) => (
+              <div
+                key={badge.id}
+                className={`p-2.5 border rounded-xl flex items-start gap-2.5 transition-all ${
+                  badge.isUnlocked
+                    ? 'bg-[#FFFDF9] border-[#C4432B]/40 shadow-2xs'
+                    : 'bg-[#EFECE6]/40 border-[#E2DDD5]/60 opacity-60'
+                }`}
+              >
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-base shrink-0 ${
+                  badge.isUnlocked ? 'bg-[#C4432B]/10' : 'bg-stone-200/50'
+                }`}>
+                  {badge.icon}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="text-xs font-serif font-medium text-[#2B2A28] truncate">
+                      {badge.name}
+                    </span>
+                    <span className="text-[9px] font-sans font-medium text-[#8A8478] shrink-0">
+                      {badge.progressLabel}
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-[#595652] font-sans line-clamp-1 mt-0.5">
+                    {badge.description}
+                  </p>
+                  <div className="w-full h-1 bg-[#E2DDD5]/70 rounded-full mt-1.5 overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all ${
+                        badge.isUnlocked ? 'bg-[#C4432B]' : 'bg-stone-400'
+                      }`}
+                      style={{ width: `${badge.progress * 100}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 

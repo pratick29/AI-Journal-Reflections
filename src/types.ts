@@ -85,6 +85,14 @@ export interface JournalLocation {
   weather?: AtmosphericWeather;
 }
 
+export interface AudioMemo {
+  id: string;
+  audioData: string; // Base64 audio/webm or audio/mp4 data URI
+  durationSeconds: number;
+  mimeType: string;
+  createdAt: string;
+}
+
 export interface Interaction {
   id: string;
   userId: string;
@@ -97,6 +105,9 @@ export interface Interaction {
   messages: ChatMessage[];
   location?: JournalLocation;
   illuminatedArtUrl?: string;
+  audioMemo?: AudioMemo;
+  isEncrypted?: boolean;
+  encryptedPayload?: string; // e2ee:v1:base64(salt + iv + ciphertext)
   createdAt: string;
   updatedAt: string;
 }

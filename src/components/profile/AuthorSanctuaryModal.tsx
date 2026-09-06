@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { AuthorProfile, AuthorWaxSeal, SocraticTone, Interaction, PhilosophicalPersona, WAX_SEALS, SOCRATIC_TONES } from '../../types';
 import { useAuth } from '../../context/AuthContext';
+import { calculateHabitStats } from '../../utils/badges';
 
 export { WAX_SEALS, SOCRATIC_TONES };
 
@@ -99,12 +100,14 @@ export const AuthorSanctuaryModal: React.FC<AuthorSanctuaryModalProps> = ({
   if (!isOpen) return null;
 
   // Cumulative stats calculation
+  const habitStats = calculateHabitStats(interactions);
+
   const totalWords = interactions.reduce((acc, curr) => {
-    const text = curr.messages.map((m) => m.content).join(' ');
+    const text = (curr.messages || []).map((m) => m.content).join(' ');
     return acc + (text ? text.trim().split(/\s+/).length : 0);
   }, 0);
 
-  const totalTurns = interactions.reduce((acc, curr) => acc + curr.messages.length, 0);
+  const totalTurns = interactions.reduce((acc, curr) => acc + (curr.messages || []).length, 0);
   const avgTurnsPerInquiry = interactions.length > 0 ? (totalTurns / interactions.length).toFixed(1) : '0';
 
   // Laurels logic
@@ -407,13 +410,13 @@ export const AuthorSanctuaryModal: React.FC<AuthorSanctuaryModalProps> = ({
                 </div>
 
                 <div className="bg-[#FFFDF9] border border-[#E2DDD5] p-3.5 text-center rounded-xs space-y-1">
-                  <span className="text-[9px] font-sans uppercase tracking-widest text-[#8A8478]">Avg Depth</span>
-                  <div className="text-xl font-serif font-light text-[#2B2A28]">{avgTurnsPerInquiry} <span className="text-xs">turns</span></div>
+                  <span className="text-[9px] font-sans uppercase tracking-widest text-[#8A8478]">Current Streak</span>
+                  <div className="text-xl font-serif font-light text-[#C4432B]">{habitStats.currentStreak} <span className="text-xs font-sans">days</span></div>
                 </div>
 
                 <div className="bg-[#FFFDF9] border border-[#E2DDD5] p-3.5 text-center rounded-xs space-y-1">
-                  <span className="text-[9px] font-sans uppercase tracking-widest text-[#8A8478]">Status</span>
-                  <div className="text-xl font-serif font-light text-[#C4432B]">Active</div>
+                  <span className="text-[9px] font-sans uppercase tracking-widest text-[#8A8478]">Best Streak</span>
+                  <div className="text-xl font-serif font-light text-[#2B2A28]">{habitStats.longestStreak} <span className="text-xs font-sans">days</span></div>
                 </div>
               </div>
 
@@ -465,43 +468,45 @@ export const AuthorSanctuaryModal: React.FC<AuthorSanctuaryModalProps> = ({
                 </div>
               </div>
 
-              {/* Socratic Laurels */}
+              {/* Socratic Laurels & Commemorative Badges */}
               <div className="space-y-3">
-                <h4 className="text-[10px] font-sans uppercase tracking-widest text-[#8A8478] font-bold">
-                  Journaling Badges &amp; Milestones
-                </h4>
+                <div className="flex items-center justify-between">
+                  <h4 className="text-[10px] font-sans uppercase tracking-widest text-[#8A8478] font-bold">
+                    Habit &amp; Streak Milestones
+                  </h4>
+                  <span className="text-[9px] font-sans text-[#8A8478] uppercase tracking-wider font-medium">
+                    {habitStats.badges.filter((b) => b.isUnlocked).length} of {habitStats.badges.length} Unlocked
+                  </span>
+                </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  <div className={`p-3 border rounded-xs flex items-center gap-2.5 ${hasCompletedDeepDialogue ? 'bg-[#FFFDF9] border-[#C4432B]/50' : 'bg-[#EFECE6]/40 border-[#E2DDD5] opacity-60'}`}>
-                    <span className="text-xl">🌿</span>
-                    <div>
-                      <div className="text-xs font-serif font-medium text-[#2B2A28]">Deep Thinker</div>
-                      <div className="text-[9px] text-[#8A8478] font-sans">Explored a conversation in depth</div>
+                  {habitStats.badges.map((badge) => (
+                    <div
+                      key={badge.id}
+                      className={`p-3 border rounded-xs flex items-start gap-3 transition-all ${
+                        badge.isUnlocked
+                          ? 'bg-[#FFFDF9] border-[#C4432B]/50 shadow-2xs'
+                          : 'bg-[#EFECE6]/40 border-[#E2DDD5] opacity-60'
+                      }`}
+                    >
+                      <span className="text-2xl shrink-0 mt-0.5">{badge.icon}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-1">
+                          <div className="text-xs font-serif font-medium text-[#2B2A28] truncate">{badge.name}</div>
+                          <span className="text-[9px] font-sans font-medium text-[#8A8478] shrink-0">{badge.progressLabel}</span>
+                        </div>
+                        <div className="text-[9px] text-[#8A8478] font-sans line-clamp-1 mt-0.5">{badge.description}</div>
+                        <div className="w-full h-1 bg-[#E2DDD5]/70 rounded-full mt-1.5 overflow-hidden">
+                          <div
+                            className={`h-full rounded-full transition-all ${
+                              badge.isUnlocked ? 'bg-[#C4432B]' : 'bg-stone-400'
+                            }`}
+                            style={{ width: `${badge.progress * 100}%` }}
+                          />
+                        </div>
+                      </div>
                     </div>
-                  </div>
-
-                  <div className={`p-3 border rounded-xs flex items-center gap-2.5 ${hasShadowWork ? 'bg-[#FFFDF9] border-[#C4432B]/50' : 'bg-[#EFECE6]/40 border-[#E2DDD5] opacity-60'}`}>
-                    <span className="text-xl">🕯️</span>
-                    <div>
-                      <div className="text-xs font-serif font-medium text-[#2B2A28]">Honest Self-Reflector</div>
-                      <div className="text-[9px] text-[#8A8478] font-sans">Explored difficult feelings openly</div>
-                    </div>
-                  </div>
-
-                  <div className={`p-3 border rounded-xs flex items-center gap-2.5 ${hasStoicEquanimity ? 'bg-[#FFFDF9] border-[#C4432B]/50' : 'bg-[#EFECE6]/40 border-[#E2DDD5] opacity-60'}`}>
-                    <span className="text-xl">🏛️</span>
-                    <div>
-                      <div className="text-xs font-serif font-medium text-[#2B2A28]">Steady Mind</div>
-                      <div className="text-[9px] text-[#8A8478] font-sans">Focused on what you can control</div>
-                    </div>
-                  </div>
-
-                  <div className={`p-3 border rounded-xs flex items-center gap-2.5 ${hasNightReflection ? 'bg-[#FFFDF9] border-[#C4432B]/50' : 'bg-[#EFECE6]/40 border-[#E2DDD5] opacity-60'}`}>
-                    <span className="text-xl">🌙</span>
-                    <div>
-                      <div className="text-xs font-serif font-medium text-[#2B2A28]">Night Owl</div>
-                      <div className="text-[9px] text-[#8A8478] font-sans">Wrote entries during quiet night hours</div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>

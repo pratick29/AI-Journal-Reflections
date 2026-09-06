@@ -8,6 +8,8 @@ import {
   X,
   Sparkles,
   Compass,
+  Lock,
+  Mic,
 } from 'lucide-react';
 import { Interaction } from '../types';
 import { subscribeUserInteractions, deleteInteraction } from '../firebase/interactions';
@@ -78,8 +80,8 @@ export const HistoryList: React.FC<HistoryListProps> = ({
     const term = searchTerm.trim().toLowerCase();
     if (!term) return matchesCategory;
 
-    const inTitle = item.title.toLowerCase().includes(term);
-    const inMessages = item.messages.some((m) => m.content.toLowerCase().includes(term));
+    const inTitle = (item.title || '').toLowerCase().includes(term);
+    const inMessages = (item.messages || []).some((m) => (m.content || '').toLowerCase().includes(term));
     const axiomList = item.cognitiveAnalysis?.coreAxioms || (item.cognitiveAnalysis?.coreAxiom ? [item.cognitiveAnalysis.coreAxiom] : []);
     const inAxioms = axiomList.some((a) => a.toLowerCase().includes(term));
     const inResonance = item.cognitiveAnalysis?.emotionalResonance?.some((r) => r.toLowerCase().includes(term));
@@ -204,8 +206,9 @@ export const HistoryList: React.FC<HistoryListProps> = ({
           filteredInteractions.map((item, index) => {
             const isSelected = selectedId === item.id;
             const itemNumber = String(filteredInteractions.length - index).padStart(2, '0');
-            const previewSnippet =
-              item.messages.find((m) => m.role === 'user')?.content || 'Empty entry';
+            const previewSnippet = item.isEncrypted
+              ? '🔒 Protected with End-to-End Encryption (AES-256)'
+              : (item.messages || []).find((m) => m.role === 'user')?.content || 'Empty entry';
             const dateObj = new Date(item.updatedAt || item.createdAt);
             const formattedDate = dateObj
               .toLocaleDateString('en-US', {
@@ -249,7 +252,25 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {item.isEncrypted && (
+                      <span
+                        title="Protected with Zero-Knowledge E2EE"
+                        className="inline-flex items-center gap-1 text-[8px] font-sans uppercase tracking-wider px-2 py-0.5 bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30 rounded-full font-medium"
+                      >
+                        <Lock className="w-2.5 h-2.5 text-amber-600 dark:text-amber-400" />
+                        <span>Vault</span>
+                      </span>
+                    )}
+                    {item.audioMemo && (
+                      <span
+                        title="Includes voice memo"
+                        className="inline-flex items-center gap-1 text-[8px] font-sans uppercase tracking-wider px-2 py-0.5 bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 border border-indigo-500/30 rounded-full font-medium"
+                      >
+                        <Mic className="w-2.5 h-2.5 text-indigo-600 dark:text-indigo-400" />
+                        <span>Audio</span>
+                      </span>
+                    )}
                     {item.cognitiveAnalysis && (
                       <span
                         title="Key Insights"
@@ -274,8 +295,9 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                   </div>
                 </div>
 
-                <h3 className="text-base font-serif leading-snug text-[#2B2A28] dark:text-[#F5F2EB] line-clamp-1 mb-1.5 font-normal group-hover:text-[#C4432B] transition-colors">
-                  {item.title}
+                <h3 className="text-base font-serif leading-snug text-[#2B2A28] dark:text-[#F5F2EB] line-clamp-1 mb-1.5 font-normal group-hover:text-[#C4432B] transition-colors flex items-center gap-1.5">
+                  {item.isEncrypted && <Lock className="w-3.5 h-3.5 text-amber-600 shrink-0" />}
+                  <span>{item.title}</span>
                 </h3>
 
                 <p className="text-xs font-serif text-[#595652] dark:text-[#C2BCB1] line-clamp-2 leading-relaxed italic">
@@ -284,7 +306,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
 
                 <div className="flex items-center justify-between text-[10px] font-sans border-t border-[#E2DDD5]/60 dark:border-[#332F2A] mt-3 pt-2 text-[#8A8478] dark:text-[#8E877C]">
                   <span className="tracking-wider uppercase text-[9px]">
-                    {item.messages.length} {item.messages.length === 1 ? 'exchange' : 'exchanges'}
+                    {item.isEncrypted ? 'Vault Encrypted' : `${(item.messages || []).length} ${(item.messages || []).length === 1 ? 'exchange' : 'exchanges'}`}
                   </span>
 
                   {deleteConfirmId === item.id ? (

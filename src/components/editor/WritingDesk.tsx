@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { Loader2, Mic, MicOff, Maximize2, BookTemplate, Compass, X, Sparkles, MapPin, Image as ImageIcon, Trash2 } from 'lucide-react';
-import { ReflectionMode, PhilosophicalPersona, JournalLocation } from '../../types';
+import { Loader2, Mic, MicOff, Maximize2, BookTemplate, Compass, X, Sparkles, MapPin, Image as ImageIcon, Trash2, Lock, Unlock, Radio } from 'lucide-react';
+import { ReflectionMode, PhilosophicalPersona, JournalLocation, AudioMemo } from '../../types';
 import { InteractiveButton } from '../common/InteractiveButton';
 import { InterlocutorSelector } from '../personas/InterlocutorSelector';
 import { scanForThoughtDistortions, DistortionMatch } from './thoughtGrammarEngine';
+import { AudioMemoPlayer } from './AudioMemoPlayer';
 
 const MOODS = [
   { id: 'equanimity', label: 'Calm & Peaceful', icon: '🌿' },
@@ -48,6 +49,10 @@ interface WritingDeskProps {
   onOpenLocationPicker?: () => void;
   attachedImage?: { data: string; mimeType: string; name?: string } | null;
   setAttachedImage?: (img: { data: string; mimeType: string; name?: string } | null) => void;
+  audioMemo?: AudioMemo | null;
+  onSaveAudioMemo?: (memo: AudioMemo | null) => void;
+  isEncrypted?: boolean;
+  onToggleEncryption?: () => void;
 }
 
 const TEMPLATES = [
@@ -90,6 +95,10 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
   onOpenLocationPicker,
   attachedImage,
   setAttachedImage,
+  audioMemo,
+  onSaveAudioMemo,
+  isEncrypted = false,
+  onToggleEncryption,
 }) => {
   const isDepthLimitReached = activeMode !== 'cognitive_lens' && userTurnCount >= 15;
   const [isListening, setIsListening] = useState(false);
@@ -98,6 +107,110 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
   const [draftRestored, setDraftRestored] = useState<boolean>(false);
   const recognitionRef = useRef<ISpeechRecognition | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Audio Voice Memo recording state
+  const [isRecordingMemo, setIsRecordingMemo] = useState(false);
+  const [recordingSeconds, setRecordingSeconds] = useState(0);
+  const recordingSecondsRef = useRef(0);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const recordingTimerRef = useRef<any>(null);
+  const mediaStreamRef = useRef<MediaStream | null>(null);
+
+  // Audio recording handlers
+  const startRecordingMemo = async () => {
+    try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert('Audio recording is not supported in this browser environment.');
+        return;
+      }
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaStreamRef.current = stream;
+      audioChunksRef.current = [];
+
+      const mimeType = typeof MediaRecorder.isTypeSupported === 'function' && MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+        ? 'audio/webm;codecs=opus'
+        : typeof MediaRecorder.isTypeSupported === 'function' && MediaRecorder.isTypeSupported('audio/mp4')
+        ? 'audio/mp4'
+        : 'audio/webm';
+
+      const recorder = new MediaRecorder(stream, { mimeType });
+      mediaRecorderRef.current = recorder;
+
+      recorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) {
+          audioChunksRef.current.push(e.data);
+        }
+      };
+
+      recorder.onstop = () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64Data = reader.result as string;
+          if (base64Data && onSaveAudioMemo) {
+            onSaveAudioMemo({
+              id: `memo_${Date.now()}`,
+              audioData: base64Data,
+              durationSeconds: recordingSecondsRef.current || 1,
+              mimeType,
+              createdAt: new Date().toISOString(),
+            });
+          }
+        };
+        reader.readAsDataURL(audioBlob);
+
+        // Stop all audio stream tracks
+        stream.getTracks().forEach((track) => track.stop());
+        mediaStreamRef.current = null;
+      };
+
+      recorder.start(250);
+      setIsRecordingMemo(true);
+      setRecordingSeconds(0);
+      recordingSecondsRef.current = 0;
+
+      recordingTimerRef.current = setInterval(() => {
+        setRecordingSeconds((prev) => {
+          const next = prev + 1;
+          recordingSecondsRef.current = next;
+          if (next >= 300) { // Limit to 5 mins
+            stopRecordingMemo();
+          }
+          return next;
+        });
+      }, 1000);
+    } catch (err: any) {
+      console.error('Error starting voice memo recording:', err);
+      alert('Unable to access microphone. Please check your browser microphone permissions.');
+    }
+  };
+
+  const stopRecordingMemo = () => {
+    if (recordingTimerRef.current) {
+      clearInterval(recordingTimerRef.current);
+      recordingTimerRef.current = null;
+    }
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+      mediaRecorderRef.current.stop();
+    }
+    setIsRecordingMemo(false);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (recordingTimerRef.current) clearInterval(recordingTimerRef.current);
+      if (mediaStreamRef.current) {
+        mediaStreamRef.current.getTracks().forEach((t) => t.stop());
+      }
+    };
+  }, []);
+
+  const formatAudioTime = (secs: number) => {
+    const m = Math.floor(secs / 60);
+    const s = Math.floor(secs % 60);
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+  };
 
   // Restore saved draft on mount
   useEffect(() => {
@@ -427,6 +540,33 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
           </div>
         )}
 
+        {/* Live Audio Voice Memo Recording Bar */}
+        {isRecordingMemo && (
+          <div className="bg-red-500/10 dark:bg-red-950/30 border border-red-500/30 dark:border-red-800/40 px-3.5 py-2 rounded-xl flex items-center justify-between text-xs text-red-700 dark:text-red-300 animate-pulse">
+            <div className="flex items-center gap-2 font-mono">
+              <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-ping shrink-0" />
+              <span>Recording Voice Memo: {formatAudioTime(recordingSeconds)}</span>
+            </div>
+            <button
+              type="button"
+              onClick={stopRecordingMemo}
+              className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-sans font-medium transition-colors cursor-pointer"
+            >
+              Stop &amp; Save
+            </button>
+          </div>
+        )}
+
+        {/* Existing Audio Voice Memo Preview */}
+        {audioMemo && !isRecordingMemo && (
+          <div className="pt-1">
+            <AudioMemoPlayer
+              audioMemo={audioMemo}
+              onDelete={() => onSaveAudioMemo && onSaveAudioMemo(null)}
+            />
+          </div>
+        )}
+
         {/* Consolidated Bottom Toolbar */}
         <div className="flex flex-wrap items-center justify-between gap-2 pt-2.5 border-t border-[#E2DDD5]/50 dark:border-[#332F2A] text-[10px] font-sans">
           {/* Left Instrument Controls */}
@@ -570,6 +710,41 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
               {isListening ? <MicOff className="w-3 h-3" /> : <Mic className="w-3 h-3" />}
               <span className="hidden sm:inline">{isListening ? 'Stop' : 'Voice'}</span>
             </button>
+
+            {/* Audio Voice Memo Recording Button */}
+            <button
+              type="button"
+              onClick={isRecordingMemo ? stopRecordingMemo : startRecordingMemo}
+              disabled={isGenerating || isDepthLimitReached}
+              title={isRecordingMemo ? 'Stop audio memo recording' : 'Record voice memo alongside reflection'}
+              className={`p-1.5 sm:px-2.5 sm:py-1.5 rounded-full border transition-all flex items-center gap-1.5 uppercase tracking-wider text-[10px] shadow-2xs cursor-pointer ${
+                isRecordingMemo
+                  ? 'bg-red-600 text-white border-red-600 font-medium animate-pulse'
+                  : audioMemo
+                  ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/50 font-medium'
+                  : 'bg-[#F7F4EE]/80 dark:bg-[#25221E] text-[#595652] dark:text-[#DDD8CE] border-[#E2DDD5] dark:border-[#38332D] hover:border-[#C4432B] hover:text-[#2B2A28] hover:dark:text-[#FFFFFF]'
+              }`}
+            >
+              <Radio className="w-3 h-3 text-[#C4432B]" />
+              <span className="hidden sm:inline">{isRecordingMemo ? 'Stop Memo' : audioMemo ? 'Memo Added' : 'Memo'}</span>
+            </button>
+
+            {/* E2EE Lock Toggle Button */}
+            {onToggleEncryption && (
+              <button
+                type="button"
+                onClick={onToggleEncryption}
+                title={isEncrypted ? 'Reflection is protected with Zero-Knowledge E2EE' : 'Enable End-to-End Encryption for this entry'}
+                className={`p-1.5 sm:px-2.5 sm:py-1.5 rounded-full border transition-all flex items-center gap-1.5 uppercase tracking-wider text-[10px] shadow-2xs cursor-pointer ${
+                  isEncrypted
+                    ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/60 font-medium'
+                    : 'bg-[#F7F4EE]/80 dark:bg-[#25221E] text-[#595652] dark:text-[#DDD8CE] border-[#E2DDD5] dark:border-[#38332D] hover:border-amber-600 hover:text-amber-700 hover:dark:text-amber-300'
+                }`}
+              >
+                {isEncrypted ? <Lock className="w-3 h-3 text-amber-600 dark:text-amber-400" /> : <Unlock className="w-3 h-3 opacity-60" />}
+                <span className="hidden sm:inline">{isEncrypted ? 'Encrypted' : 'Lock'}</span>
+              </button>
+            )}
 
             {/* Zen Mode Button */}
             {onOpenZenMode && (
