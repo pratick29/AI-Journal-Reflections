@@ -565,7 +565,7 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
               : "What's on your mind? Write freely here..."
           }
           style={{ height: `${composerHeight}px` }}
-          className="w-full bg-transparent text-base font-serif text-[#2B2A28] dark:text-[#F5F2EB] placeholder-[#8A8478]/60 dark:placeholder-[#7A746B] focus:outline-none resize-y min-h-[70px] max-h-[500px] leading-relaxed"
+          className="w-full bg-transparent text-base font-serif text-[#2B2A28] dark:text-[#F5F2EB] placeholder-[#8A8478]/60 dark:placeholder-[#7A746B] focus:outline-none resize-y min-h-[70px] max-h-[500px] leading-relaxed px-1"
           onKeyDown={(e) => {
             if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
               e.preventDefault();
@@ -649,9 +649,9 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
           </div>
         )}
 
-        {/* Consolidated Bottom Toolbar */}
-        <div className="flex flex-wrap items-center justify-between gap-2 pt-2.5 border-t border-[#E2DDD5]/50 dark:border-[#332F2A] text-[10px] font-sans">
-          {/* Left Instrument Controls */}
+        {/* Consolidated Bottom Toolbar: Balanced Left & Right */}
+        <div className="flex flex-wrap items-center justify-between gap-2.5 pt-2.5 border-t border-[#E2DDD5]/50 dark:border-[#332F2A] text-[10px] font-sans">
+          {/* Left Side: Thought Framework (Mode, Guide, Mood, Prompts) */}
           <div className="flex items-center gap-1.5 flex-wrap">
             {/* Mode Selector */}
             <select
@@ -753,7 +753,10 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
                 </div>
               )}
             </div>
+          </div>
 
+          {/* Right Side: Media, Privacy, Shortcuts & Submit */}
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap ml-auto">
             {/* Photo / Visual Attachment Button */}
             <input
               type="file"
@@ -840,19 +843,18 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
                 <span className="hidden sm:inline">Zen</span>
               </button>
             )}
-          </div>
 
-          {/* Right: Submit Button & Hint */}
-          <div className="flex items-center gap-3 ml-auto">
-            <span className="hidden md:inline tracking-wider text-[#8A8478] text-[9px]">
-              <kbd className="px-1.5 py-0.5 border border-[#E2DDD5] bg-[#F7F4EE] font-mono rounded-md shadow-2xs">⌘ + Enter</kbd>
+            {/* Shortcut Hint */}
+            <span className="hidden xl:inline tracking-wider text-[#8A8478] dark:text-[#8E877C] text-[9px] ml-1">
+              <kbd className="px-1.5 py-0.5 border border-[#E2DDD5] dark:border-[#38332D] bg-[#F7F4EE] dark:bg-[#25221E] font-mono rounded-md shadow-2xs">⌘ + Enter</kbd>
             </span>
 
+            {/* Submit Action Button */}
             <InteractiveButton
               id="submit-inquiry-btn"
               type="submit"
               disabled={isGenerating || !promptInput.trim() || isDepthLimitReached}
-              className="px-5 py-2.5 font-semibold active:scale-[0.98] rounded-full text-[10px] uppercase tracking-[0.2em] shadow-sm hover:shadow-md transition-all"
+              className="px-5 py-2.5 font-semibold active:scale-[0.98] rounded-full text-[10px] uppercase tracking-[0.2em] shadow-sm hover:shadow-md transition-all ml-1"
             >
               {isGenerating ? (
                 <>

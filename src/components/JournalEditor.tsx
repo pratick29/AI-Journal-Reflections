@@ -740,8 +740,9 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
   return (
     <div id="journal-editor" className="flex-1 flex flex-col h-full overflow-hidden bg-[#FBF9F5] dark:bg-[#131211]">
       {/* Top Inquiry Banner & Perspective Navigation */}
-      <div className="border-b border-[#E5E0D8] dark:border-[#2C2824] px-4 py-3 sm:px-8 bg-[#FFFFFF] dark:bg-[#181614] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
-        <div className="flex items-center gap-3">
+      <div className="border-b border-[#E5E0D8] dark:border-[#2C2824] px-4 sm:px-8 lg:px-12 bg-[#FFFFFF] dark:bg-[#181614] shrink-0">
+        <div className="max-w-5xl xl:max-w-6xl mx-auto w-full flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-3">
+          <div className="flex items-center gap-3">
           <input
             id="inquiry-title-input"
             type="text"
@@ -899,6 +900,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
             </button>
           )}
         </div>
+        </div>
       </div>
 
       {/* Error Notice Banner */}
@@ -915,7 +917,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
       )}
 
       {/* Main Perspective Body View */}
-      <div className="flex-1 flex flex-col min-h-0 px-4 py-3 sm:px-12 max-w-4xl mx-auto w-full overflow-hidden">
+      <div className="flex-1 flex flex-col min-h-0 px-4 sm:px-8 lg:px-12 py-3.5 max-w-5xl xl:max-w-6xl mx-auto w-full overflow-hidden">
         {activeTab === 'dialogue' && (
           <div className="flex-1 flex flex-col min-h-0 justify-between gap-3">
             {/* Scrollable Upper Area for Prompts / Dialogue Messages */}

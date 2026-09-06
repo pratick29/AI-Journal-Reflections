@@ -408,7 +408,7 @@ function MainApp() {
         )}
 
         {/* Main Journal & Multi-Turn Gemini Area */}
-        <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-[#FBF9F5]">
+        <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-[#FBF9F5] dark:bg-[#131211]">
           <JournalEditor
             currentInteraction={selectedInteraction}
             onInteractionSaved={(saved) => setSelectedInteraction(saved)}
