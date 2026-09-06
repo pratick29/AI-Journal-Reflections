@@ -16,6 +16,8 @@ import {
   Cpu,
   Database,
   Eye,
+  Download,
+  Zap,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { UserRole, AdminTelemetry, SecurityAuditLog } from '../../types';
@@ -43,20 +45,29 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
 
   // Check role & load telemetry on open or passkey change
   const refreshAdminData = async () => {
-    if (!user) return;
     setIsLoading(true);
     setActionNotice(null);
 
     try {
-      const idToken = await user.getIdToken();
+      let idToken = '';
+      if (user) {
+        try {
+          idToken = await user.getIdToken();
+        } catch (e) {
+          console.warn('Failed to retrieve Firebase ID token:', e);
+        }
+      }
+
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      if (idToken) headers['Authorization'] = `Bearer ${idToken}`;
+      if (passphrase) headers['x-admin-passphrase'] = passphrase;
 
       // 1. Verify Role
       const roleRes = await fetch('/api/admin/verify-role', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${idToken}`,
-        },
+        headers,
         body: JSON.stringify({ passphrase }),
       });
 
@@ -70,10 +81,7 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
 
       // 2. Fetch Metrics
       const metricsRes = await fetch('/api/admin/metrics', {
-        headers: {
-          Authorization: `Bearer ${idToken}`,
-          'x-admin-passphrase': passphrase,
-        },
+        headers,
       });
 
       if (metricsRes.ok) {
@@ -83,10 +91,7 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
 
       // 3. Fetch Audit Logs
       const logsRes = await fetch('/api/admin/audit-logs', {
-        headers: {
-          Authorization: `Bearer ${idToken}`,
-          'x-admin-passphrase': passphrase,
-        },
+        headers,
       });
 
       if (logsRes.ok) {
@@ -106,30 +111,91 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
     }
   }, [isOpen, passphrase]);
 
+  // Handle escape key
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   // Admin action: clear rate limits
   const handleClearRateLimits = async () => {
-    if (!user) return;
     setIsLoading(true);
     try {
-      const idToken = await user.getIdToken();
+      let idToken = '';
+      if (user) {
+        try {
+          idToken = await user.getIdToken();
+        } catch {}
+      }
+      const headers: Record<string, string> = {};
+      if (idToken) headers['Authorization'] = `Bearer ${idToken}`;
+      if (passphrase) headers['x-admin-passphrase'] = passphrase;
+
       const res = await fetch('/api/admin/clear-rate-limits', {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${idToken}`,
-          'x-admin-passphrase': passphrase,
-        },
+        headers,
       });
       if (res.ok) {
         setActionNotice('All active rate limit throttles have been cleared.');
         refreshAdminData();
       } else {
-        setActionNotice('Failed to reset rate limits: check permissions.');
+        const errJson = await res.json().catch(() => ({}));
+        setActionNotice(errJson.error || 'Failed to reset rate limits: check permissions.');
       }
     } catch (err: any) {
       setActionNotice(`Error: ${err.message}`);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Admin action: simulate security barrier test probe
+  const handleTestProbe = async () => {
+    setIsLoading(true);
+    try {
+      let idToken = '';
+      if (user) {
+        try {
+          idToken = await user.getIdToken();
+        } catch {}
+      }
+      const headers: Record<string, string> = {};
+      if (idToken) headers['Authorization'] = `Bearer ${idToken}`;
+      if (passphrase) headers['x-admin-passphrase'] = passphrase;
+
+      const res = await fetch('/api/admin/test-probe', {
+        method: 'POST',
+        headers,
+      });
+      if (res.ok) {
+        setActionNotice('Simulated privilege escalation probe deflected & recorded in security audit trail.');
+        refreshAdminData();
+      } else {
+        const errJson = await res.json().catch(() => ({}));
+        setActionNotice(errJson.error || 'Failed to test probe: check admin permissions.');
+      }
+    } catch (err: any) {
+      setActionNotice(`Error: ${err.message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Admin action: export audit logs as JSON
+  const handleExportAuditLogs = () => {
+    if (auditLogs.length === 0) return;
+    const jsonStr = JSON.stringify(auditLogs, null, 2);
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `security-audit-trail-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   if (!isOpen) return null;
@@ -412,6 +478,16 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
                     <Unlock className="w-3.5 h-3.5 text-amber-400" />
                     <span>Clear All Rate Limits</span>
                   </button>
+
+                  <button
+                    type="button"
+                    onClick={handleTestProbe}
+                    disabled={currentRole !== 'admin' || isLoading}
+                    className="px-3.5 py-2 text-xs font-sans uppercase tracking-wider bg-[#332E29] hover:bg-amber-700 disabled:opacity-40 text-white rounded-xs border border-[#443E38] transition-colors flex items-center gap-1.5 cursor-pointer font-semibold"
+                  >
+                    <Zap className="w-3.5 h-3.5 text-amber-300" />
+                    <span>Simulate Security Barrier Probe</span>
+                  </button>
                 </div>
               </div>
             </div>
@@ -420,22 +496,35 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
           {/* TAB 2: AUDIT LOGS */}
           {activeTab === 'audit' && (
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="text-xs font-sans text-[#8C8478]">
                   Chronological trail of security authentications, rate limits, and injection probes.
                 </div>
-                <div className="flex items-center gap-1 bg-[#24211E] border border-[#38332D] p-1 rounded-xs text-[10px] font-sans uppercase">
-                  {(['all', 'warning', 'critical'] as const).map((filter) => (
-                    <button
-                      key={filter}
-                      onClick={() => setLogFilter(filter)}
-                      className={`px-2.5 py-0.5 rounded-xs transition-colors ${
-                        logFilter === filter ? 'bg-[#C4432B] text-white font-semibold' : 'text-[#8C8478] hover:text-white'
-                      }`}
-                    >
-                      {filter}
-                    </button>
-                  ))}
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleExportAuditLogs}
+                    disabled={auditLogs.length === 0}
+                    className="px-2.5 py-1 text-[10px] uppercase tracking-wider bg-[#24211E] hover:bg-[#38332D] text-[#D4CEC4] border border-[#38332D] rounded-xs transition-colors flex items-center gap-1 font-semibold disabled:opacity-40"
+                    title="Export Security Audit Logs to JSON"
+                  >
+                    <Download className="w-3 h-3 text-[#C4432B]" />
+                    <span>Export JSON</span>
+                  </button>
+
+                  <div className="flex items-center gap-1 bg-[#24211E] border border-[#38332D] p-1 rounded-xs text-[10px] font-sans uppercase">
+                    {(['all', 'warning', 'critical'] as const).map((filter) => (
+                      <button
+                        key={filter}
+                        onClick={() => setLogFilter(filter)}
+                        className={`px-2.5 py-0.5 rounded-xs transition-colors ${
+                          logFilter === filter ? 'bg-[#C4432B] text-white font-semibold' : 'text-[#8C8478] hover:text-white'
+                        }`}
+                      >
+                        {filter}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
