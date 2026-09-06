@@ -846,12 +846,12 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
         </div>
 
         {/* Perspective Tab Controls & Actions */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {/* Tab Switchers */}
           <div className="flex border border-[#E5E0D8] dark:border-[#38332D] bg-[#F4F0E8]/70 dark:bg-[#25221E] p-1 rounded-full text-[10px] font-sans uppercase tracking-[0.15em] shadow-2xs">
             <button
               onClick={() => setActiveTab('dialogue')}
-              className={`px-3.5 py-1.5 rounded-full transition-all ${
+              className={`px-3 py-1.5 rounded-full transition-all ${
                 activeTab === 'dialogue'
                   ? 'bg-[#1A1918] text-[#FBF9F5] dark:bg-[#C4432B] dark:text-[#FFFFFF] font-semibold shadow-xs'
                   : 'text-[#57534E] dark:text-[#A8A196] hover:text-[#1A1918] hover:dark:text-[#F5F2EB]'
@@ -866,14 +866,15 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
                   handleSubmitPrompt('cognitive_lens');
                 }
               }}
-              className={`px-3.5 py-1.5 rounded-full transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-full transition-all flex items-center gap-1.5 ${
                 activeTab === 'cognitive_lens'
                   ? 'bg-[#1A1918] text-[#FBF9F5] dark:bg-[#C4432B] dark:text-[#FFFFFF] font-semibold shadow-xs'
                   : 'text-[#57534E] dark:text-[#A8A196] hover:text-[#1A1918] hover:dark:text-[#F5F2EB]'
               }`}
             >
               <Sparkles className="w-3 h-3 text-[#A94A38] dark:text-[#FF8A73]" />
-              <span>Key Insights</span>
+              <span className="hidden sm:inline">Key Insights</span>
+              <span className="sm:hidden">Insights</span>
             </button>
             <button
               onClick={() => {
@@ -882,73 +883,93 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
                   handleSubmitPrompt('thinking_map');
                 }
               }}
-              className={`px-3.5 py-1.5 rounded-full transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-full transition-all flex items-center gap-1.5 ${
                 activeTab === 'thinking_map'
                   ? 'bg-[#1A1918] text-[#FBF9F5] dark:bg-[#C4432B] dark:text-[#FFFFFF] font-semibold shadow-xs'
                   : 'text-[#57534E] dark:text-[#A8A196] hover:text-[#1A1918] hover:dark:text-[#F5F2EB]'
               }`}
             >
               <Compass className="w-3 h-3 text-[#A94A38] dark:text-[#FF8A73]" />
-              <span>Idea Map</span>
+              <span className="hidden sm:inline">Idea Map</span>
+              <span className="sm:hidden">Map</span>
             </button>
             <button
               onClick={() => setActiveTab('woodcut')}
-              className={`px-3.5 py-1.5 rounded-full transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-full transition-all flex items-center gap-1.5 ${
                 activeTab === 'woodcut'
                   ? 'bg-[#1A1918] text-[#FBF9F5] dark:bg-[#C4432B] dark:text-[#FFFFFF] font-semibold shadow-xs'
                   : 'text-[#57534E] dark:text-[#A8A196] hover:text-[#1A1918] hover:dark:text-[#F5F2EB]'
               }`}
             >
               <Palette className="w-3 h-3 text-[#A94A38] dark:text-[#FF8A73]" />
-              <span>Entry Art</span>
+              <span className="hidden sm:inline">Entry Art</span>
+              <span className="sm:hidden">Art</span>
             </button>
           </div>
 
-          {/* Export & Save Status */}
-          {messages.length > 0 && (
-            <div className="flex items-center gap-1.5">
+          {/* Export & Publication Suite: Always visible with active/disabled styling when empty */}
+          <div className="flex items-center gap-1 bg-[#F4F0E8]/40 dark:bg-[#25221E]/60 border border-[#E5E0D8]/80 dark:border-[#38332D]/80 px-1.5 py-1 rounded-full shadow-2xs">
+            <button
+              onClick={handleExportText}
+              disabled={messages.length === 0}
+              className={`p-1.5 border border-[#E5E0D8] dark:border-[#38332D] transition-all rounded-full shadow-2xs ${
+                messages.length > 0
+                  ? 'bg-[#FFFFFF] dark:bg-[#25221E] text-[#57534E] dark:text-[#C8C2B5] hover:border-[#1A1918] dark:hover:border-[#C4432B] hover:text-[#1A1918] hover:dark:text-[#F5F2EB] cursor-pointer'
+                  : 'bg-[#F5F2EB]/50 dark:bg-[#1E1C1A] text-[#B0AAA0] dark:text-[#605B54] opacity-50 cursor-not-allowed'
+              }`}
+              title={messages.length > 0 ? (copiedExport ? "Entry copied!" : "Copy entry to clipboard") : "Add reflections before copying"}
+            >
+              {copiedExport ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Download className="w-3.5 h-3.5" />}
+            </button>
+            <button
+              onClick={handleExportMarkdown}
+              disabled={messages.length === 0}
+              className={`px-2.5 py-1 border border-[#E5E0D8] dark:border-[#38332D] transition-all flex items-center gap-1 text-[9px] uppercase tracking-wider rounded-full shadow-2xs ${
+                messages.length > 0
+                  ? 'bg-[#FFFFFF] dark:bg-[#25221E] text-[#57534E] dark:text-[#C8C2B5] hover:border-[#7C3AED] hover:text-[#7C3AED] cursor-pointer'
+                  : 'bg-[#F5F2EB]/50 dark:bg-[#1E1C1A] text-[#B0AAA0] dark:text-[#605B54] opacity-50 cursor-not-allowed'
+              }`}
+              title={messages.length > 0 ? "Download Markdown file (.md) for Obsidian, Notion, or Logseq" : "Add reflections before exporting to Markdown"}
+            >
+              <FileText className={`w-3.5 h-3.5 ${messages.length > 0 ? 'text-[#7C3AED]' : 'text-stone-400'}`} />
+              <span className="font-mono font-medium">.MD</span>
+            </button>
+            <button
+              onClick={handleExportGoogleDocs}
+              disabled={messages.length === 0}
+              className={`px-2.5 py-1 border border-[#E5E0D8] dark:border-[#38332D] transition-all flex items-center gap-1 text-[9px] uppercase tracking-wider rounded-full shadow-2xs ${
+                messages.length > 0
+                  ? 'bg-[#FFFFFF] dark:bg-[#25221E] text-[#57534E] dark:text-[#C8C2B5] hover:border-[#4285F4] hover:text-[#4285F4] cursor-pointer'
+                  : 'bg-[#F5F2EB]/50 dark:bg-[#1E1C1A] text-[#B0AAA0] dark:text-[#605B54] opacity-50 cursor-not-allowed'
+              }`}
+              title={messages.length > 0 ? "1-Click Export to Google Docs (opens document & formats with Ctrl+V)" : "Add reflections before exporting to Google Docs"}
+            >
+              <FileText className={`w-3.5 h-3.5 ${messages.length > 0 ? 'text-[#4285F4]' : 'text-stone-400'}`} />
+              <span className="font-sans font-medium">Docs</span>
+            </button>
+            <button
+              onClick={handlePrintSpecimen}
+              disabled={messages.length === 0}
+              className={`p-1.5 border border-[#E5E0D8] dark:border-[#38332D] transition-all rounded-full shadow-2xs ${
+                messages.length > 0
+                  ? 'bg-[#FFFFFF] dark:bg-[#25221E] text-[#57534E] dark:text-[#C8C2B5] hover:border-[#1A1918] dark:hover:border-[#C4432B] hover:text-[#1A1918] hover:dark:text-[#F5F2EB] cursor-pointer'
+                  : 'bg-[#F5F2EB]/50 dark:bg-[#1E1C1A] text-[#B0AAA0] dark:text-[#605B54] opacity-50 cursor-not-allowed'
+              }`}
+              title={messages.length > 0 ? "Print / Export PDF" : "Add reflections before printing"}
+            >
+              <Printer className="w-3.5 h-3.5" />
+            </button>
+            {onOpenNotifications && (
               <button
-                onClick={handleExportText}
-                className="p-2 border border-[#E5E0D8] dark:border-[#38332D] hover:border-[#1A1918] dark:hover:border-[#C4432B] bg-[#FFFFFF] dark:bg-[#25221E] text-[#57534E] dark:text-[#C8C2B5] hover:text-[#1A1918] hover:dark:text-[#F5F2EB] transition-all rounded-full shadow-2xs"
-                title={copiedExport ? "Entry copied!" : "Copy entry to clipboard"}
+                onClick={onOpenNotifications}
+                className="px-2.5 py-1 border border-[#E5E0D8] dark:border-[#38332D] hover:border-[#C4432B] hover:text-[#C4432B] bg-[#FFFFFF] dark:bg-[#25221E] text-[#57534E] dark:text-[#C8C2B5] transition-all flex items-center gap-1 text-[9px] uppercase tracking-wider rounded-full shadow-2xs cursor-pointer"
+                title="Send to Slack / Discord / Webhooks"
               >
-                {copiedExport ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Download className="w-3.5 h-3.5" />}
+                <Bell className="w-3.5 h-3.5 text-[#C4432B]" />
+                <span className="hidden md:inline">Send</span>
               </button>
-              <button
-                onClick={handleExportMarkdown}
-                className="px-2.5 py-1.5 border border-[#E5E0D8] dark:border-[#38332D] hover:border-[#7C3AED] hover:text-[#7C3AED] bg-[#FFFFFF] dark:bg-[#25221E] text-[#57534E] dark:text-[#C8C2B5] transition-all flex items-center gap-1 text-[9px] uppercase tracking-wider rounded-full shadow-2xs cursor-pointer"
-                title="Download Markdown file for Obsidian, Notion, or Logseq"
-              >
-                <FileText className="w-3.5 h-3.5 text-[#7C3AED]" />
-                <span className="hidden sm:inline font-mono font-medium">.MD</span>
-              </button>
-              <button
-                onClick={handleExportGoogleDocs}
-                className="px-2.5 py-1.5 border border-[#E5E0D8] dark:border-[#38332D] hover:border-[#4285F4] hover:text-[#4285F4] bg-[#FFFFFF] dark:bg-[#25221E] text-[#57534E] dark:text-[#C8C2B5] transition-all flex items-center gap-1 text-[9px] uppercase tracking-wider rounded-full shadow-2xs cursor-pointer"
-                title="Export formatted reflection to Google Docs"
-              >
-                <FileText className="w-3.5 h-3.5 text-[#4285F4]" />
-                <span className="hidden sm:inline font-sans font-medium">Docs</span>
-              </button>
-              <button
-                onClick={handlePrintSpecimen}
-                className="p-2 border border-[#E5E0D8] dark:border-[#38332D] hover:border-[#1A1918] dark:hover:border-[#C4432B] bg-[#FFFFFF] dark:bg-[#25221E] text-[#57534E] dark:text-[#C8C2B5] hover:text-[#1A1918] hover:dark:text-[#F5F2EB] transition-all rounded-full shadow-2xs"
-                title="Print / Export PDF"
-              >
-                <Printer className="w-3.5 h-3.5" />
-              </button>
-              {onOpenNotifications && (
-                <button
-                  onClick={onOpenNotifications}
-                  className="px-3 py-1.5 border border-[#E5E0D8] dark:border-[#38332D] hover:border-[#C4432B] hover:text-[#C4432B] bg-[#FFFFFF] dark:bg-[#25221E] text-[#57534E] dark:text-[#C8C2B5] transition-all flex items-center gap-1.5 text-[9px] uppercase tracking-wider rounded-full shadow-2xs"
-                  title="Send to Slack / Discord / Webhook"
-                >
-                  <Bell className="w-3.5 h-3.5 text-[#C4432B]" />
-                  <span className="hidden lg:inline">Send</span>
-                </button>
-              )}
-            </div>
-          )}
+            )}
+          </div>
 
           {/* Save Status Indicator */}
           {saveStatus === 'saving' && (
