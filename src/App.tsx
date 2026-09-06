@@ -9,8 +9,9 @@ import { ZenMode } from './components/editor/ZenMode';
 import { AmbientCanvas } from './components/common/AmbientCanvas';
 import { SoundscapePlayer } from './components/common/SoundscapePlayer';
 import { Interaction, PhilosophicalPersona, AuthorProfile } from './types';
-import { subscribeUserInteractions } from './firebase/interactions';
-import { Loader2, GripVertical } from 'lucide-react';
+import { subscribeUserInteractions, saveInteraction } from './firebase/interactions';
+import { Loader2, GripVertical, Wifi, WifiOff, RefreshCw } from 'lucide-react';
+import { getPendingSyncCount, flushOfflineQueue } from './utils/offlineSync';
 
 // Dynamic Code-Splitting: Lazy-load heavy modals for instantaneous initial load speeds
 const TestWalkthroughModal = React.lazy(() =>
@@ -131,6 +132,52 @@ function MainApp() {
     }
     return 'paper';
   });
+
+  // Offline Persistence & Network Status State
+  const [isOnline, setIsOnline] = useState<boolean>(() => typeof navigator !== 'undefined' ? navigator.onLine : true);
+  const [pendingSyncCount, setPendingSyncCount] = useState<number>(0);
+  const [isSyncingOffline, setIsSyncingOffline] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!user) return;
+    const updatePending = async () => {
+      const count = await getPendingSyncCount(user.uid);
+      setPendingSyncCount(count);
+    };
+
+    updatePending();
+
+    const handleOnline = async () => {
+      setIsOnline(true);
+      setIsSyncingOffline(true);
+      try {
+        await flushOfflineQueue(user.uid, async (item) => {
+          await saveInteraction(user.uid, item);
+        });
+      } finally {
+        await updatePending();
+        setIsSyncingOffline(false);
+      }
+    };
+
+    const handleOffline = () => {
+      setIsOnline(false);
+    };
+
+    const handleQueueUpdate = () => {
+      updatePending();
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    window.addEventListener('mindscribe:offline-queue-updated', handleQueueUpdate);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener('mindscribe:offline-queue-updated', handleQueueUpdate);
+    };
+  }, [user]);
 
   useEffect(() => {
     if (theme === 'candlelight') {
@@ -424,11 +471,51 @@ function MainApp() {
         </div>
       </main>
 
-      {/* Editorial System Status Footer */}
+      {/* Editorial System Status Footer with Ambient Network & Offline Sync Status */}
       <footer className="h-8 sm:h-9 border-t border-[#E5E0D8] dark:border-[#2C2824] flex items-center px-4 sm:px-6 justify-between text-[9px] sm:text-[10px] font-sans uppercase tracking-[0.18em] text-[#8C857B] dark:text-[#8E877C] bg-[#F4F0E8]/60 dark:bg-[#141312] shrink-0">
         <span className="truncate max-w-[200px] sm:max-w-none">Private &amp; Secure · Your Data Stays Yours</span>
         <span className="hidden sm:inline">Powered by Google Gemini</span>
-        <span className="truncate">Auto-Saved</span>
+        
+        {/* Live Ambient Network & Sync Indicator */}
+        <div className="flex items-center gap-2">
+          {isSyncingOffline ? (
+            <span className="inline-flex items-center gap-1.5 text-[#C4432B] dark:text-[#E05A42] font-medium animate-pulse">
+              <RefreshCw className="w-2.5 h-2.5 animate-spin" />
+              <span>Syncing {pendingSyncCount > 0 ? `(${pendingSyncCount})` : ''}</span>
+            </span>
+          ) : !isOnline ? (
+            <span className="inline-flex items-center gap-1.5 text-amber-600 dark:text-amber-400 font-medium">
+              <WifiOff className="w-2.5 h-2.5" />
+              <span>Offline · Saved Locally {pendingSyncCount > 0 ? `(${pendingSyncCount} pending)` : ''}</span>
+            </span>
+          ) : pendingSyncCount > 0 ? (
+            <button
+              onClick={async () => {
+                if (!user) return;
+                setIsSyncingOffline(true);
+                try {
+                  await flushOfflineQueue(user.uid, async (item) => {
+                    await saveInteraction(user.uid, item);
+                  });
+                  const count = await getPendingSyncCount(user.uid);
+                  setPendingSyncCount(count);
+                } finally {
+                  setIsSyncingOffline(false);
+                }
+              }}
+              className="inline-flex items-center gap-1.5 text-amber-600 hover:text-[#C4432B] transition-colors cursor-pointer"
+              title="Click to sync pending offline reflections now"
+            >
+              <RefreshCw className="w-2.5 h-2.5" />
+              <span>Sync {pendingSyncCount} Pending →</span>
+            </button>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 text-[#7A746B] dark:text-[#A0988D]">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400 inline-block" />
+              <span>Online · Synchronized</span>
+            </span>
+          )}
+        </div>
       </footer>
 
       {/* Zen Distraction-Free Writing Studio */}

@@ -196,16 +196,22 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
     window.addEventListener('pointerup', onPointerUp);
   };
 
-  // Audio Voice Memo recording state
+  // Audio Voice Memo recording & Concurrent Speech-to-Text streaming state
   const [isRecordingMemo, setIsRecordingMemo] = useState(false);
   const [recordingSeconds, setRecordingSeconds] = useState(0);
+  const [interimTranscript, setInterimTranscript] = useState<string>('');
   const recordingSecondsRef = useRef(0);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const recordingTimerRef = useRef<any>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
+  const memoRecognitionRef = useRef<ISpeechRecognition | null>(null);
+  const promptInputRef = useRef(promptInput);
+  useEffect(() => {
+    promptInputRef.current = promptInput;
+  }, [promptInput]);
 
-  // Audio recording handlers
+  // Audio recording handlers with Real-Time Streaming Speech-to-Text
   const startRecordingMemo = async () => {
     try {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -253,9 +259,58 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
         mediaStreamRef.current = null;
       };
 
+      // Concurrent Real-Time Speech-to-Text Recognition
+      const SpeechRecognitionClass = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (SpeechRecognitionClass) {
+        try {
+          const recognition = new SpeechRecognitionClass();
+          recognition.continuous = true;
+          recognition.interimResults = true;
+          recognition.lang = 'en-US';
+
+          recognition.onresult = (event: any) => {
+            let finalBatch = '';
+            let currentInterim = '';
+
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+              const transcriptPiece = event.results[i][0]?.transcript || '';
+              if (event.results[i].isFinal) {
+                finalBatch += transcriptPiece + ' ';
+              } else {
+                currentInterim += transcriptPiece;
+              }
+            }
+
+            if (finalBatch) {
+              const currentPrompt = promptInputRef.current;
+              const updated = currentPrompt.trim()
+                ? `${currentPrompt.trim()} ${finalBatch.trim()}`
+                : finalBatch.trim();
+              setPromptInput(updated);
+            }
+            setInterimTranscript(currentInterim);
+          };
+
+          recognition.onerror = (err: any) => {
+            console.warn('[Real-Time Voice STT] Speech recognition warning:', err?.error || err);
+          };
+
+          recognition.onend = () => {
+            // Keep interim cleared on stop
+            setInterimTranscript('');
+          };
+
+          memoRecognitionRef.current = recognition;
+          recognition.start();
+        } catch (sttErr) {
+          console.warn('[Real-Time Voice STT] Could not start concurrent speech recognition:', sttErr);
+        }
+      }
+
       recorder.start(250);
       setIsRecordingMemo(true);
       setRecordingSeconds(0);
+      setInterimTranscript('');
       recordingSecondsRef.current = 0;
 
       recordingTimerRef.current = setInterval(() => {
@@ -279,6 +334,16 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
       clearInterval(recordingTimerRef.current);
       recordingTimerRef.current = null;
     }
+    if (memoRecognitionRef.current) {
+      try {
+        memoRecognitionRef.current.stop();
+      } catch {
+        // ignore
+      }
+      memoRecognitionRef.current = null;
+    }
+    setInterimTranscript('');
+
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
       mediaRecorderRef.current.stop();
     }
@@ -368,19 +433,29 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
     try {
       const recognition = new SpeechRecognitionClass();
       recognition.continuous = true;
-      recognition.interimResults = false;
+      recognition.interimResults = true;
       recognition.lang = 'en-US';
 
       recognition.onresult = (event: any) => {
-        let transcript = '';
+        let finalBatch = '';
+        let currentInterim = '';
+
         for (let i = event.resultIndex; i < event.results.length; i++) {
+          const piece = event.results[i][0]?.transcript || '';
           if (event.results[i].isFinal) {
-            transcript += event.results[i][0].transcript + ' ';
+            finalBatch += piece + ' ';
+          } else {
+            currentInterim += piece;
           }
         }
-        if (transcript) {
-          setPromptInput(promptInput ? `${promptInput} ${transcript.trim()}` : transcript.trim());
+        if (finalBatch) {
+          const currentPrompt = promptInputRef.current;
+          const updated = currentPrompt.trim()
+            ? `${currentPrompt.trim()} ${finalBatch.trim()}`
+            : finalBatch.trim();
+          setPromptInput(updated);
         }
+        setInterimTranscript(currentInterim);
       };
 
       recognition.onerror = (err: any) => {
@@ -749,20 +824,69 @@ export const WritingDesk: React.FC<WritingDeskProps> = ({
           </div>
         )}
 
-        {/* Live Audio Voice Memo Recording Bar */}
-        {isRecordingMemo && (
-          <div className="bg-red-500/10 dark:bg-red-950/30 border border-red-500/30 dark:border-red-800/40 px-3.5 py-2 rounded-xl flex items-center justify-between text-xs text-red-700 dark:text-red-300 animate-pulse">
-            <div className="flex items-center gap-2 font-mono">
-              <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-ping shrink-0" />
-              <span>Recording Voice Memo: {formatAudioTime(recordingSeconds)}</span>
+        {/* Live Standalone Speech-to-Text Dictation Bar with Interim Streaming Preview */}
+        {isListening && !isRecordingMemo && (
+          <div className="bg-[#C4432B]/10 dark:bg-[#C4432B]/20 border border-[#C4432B]/30 p-3 rounded-xl space-y-1.5 text-xs text-[#C4432B] dark:text-[#FF8A73]">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#C4432B] animate-ping shrink-0" />
+                <span className="font-semibold uppercase tracking-wider text-[10px]">Real-Time Voice Dictation</span>
+                <div className="flex items-center gap-0.5 ml-2 h-3">
+                  <span className="w-1 bg-[#C4432B] rounded-full animate-[bounce_0.8s_infinite] h-2" />
+                  <span className="w-1 bg-[#C4432B] rounded-full animate-[bounce_0.6s_infinite] h-3" />
+                  <span className="w-1 bg-[#C4432B] rounded-full animate-[bounce_0.9s_infinite] h-2.5" />
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleToggleDictation}
+                className="px-2.5 py-0.5 bg-[#C4432B] text-white rounded-md text-[10px] font-sans uppercase tracking-wider transition-colors cursor-pointer"
+              >
+                Stop
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={stopRecordingMemo}
-              className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-sans font-medium transition-colors cursor-pointer"
-            >
-              Stop &amp; Save
-            </button>
+            <div className="pt-0.5 text-[11px] font-serif italic text-[#4A4640] dark:text-[#E6E0D5] leading-relaxed">
+              {interimTranscript ? `"${interimTranscript}..."` : 'Listening... Speak naturally to stream words into your manuscript.'}
+            </div>
+          </div>
+        )}
+
+        {/* Live Audio Voice Memo Recording Bar with Real-Time Waveform & Interim Transcription */}
+        {isRecordingMemo && (
+          <div className="bg-red-500/10 dark:bg-red-950/30 border border-red-500/30 dark:border-red-800/40 p-3.5 rounded-xl space-y-2 text-xs text-red-700 dark:text-red-300">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 font-mono">
+                <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-ping shrink-0" />
+                <span className="font-semibold uppercase tracking-wider text-[10px] text-red-600 dark:text-red-400">Recording Voice Memo:</span>
+                <span className="font-bold">{formatAudioTime(recordingSeconds)}</span>
+
+                {/* Animated Equalizer Waveform Bars */}
+                <div className="flex items-center gap-0.5 ml-2 h-3.5">
+                  <span className="w-1 bg-red-500 dark:bg-red-400 rounded-full animate-[bounce_0.8s_infinite] h-2" />
+                  <span className="w-1 bg-red-600 dark:bg-red-400 rounded-full animate-[bounce_0.6s_infinite] h-3.5" />
+                  <span className="w-1 bg-red-500 dark:bg-red-400 rounded-full animate-[bounce_0.9s_infinite] h-2.5" />
+                  <span className="w-1 bg-red-600 dark:bg-red-400 rounded-full animate-[bounce_0.7s_infinite] h-3" />
+                  <span className="w-1 bg-red-500 dark:bg-red-400 rounded-full animate-[bounce_1.0s_infinite] h-1.5" />
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={stopRecordingMemo}
+                className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-sans font-medium transition-colors cursor-pointer shadow-xs active:scale-95"
+              >
+                Stop &amp; Save Memo
+              </button>
+            </div>
+
+            {/* Live Streaming Interim Transcript */}
+            <div className="pt-1 border-t border-red-500/20 dark:border-red-900/40 text-[11px] font-serif flex items-start gap-1.5">
+              <span className="font-sans text-[9px] uppercase tracking-wider font-bold text-red-600 dark:text-red-400 shrink-0 mt-0.5">
+                Live Speech:
+              </span>
+              <span className="italic text-[#4A4640] dark:text-[#E6E0D5] leading-relaxed">
+                {interimTranscript ? `"${interimTranscript}..."` : 'Streaming transcription directly into manuscript as you speak...'}
+              </span>
+            </div>
           </div>
         )}
 

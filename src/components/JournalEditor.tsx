@@ -52,6 +52,7 @@ import {
   setSessionPassphrase,
 } from '../utils/crypto';
 import { exportToGoogleDocs } from '../utils/googleDrive';
+import { enqueueOfflineSync, flushOfflineQueue, cacheInteractionOffline } from '../utils/offlineSync';
 
 interface JournalEditorProps {
   currentInteraction: Interaction | null;
@@ -317,7 +318,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
     return firstUserMsg?.content || '';
   }, [pastMemory]);
 
-  // Commit interaction to Firestore with guaranteed transaction verification
+  // Commit interaction to Firestore with guaranteed transaction verification & offline sync queue
   const commitToFirestore = async (updatedInteraction: Interaction): Promise<boolean> => {
     if (!user) return false;
     setIsSaving(true);
@@ -355,14 +356,34 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
         };
       }
 
-      await saveInteraction(user.uid, interactionToSave);
-      setSaveStatus('saved');
-      setErrorMessage(null);
-      setPendingUnsavedInteraction(null);
-      onInteractionSaved(updatedInteraction);
-      return true;
+      // Check if user is offline
+      if (typeof navigator !== 'undefined' && !navigator.onLine) {
+        await enqueueOfflineSync(user.uid, interactionToSave);
+        setSaveStatus('saved');
+        setErrorMessage(null);
+        setPendingUnsavedInteraction(null);
+        onInteractionSaved(updatedInteraction);
+        return true;
+      }
+
+      try {
+        await saveInteraction(user.uid, interactionToSave);
+        setSaveStatus('saved');
+        setErrorMessage(null);
+        setPendingUnsavedInteraction(null);
+        onInteractionSaved(updatedInteraction);
+        return true;
+      } catch (networkErr) {
+        console.warn('Network error while persisting to Firestore; queuing for background sync:', networkErr);
+        await enqueueOfflineSync(user.uid, interactionToSave);
+        setSaveStatus('saved');
+        setErrorMessage(null);
+        setPendingUnsavedInteraction(null);
+        onInteractionSaved(updatedInteraction);
+        return true;
+      }
     } catch (err: any) {
-      console.error('Failed to commit interaction to Firestore:', err);
+      console.error('Failed to commit interaction:', err);
       setSaveStatus('error');
       setPendingUnsavedInteraction(updatedInteraction);
       setErrorMessage(
@@ -373,6 +394,27 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({
       setIsSaving(false);
     }
   };
+
+  // Auto-flush offline sync queue when connectivity is restored
+  useEffect(() => {
+    if (!user) return;
+    const handleOnline = async () => {
+      try {
+        await flushOfflineQueue(user.uid, async (interaction) => {
+          await saveInteraction(user.uid, interaction);
+        });
+      } catch (err) {
+        console.warn('Auto-flush offline queue error:', err);
+      }
+    };
+
+    window.addEventListener('online', handleOnline);
+    // Also attempt flush on initial mount if online
+    if (navigator.onLine) {
+      handleOnline();
+    }
+    return () => window.removeEventListener('online', handleOnline);
+  }, [user]);
 
   // Client-side DAG validation of ThinkingMap graph before rendering/saving
   const validateThinkingMapGraph = (rawMap: any): ThinkingMap | null => {
